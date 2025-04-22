@@ -1,6 +1,9 @@
 <?php
+$db;
+include ('database.php');
+//header("Content-Type: text/html; charset=UTF-8");
 header('Content-Type: application/json');
-include('database.php');
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 $name = $data['name'];
