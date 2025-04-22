@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
-$db = new PDO('mysql:host=localhost;dbname=mydb;charset=utf8', 'root', ''); // Укажи свои
-
+include('database.php');
 $data = json_decode(file_get_contents('php://input'), true);
 
 $name = $data['name'];
