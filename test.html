@@ -123,7 +123,7 @@
             };
 
             try {
-                const response = await fetch('http://u68790.kubsu-dev.ru/web_proj/sumbit.php'), {
+                const response = await fetch('http://u68790.kubsu-dev.ru/web_proj/sumbit.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -131,7 +131,7 @@
                     body: JSON.stringify(formData)
                 });
 
-                const result = await response.json();
+              const result = await response.json();
               if (response.ok) {
                     showMessage('Данные успешно сохранены в базе данных!', 'success');
                     document.getElementById('userForm').reset();
