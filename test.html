@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Форма пользователя</title>
+</head>
+<body>
+  <h2>Форма пользователя</h2>
+  <form id="userForm">
+    <label>
+      Имя:
+      <input type="text" name="name" required />
+    </label><br /><br />
+
+    <label>
+      Email:
+      <input type="email" name="email" required />
+    </label><br /><br />
+
+    <label>
+      Телефон:
+      <input type="tel" name="phone" required />
+    </label><br /><br />
+
+    <label>
+      О себе:
+      <textarea name="bio" rows="4" required></textarea>
+    </label><br /><br />
+
+    <button type="submit">Отправить</button>
+  </form>
+
+  <br />
+  <button onclick="window.location.href='login.html'">Войти</button>
+
+  <div id="response"></div>
+
+  <script>
+    document.getElementById('userForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      try {
+        const res = await fetch('http://u68790.kusu-dev.ru/web_proj/submit.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        document.getElementById('response').innerHTML = result.message;
+
+        if (result.login && result.password) {
+          document.getElementById('response').innerHTML += `
+            <p><strong>Ваш логин:</strong> ${result.login}</p>
+            <p><strong>Ваш пароль:</strong> ${result.password}</p>`;
+        }
+      } catch (error) {
+        document.getElementById('response').textContent = 'Ошибка при отправке данных.';
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
