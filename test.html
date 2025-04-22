@@ -1,68 +1,157 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Форма пользователя</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        textarea {
+            height: 100px;
+        }
+        .checkbox-group {
+            margin: 15px 0;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #loginBtn {
+            background-color: #2196F3;
+        }
+        #loginBtn:hover {
+            background-color: #0b7dda;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            display: block;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <h2>Форма пользователя</h2>
-  <form id="userForm">
-    <label>
-      Имя:
-      <input type="text" name="name" required />
-    </label><br /><br />
+    <h1>Форма пользователя</h1>
+    <form id="userForm">
+        <div class="form-group">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Телефон:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="bio">Биография:</label>
+            <textarea id="bio" name="bio"></textarea>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="agree" name="agree" required>
+            <label for="agree">Я согласен с условиями обработки данных</label>
+        </div>
+        
+        <div class="buttons">
+            <button type="submit" id="submitBtn">Отправить</button>
+            <button type="button" id="loginBtn">Войти</button>
+        </div>
+    </form>
 
-    <label>
-      Email:
-      <input type="email" name="email" required />
-    </label><br /><br />
+    <div id="message"></div>
 
-    <label>
-      Телефон:
-      <input type="tel" name="phone" required />
-    </label><br /><br />
+    <script>
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                bio: document.getElementById('bio').value,
+                agree: document.getElementById('agree').checked
+            };
 
-    <label>
-      О себе:
-      <textarea name="bio" rows="4" required></textarea>
-    </label><br /><br />
+            try {
+                const response = await fetch('http://u68790.kubsu-dev.ru/web_proj/sumbit.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
 
-    <button type="submit">Отправить</button>
-  </form>
-
-  <br />
-  <button onclick="window.location.href='login.php'">Войти</button>
-
-  <div id="response"></div>
-
-  <script>
-    document.getElementById('userForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const formData = new FormData(this);
-      const data = {};
-      formData.forEach((value, key) => data[key] = value);
-
-      try {
-        const res = await fetch('http://u68790.kusu-dev.ru/web_proj/submit.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+                const result = await response.json();
+              if (response.ok) {
+                    showMessage('Данные успешно сохранены в базе данных!', 'success');
+                    document.getElementById('userForm').reset();
+                } else {
+                    showMessage(Ошибка: ${result.message || 'Неизвестная ошибка'}, 'error');
+                }
+            } catch (error) {
+                showMessage(Ошибка сети: ${error.message}, 'error');
+            }
         });
 
-        const result = await res.json();
-        document.getElementById('response').innerHTML = result.message;
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            alert('Кнопка "Войти" нажата!');
+        });
 
-        if (result.login && result.password) {
-          document.getElementById('response').innerHTML += `
-            <p><strong>Ваш логин:</strong> ${result.login}</p>
-            <p><strong>Ваш пароль:</strong> ${result.password}</p>`;
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = type;
         }
-      } catch (error) {
-        document.getElementById('response').textContent = 'Ошибка при отправке данных.';
-        console.error(error);
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
