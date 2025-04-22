@@ -135,11 +135,13 @@
               if (response.ok) {
                     showMessage('Данные успешно сохранены в базе данных!', 'success');
                     document.getElementById('userForm').reset();
-                } else {
-                    showMessage(Ошибка: ${result.message || 'Неизвестная ошибка'}, 'error');
-                }
+                } 
+              // else {
+              //       showMessage(Ошибка: ${result.message || 'Неизвестная ошибка'}, 'error');
+              //   }
             } catch (error) {
-                showMessage(Ошибка сети: ${error.message}, 'error');
+               // showMessage(Ошибка сети: ${error.message}, 'error');
+                showMessage('Данныx net', 'error');
             }
         });
 
