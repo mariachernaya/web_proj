@@ -33,15 +33,16 @@ try {
     //$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // Подготовка SQL-запроса
-    $stmt = $conn->prepare("INSERT INTO usersi (name, phone, email, bio, agree, created_at) 
-                           VALUES (:name, :phone, :email, :bio, :agree, NOW())");
-    
+    // $stmt = $conn->prepare("INSERT INTO usersi (name, phone, email, bio, agree, created_at) 
+    //                        VALUES (:name, :phone, :email, :bio, :agree, NOW())");
+     $stmt = $conn->prepare("INSERT INTO usersi (name, phone, email, bio) 
+                           VALUES (:name, :phone, :email, :bio)");
     // Привязка параметров
     $stmt->bindParam(':name', $data['name']);
     $stmt->bindParam(':phone', $data['phone']);
     $stmt->bindParam(':email', $data['email']);
     $stmt->bindParam(':bio', $data['bio']);
-    $stmt->bindParam(':agree', $data['agree'], PDO::PARAM_BOOL);
+   // $stmt->bindParam(':agree', $data['agree'], PDO::PARAM_BOOL);
     
     // Выполнение запроса
     $stmt->execute();
