@@ -11,6 +11,19 @@
             margin: 0 auto;
             padding: 20px;
         }
+        .close-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.close-btn:hover {
+    background-color: #c82333;
+}
         .form-group {
             margin-bottom: 15px;
         }
@@ -105,7 +118,6 @@
         document.getElementById('myForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Собираем данные формы
             const formData = new FormData(this);
             
             // Отправляем данные на сервер
@@ -129,12 +141,18 @@
                         <tr><th>Пароль:</th><td><code>${data.credentials.password}</code></td></tr>
                     </table>
                     <p class="warning">Сохраните эти данные! Пароль нельзя восстановить!</p>
+                    <button class="close-btn">Закрыть</button>
                 </div>
             </div>
         `;
         responseDiv.innerHTML = successHtml;
         document.getElementById('myForm').reset();
+        
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            responseDiv.style.display = 'none';
+        });
     }
+   
     else if (data.errors) {
                     let errorsHtml = '<ul>';
                     for (const [field, error] of Object.entries(data.errors)) {
@@ -149,9 +167,7 @@
                 }
                 
                 responseDiv.style.display = 'block';
-                setTimeout(() => {
-                    responseDiv.style.display = 'none';
-                }, 5000);
+               
 })
             
             .catch(error => {
