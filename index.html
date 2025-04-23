@@ -23,6 +23,92 @@
 	<script src="jquery-3.4.1.min.js" defer></script>
 	<script src="slick/slick.min.js" defer></script>
 	<script src="project.js" defer></script>
+	 <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .close-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.close-btn:hover {
+    background-color: #c82333;
+}
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #responseContainer {
+            margin-top: 15px;
+            padding: 10px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.credentials-box {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.credentials-box table {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.credentials-box th {
+    text-align: left;
+    width: 30%;
+}
+
+.warning {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 10px;
+}
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -909,7 +995,92 @@
                     </div>
                 </div>
             </section> -->
+<h1>Отправка данных</h1>
+    <form id="myForm">
+        <div class="form-group">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="userMessage">Сообщение:</label>
+            <textarea id="userMessage" name="message" rows="4" required></textarea>
+        </div>
+        
+        <button type="submit">Отправить</button>
+    </form>
+    
+    <div id="responseContainer"></div>
 
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Отправляем данные на сервер
+            fetch('http://u68790.kubsu-dev.ru/web_proj/sumbit.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+.then(data => {
+    const responseDiv = document.getElementById('responseContainer');
+    responseDiv.innerHTML = '';
+    
+    if (data.success) {
+        let successHtml = `
+            <div class="alert-success">
+                <p>${data.message}</p>
+                <div class="credentials-box">
+                    <h3>Ваши учетные данные:</h3>
+                    <table>
+                        <tr><th>Логин:</th><td><code>${data.credentials.login}</code></td></tr>
+                        <tr><th>Пароль:</th><td><code>${data.credentials.password}</code></td></tr>
+                    </table>
+                    <p class="warning">Сохраните эти данные! Пароль нельзя восстановить!</p>
+                    <button class="close-btn">Закрыть</button>
+                </div>
+            </div>
+        `;
+        responseDiv.innerHTML = successHtml;
+        document.getElementById('myForm').reset();
+        
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            responseDiv.style.display = 'none';
+        });
+    }
+   
+    else if (data.errors) {
+                    let errorsHtml = '<ul>';
+                    for (const [field, error] of Object.entries(data.errors)) {
+                        errorsHtml += `<li>${error}</li>`;
+                    }
+                    errorsHtml += '</ul>';
+                    responseDiv.innerHTML = errorsHtml;
+                    responseDiv.className = 'error';
+                } else {
+                    responseDiv.textContent = data.error || 'Произошла ошибка';
+                    responseDiv.className = 'error';
+                }
+                
+                responseDiv.style.display = 'block';
+               
+})
+            
+            .catch(error => {
+                const responseDiv = document.getElementById('responseContainer');
+                responseDiv.textContent = 'Ошибка: ' + error.message;
+                responseDiv.className = 'error';
+                responseDiv.style.display = 'block';
+            });
+        });
+    </script>
             <section id="block-copyright" class="block clear">
                 <h6>&nbsp;</h6>
                 <div class="fpt-56   "><p>Проект ООО «Инитлаб», Краснодар, Россия. <br>
