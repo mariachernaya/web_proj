@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма пользователя</title>
+    <title>Форма отправки данных</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -17,74 +17,43 @@
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
         }
-        input[type="text"],
-        input[type="tel"],
-        input[type="email"],
-        textarea {
+        input, textarea {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        textarea {
-            height: 100px;
-        }
-        .checkbox-group {
-            margin: 15px 0;
-        }
-        .buttons {
-            margin-top: 20px;
         }
         button {
-            padding: 10px 15px;
-            margin-right: 10px;
             background-color: #4CAF50;
             color: white;
+            padding: 10px 15px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
         }
         button:hover {
             background-color: #45a049;
         }
-        #loginBtn {
-            background-color: #2196F3;
-        }
-        #loginBtn:hover {
-            background-color: #0b7dda;
-        }
         #message {
-            margin-top: 20px;
+            margin-top: 15px;
             padding: 10px;
-            border-radius: 4px;
             display: none;
         }
         .success {
             background-color: #dff0d8;
             color: #3c763d;
-            display: block;
         }
         .error {
             background-color: #f2dede;
             color: #a94442;
-            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Форма пользователя</h1>
-    <form id="userForm">
+    <h1>Отправка данных</h1>
+    <form id="myForm">
         <div class="form-group">
             <label for="name">Имя:</label>
             <input type="text" id="name" name="name" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="phone">Телефон:</label>
-            <input type="tel" id="phone" name="phone" required>
         </div>
         
         <div class="form-group">
@@ -93,67 +62,56 @@
         </div>
         
         <div class="form-group">
-            <label for="bio">Биография:</label>
-            <textarea id="bio" name="bio"></textarea>
+            <label for="message">Сообщение:</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
         </div>
         
-        <div class="checkbox-group">
-            <input type="checkbox" id="agree" name="agree" required>
-            <label for="agree">Я согласен с условиями обработки данных</label>
-        </div>
-        
-        <div class="buttons">
-            <button type="submit" id="submitBtn">Отправить</button>
-            <button type="button" id="loginBtn">Войти</button>
-        </div>
+        <button type="submit">Отправить</button>
     </form>
-
-    <div id="message"></div>
+    
+    <div id="response-message"></div>
 
     <script>
-        document.getElementById('userForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        document.getElementById('myForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Предотвращаем стандартную отправку формы
             
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                bio: document.getElementById('bio').value,
-                agree: document.getElementById('agree').checked
-            };
-
-            try {
-                const response = await fetch('http://u68790.kubsu-dev.ru/web_proj/sumbit.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-              const result = await response.json();
-              if (response.ok) {
-                    showMessage('Данные успешно сохранены в базе данных!', 'success');
-                    document.getElementById('userForm').reset();
-                } 
-              // else {
-              //       showMessage(Ошибка: ${result.message || 'Неизвестная ошибка'}, 'error');
-              //   }
-            } catch (error) {
-               // showMessage(Ошибка сети: ${error.message}, 'error');
-                showMessage('Данныx net', 'error');
-            }
+            // Собираем данные формы
+            const formData = new FormData(this);
+            
+            // Отправляем данные на сервер
+            fetch('submit.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка сети');
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Выводим сообщение об успехе
+                const messageDiv = document.getElementById('response-message');
+                messageDiv.textContent = 'Данные успешно отправлены!';
+                messageDiv.className = 'success';
+                messageDiv.style.display = 'block';
+                
+                // Очищаем форму
+                document.getElementById('myForm').reset();
+                
+                // Скрываем сообщение через 3 секунды
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                // Выводим сообщение об ошибке
+                const messageDiv = document.getElementById('response-message');
+                messageDiv.textContent = 'Произошла ошибка: ' + error.message;
+                messageDiv.className = 'error';
+                messageDiv.style.display = 'block';
+            });
         });
-
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            alert('Кнопка "Войти" нажата!');
-        });
-
-        function showMessage(text, type) {
-            const messageEl = document.getElementById('message');
-            messageEl.textContent = text;
-            messageEl.className = type;
-        }
     </script>
 </body>
 </html>
