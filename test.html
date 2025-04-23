@@ -83,27 +83,31 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка сети');
-                }
-                return response.text();
-            })
-            .then(data => {
-                // Выводим сообщение об успехе
-                const messageDiv = document.getElementById('response-message');
-                messageDiv.textContent = 'Данные успешно отправлены!';
-                messageDiv.className = 'success';
-                messageDiv.style.display = 'block';
-                
-                // Очищаем форму
-                document.getElementById('myForm').reset();
-                
-                // Скрываем сообщение через 3 секунды
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
-            })
+           .then(response => response.json())
+.then(data => {
+    const messageDiv = document.getElementById('response-message');
+    
+    if (data.success) {
+        messageDiv.textContent = data.message;
+        messageDiv.className = 'success';
+        document.getElementById('myForm').reset();
+    } else if (data.errors) {
+        let errorsText = '';
+        for (const [field, error] of Object.entries(data.errors)) {
+            errorsText += `${error}\n`;
+        }
+        messageDiv.textContent = errorsText;
+        messageDiv.className = 'error';
+    } else {
+        messageDiv.textContent = data.error || 'Произошла ошибка';
+        messageDiv.className = 'error';
+    }
+    
+    messageDiv.style.display = 'block';
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 5000);
+})
             .catch(error => {
                 // Выводим сообщение об ошибке
                 const messageDiv = document.getElementById('response-message');
