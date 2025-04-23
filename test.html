@@ -45,6 +45,36 @@
         .error {
             background-color: #f2dede;
             color: #a94442;
+        .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.credentials-box {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.credentials-box table {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.credentials-box th {
+    text-align: left;
+    width: 30%;
+}
+
+.warning {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 10px;
+}
         }
     </style>
 </head>
@@ -83,21 +113,29 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка сети');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const responseDiv = document.getElementById('responseContainer');
-                responseDiv.innerHTML = '';
-                
-                if (data.success) {
-                    responseDiv.textContent = data.message;
-                    responseDiv.className = 'success';
-                    document.getElementById('myForm').reset();
-                } else if (data.errors) {
+            .then(response => response.json())
+.then(data => {
+    const responseDiv = document.getElementById('responseContainer');
+    responseDiv.innerHTML = '';
+    
+    if (data.success) {
+        let successHtml = `
+            <div class="alert-success">
+                <p>${data.message}</p>
+                <div class="credentials-box">
+                    <h3>Ваши учетные данные:</h3>
+                    <table>
+                        <tr><th>Логин:</th><td><code>${data.credentials.login}</code></td></tr>
+                        <tr><th>Пароль:</th><td><code>${data.credentials.password}</code></td></tr>
+                    </table>
+                    <p class="warning">Сохраните эти данные! Пароль нельзя восстановить!</p>
+                </div>
+            </div>
+        `;
+        responseDiv.innerHTML = successHtml;
+        document.getElementById('myForm').reset();
+    }
+    else if (data.errors) {
                     let errorsHtml = '<ul>';
                     for (const [field, error] of Object.entries(data.errors)) {
                         errorsHtml += `<li>${error}</li>`;
@@ -114,7 +152,8 @@
                 setTimeout(() => {
                     responseDiv.style.display = 'none';
                 }, 5000);
-            })
+})
+            
             .catch(error => {
                 const responseDiv = document.getElementById('responseContainer');
                 responseDiv.textContent = 'Ошибка: ' + error.message;
