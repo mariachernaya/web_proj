@@ -1,31 +1,25 @@
 <?php
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Проверяем, что запрос пришел методом POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Метод не разрешен']);
     exit;
 }
 
-// Получаем и очищаем данные
+// Обработка входных данных
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $message = trim($_POST['message'] ?? '');
 
-// Валидация данных
+// Валидация
 $errors = [];
-if (empty($name)) {
-    $errors['name'] = 'Имя обязательно для заполнения';
-}
-if (empty($email)) {
-    $errors['email'] = 'Email обязателен для заполнения';
-} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors['email'] = 'Некорректный формат email';
-}
-if (empty($message)) {
-    $errors['message'] = 'Сообщение обязательно для заполнения';
-}
+if (empty($name)) $errors['name'] = 'Имя обязательно';
+if (empty($email)) $errors['email'] = 'Email обязателен';
+elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = 'Некорректный email';
+if (empty($message)) $errors['message'] = 'Сообщение обязательно';
 
 if (!empty($errors)) {
     http_response_code(400);
@@ -33,34 +27,63 @@ if (!empty($errors)) {
     exit;
 }
 
-// Настройки подключения к БД
-
+// Настройки БД
 $user = 'u68790'; 
 $pass = '4247220'; 
 
 
 try {
-    // Подключаемся к MySQL
   
     $pdo = new PDO("mysql:host=localhost;dbname=u68790;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Подготавливаем SQL запрос
-    $stmt = $pdo->prepare("INSERT INTO usersi (name, email, message, created_at) VALUES (:name, :email, :message, NOW())");
     
-    // Выполняем запрос с параметрами
-    $stmt->execute([
+    
+    $pdo->beginTransaction();
+
+    // 1. Сохраняем основную информацию о пользователе
+    $stmtUser = $pdo->prepare("INSERT INTO usersi (name, email, message, created_at) 
+                              VALUES (:name, :email, :message, NOW())");
+    $stmtUser->execute([
         ':name' => $name,
         ':email' => $email,
         ':message' => $message
     ]);
-
-    // Возвращаем успешный ответ
-    echo json_encode(['success' => true, 'message' => 'Данные успешно сохранены']);
     
+    $userId = $pdo->lastInsertId();
+
+    // 2. Генерируем и сохраняем учетные данные
+    $login = uniqid();
+    $password = uniqid();
+    $passwordHash = md5($password);
+
+    $stmtCred = $pdo->prepare("INSERT INTO user_credentials 
+                              (user_id, login, password_hash, created_at) 
+                              VALUES (:user_id, :login, :password_hash, NOW())");
+    $stmtCred->execute([
+        ':user_id' => $userId,
+        ':login' => $login,
+        ':password_hash' => $passwordHash
+    ]);
+
+  
+    $pdo->commit();
+
+    // Возвращаем ответ
+    echo json_encode([
+        'success' => true,
+        'message' => 'Регистрация успешна!',
+        'credentials' => [
+            'login' => $login,
+            'password' => $password
+        ]
+    ]);
+
 } catch (PDOException $e) {
-    // Обработка ошибок БД
+    $pdo->rollBack();
     http_response_code(500);
     echo json_encode(['error' => 'Ошибка базы данных: ' . $e->getMessage()]);
 }
+
+
+
 ?>
