@@ -35,15 +35,15 @@ if (!empty($errors)) {
 
 // Настройки подключения к БД
 
-$user = 'u68791'; 
-	$pass = '1609462'; 
+$user = 'u68790'; 
+$pass = '4247220'; 
 
 
 try {
     // Подключаемся к MySQL
-    $pdo = new PDO('mysql:host=localhost;dbname=u68791', $user, $pass,
-	[PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); 
-   // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  
+    $pdo = new PDO("mysql:host=localhost;dbname=u68790;charset=utf8", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Подготавливаем SQL запрос
     $stmt = $pdo->prepare("INSERT INTO usersi (name, email, message, created_at) VALUES (:name, :email, :message, NOW())");
