@@ -19,7 +19,7 @@ try {
     // Поиск пользователя
     $stmt = $pdo->prepare("
         SELECT u.id, u.name, u.email, u.message 
-        FROM users u
+        FROM usersi u
         JOIN user_credentials uc ON u.id = uc.user_id
         WHERE uc.login = :login AND uc.password_hash = SHA2(:password, 256)
     ");
