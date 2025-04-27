@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма отправки данных</title>
+    <title>Форма регистрации и входа</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,19 +11,6 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .close-btn {
-    background-color: #dc3545;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.close-btn:hover {
-    background-color: #c82333;
-}
         .form-group {
             margin-bottom: 15px;
         }
@@ -42,9 +29,22 @@
             padding: 10px 15px;
             border: none;
             cursor: pointer;
+            margin-right: 10px;
         }
         button:hover {
             background-color: #45a049;
+        }
+        .close-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .close-btn:hover {
+            background-color: #c82333;
         }
         #responseContainer {
             margin-top: 15px;
@@ -58,42 +58,52 @@
         .error {
             background-color: #f2dede;
             color: #a94442;
+        }
         .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 15px;
-    border-radius: 5px;
-}
-
-.credentials-box {
-    margin-top: 15px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.credentials-box table {
-    width: 100%;
-    margin: 10px 0;
-}
-
-.credentials-box th {
-    text-align: left;
-    width: 30%;
-}
-
-.warning {
-    color: #dc3545;
-    font-weight: bold;
-    margin-top: 10px;
-}
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .credentials-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .credentials-box table {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .credentials-box th {
+            text-align: left;
+            width: 30%;
+        }
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .form-section {
+            display: none;
+        }
+        .active-form {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Отправка данных</h1>
-    <form id="myForm">
+    <h1>Форма регистрации и входа</h1>
+    
+    <div class="form-buttons">
+        <button id="showRegisterBtn">Регистрация</button>
+        <button id="showLoginBtn">Войти</button>
+    </div>
+
+    <!-- Форма регистрации -->
+    <form id="registerForm" class="form-section active-form">
+        <h2>Регистрация</h2>
         <div class="form-group">
             <label for="name">Имя:</label>
             <input type="text" id="name" name="name" required>
@@ -109,51 +119,108 @@
             <textarea id="userMessage" name="message" rows="4" required></textarea>
         </div>
         
-        <button type="submit">Отправить</button>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    
+    <!-- Форма входа -->
+    <form id="loginForm" class="form-section">
+        <h2>Вход</h2>
+        <div class="form-group">
+            <label for="loginUsername">Логин:</label>
+            <input type="text" id="loginUsername" name="login" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="loginPassword">Пароль:</label>
+            <input type="password" id="loginPassword" name="password" required>
+        </div>
+        
+        <button type="submit">Войти</button>
+    </form>
+    
+    <!-- Форма редактирования -->
+    <form id="editForm" class="form-section">
+        <h2>Редактирование данных</h2>
+        <div class="form-group">
+            <label for="editName">Имя:</label>
+            <input type="text" id="editName" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="editMessage">Сообщение:</label>
+            <textarea id="editMessage" name="message" rows="4" required></textarea>
+        </div>
+        
+        <button type="submit">Сохранить изменения</button>
+        <button type="button" id="logoutBtn">Выйти</button>
     </form>
     
     <div id="responseContainer"></div>
 
     <script>
-        document.getElementById('myForm').addEventListener('submit', function(e) {
+        // Переключение между формами
+        document.getElementById('showRegisterBtn').addEventListener('click', function() {
+            showForm('registerForm');
+        });
+        
+        document.getElementById('showLoginBtn').addEventListener('click', function() {
+            showForm('loginForm');
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            showForm('registerForm');
+            document.getElementById('responseContainer').innerHTML = '';
+        });
+        
+        function showForm(formId) {
+            document.querySelectorAll('.form-section').forEach(form => {
+                form.classList.remove('active-form');
+            });
+            document.getElementById(formId).classList.add('active-form');
+        }
+
+        // Обработка регистрации
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             
-            // Отправляем данные на сервер
             fetch('http://u68790.kubsu-dev.ru/web_proj/sumbit.php', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
-.then(data => {
-    const responseDiv = document.getElementById('responseContainer');
-    responseDiv.innerHTML = '';
-    
-    if (data.success) {
-        let successHtml = `
-            <div class="alert-success">
-                <p>${data.message}</p>
-                <div class="credentials-box">
-                    <h3>Ваши учетные данные:</h3>
-                    <table>
-                        <tr><th>Логин:</th><td><code>${data.credentials.login}</code></td></tr>
-                        <tr><th>Пароль:</th><td><code>${data.credentials.password}</code></td></tr>
-                    </table>
-                    <p class="warning">Сохраните эти данные! Пароль нельзя восстановить!</p>
-                    <button class="close-btn">Закрыть</button>
-                </div>
-            </div>
-        `;
-        responseDiv.innerHTML = successHtml;
-        document.getElementById('myForm').reset();
-        
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            responseDiv.style.display = 'none';
-        });
-    }
-   
-    else if (data.errors) {
+            .then(data => {
+                const responseDiv = document.getElementById('responseContainer');
+                responseDiv.innerHTML = '';
+                
+                if (data.success) {
+                    let successHtml = `
+                        <div class="alert-success">
+                            <p>${data.message}</p>
+                            <div class="credentials-box">
+                                <h3>Ваши учетные данные:</h3>
+                                <table>
+                                    <tr><th>Логин:</th><td><code>${data.credentials.login}</code></td></tr>
+                                    <tr><th>Пароль:</th><td><code>${data.credentials.password}</code></td></tr>
+                                </table>
+                                <p class="warning">Сохраните эти данные! Пароль нельзя восстановить!</p>
+                                <button class="close-btn">Закрыть</button>
+                            </div>
+                        </div>
+                    `;
+                    responseDiv.innerHTML = successHtml;
+                    this.reset();
+                    
+                    document.querySelector('.close-btn').addEventListener('click', function() {
+                        responseDiv.style.display = 'none';
+                    });
+                } else if (data.errors) {
                     let errorsHtml = '<ul>';
                     for (const [field, error] of Object.entries(data.errors)) {
                         errorsHtml += `<li>${error}</li>`;
@@ -167,14 +234,77 @@
                 }
                 
                 responseDiv.style.display = 'block';
-               
-})
-            
+            })
             .catch(error => {
                 const responseDiv = document.getElementById('responseContainer');
                 responseDiv.textContent = 'Ошибка: ' + error.message;
                 responseDiv.className = 'error';
                 responseDiv.style.display = 'block';
+            });
+        });
+        
+        // Обработка входа
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('http://u68790.kubsu-dev.ru/web_proj/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById('responseContainer');
+                responseDiv.innerHTML = '';
+                
+                if (data.success) {
+                    // Заполняем форму редактирования
+                    document.getElementById('editName').value = data.user.name;
+                    document.getElementById('editEmail').value = data.user.email;
+                    document.getElementById('editMessage').value = data.user.message;
+                    
+                    // Показываем форму редактирования
+                    showForm('editForm');
+                    
+                    // Сообщение об успешном входе
+                    responseDiv.innerHTML = '<div class="success">Вы успешно вошли в систему</div>';
+                    responseDiv.style.display = 'block';
+                } else {
+                    responseDiv.innerHTML = '<div class="error">' + data.error + '</div>';
+                    responseDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+        
+        // Обработка редактирования данных
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('http://u68790.kubsu-dev.ru/web_proj/update.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById('responseContainer');
+                responseDiv.innerHTML = '';
+                
+                if (data.success) {
+                    responseDiv.innerHTML = '<div class="success">Данные успешно обновлены</div>';
+                } else {
+                    responseDiv.innerHTML = '<div class="error">' + data.error + '</div>';
+                }
+                
+                responseDiv.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         });
     </script>
