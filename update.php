@@ -18,7 +18,7 @@ try {
     $message = $_POST['message'] ?? '';
     
     // Обновление данных пользователя
-    $stmt = $pdo->prepare("UPDATE users SET name = :name, email = :email, message = :message WHERE email = :email");
+    $stmt = $pdo->prepare("UPDATE usersi SET name = :name, email = :email, message = :message WHERE email = :email");
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':message', $message);
