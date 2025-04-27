@@ -14,14 +14,14 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     $login = $_POST['login'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $password = md5($_POST['password'] ?? '');
     
     // Поиск пользователя
     $stmt = $pdo->prepare("
         SELECT u.id, u.name, u.email, u.message 
         FROM usersi u
         JOIN user_credentials uc ON u.id = uc.user_id
-        WHERE uc.login = :login AND uc.password_hash = SHA2(:password, 256)
+        WHERE uc.login = :login AND uc.password_hash = :password
     ");
     $stmt->bindParam(':login', $login);
     $stmt->bindParam(':password', $password);
