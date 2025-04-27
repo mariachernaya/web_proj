@@ -22,18 +22,17 @@
 <!-- 	<script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script> -->
 	<script src="jquery-3.4.1.min.js" defer></script>
 	<script src="slick/slick.min.js" defer></script>
-	<script src="project.js" defer>
-		
-	</script>
-<!-- 	        body {
+	<script src="project.js" defer></script>
+	<style>
+/*  	        body {
             font-family: Arial, sans-serif;
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px; -->
-        }
-<!--         .form-group {
+            padding: 20px; 
+        } */
+/*         .form-group {
             margin-bottom: 15px;
-        } -->
+        }  */
         label {
             display: block;
             margin-bottom: 5px;
@@ -43,14 +42,14 @@
             padding: 8px;
             box-sizing: border-box;
         }
-<!--         button {
+/*         button {
             background-color: #4CAF50;
             color: white;
             padding: 10px 15px;
             border: none;
             cursor: pointer;
             margin-right: 10px;
-        } -->
+        }  */
         button:hover {
             background-color: #45a049;
         }
@@ -999,7 +998,84 @@
                 </div>
             </section> -->
 <h1>Отправка данных</h1>
-          
+              <div class="form-buttons">
+        <button id="showRegisterBtn">Регистрация</button>
+        <button id="showLoginBtn">Войти</button>
+    </div>
+
+    <!-- Форма регистрации -->
+    <form id="registerForm" class="form-section active-form">
+        <h2>Регистрация</h2>
+        <div class="form-group">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="userMessage">Сообщение:</label>
+            <textarea id="userMessage" name="message" rows="4" required></textarea>
+        </div>
+        
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+		    <!-- Форма входа -->
+    <form id="loginForm" class="form-section">
+        <h2>Вход</h2>
+        <div class="form-group">
+            <label for="loginUsername">Логин:</label>
+            <input type="text" id="loginUsername" name="login" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="loginPassword">Пароль:</label>
+            <input type="password" id="loginPassword" name="password" required>
+        </div>
+        
+        <button type="submit">Войти</button>
+    </form>
+    
+    <!-- Форма редактирования -->
+    <form id="editForm" class="form-section">
+        <h2>Редактирование данных</h2>
+        <div class="form-group">
+            <label for="editName">Имя:</label>
+            <input type="text" id="editName" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="editMessage">Сообщение:</label>
+            <textarea id="editMessage" name="message" rows="4" required></textarea>
+        </div>
+        
+        <button type="submit">Сохранить изменения</button>
+        <button type="button" id="logoutBtn">Выйти</button>
+    </form>
+		    <div id="responseContainer"></div>
+
+    <script>
+        // Переключение между формами
+        document.getElementById('showRegisterBtn').addEventListener('click', function() {
+            showForm('registerForm');
+        });
+        
+        document.getElementById('showLoginBtn').addEventListener('click', function() {
+            showForm('loginForm');
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            showForm('registerForm');
+            document.getElementById('responseContainer').innerHTML = '';
+        });
         function showForm(formId) {
             document.querySelectorAll('.form-section').forEach(form => {
                 form.classList.remove('active-form');
