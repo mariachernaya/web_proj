@@ -1305,3 +1305,82 @@ footer {
 
 
 
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }  
+        button:hover {
+            background-color: #45a049;
+        }
+        .close-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .close-btn:hover {
+            background-color: #c82333;
+        }
+        #responseContainer {
+            margin-top: 15px;
+            padding: 10px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .credentials-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .credentials-box table {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .credentials-box th {
+            text-align: left;
+            width: 30%;
+        }
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .form-section {
+            display: none;
+        }
+        .active-form {
+            display: block;
+        }
+    
+
