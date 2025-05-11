@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    
+    http_response_code(405);
     echo json_encode(['error' => 'Метод не разрешен']);
     exit;
 }
@@ -25,6 +25,7 @@ elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = 'Неко
 if (empty($message)) $errors['message'] = 'Сообщение обязательно';
 
 if (!empty($errors)) {
+    http_response_code(400);
     echo json_encode(['errors' => $errors]);
     exit;
 }
@@ -42,7 +43,7 @@ try {
     
     $pdo->beginTransaction();
 
-    // 1. Сохраняем основную информацию о пользователе
+    
     $stmtUser = $pdo->prepare("INSERT INTO usersi (name, email, message, created_at) 
                               VALUES (:name, :email, :message, NOW())");
     $stmtUser->execute([
@@ -53,7 +54,6 @@ try {
     
     $userId = $pdo->lastInsertId();
 
-    // 2. Генерируем и сохраняем учетные данные
     $login = uniqid();
     $password = uniqid();
     $passwordHash = md5($password);
@@ -70,7 +70,6 @@ try {
   
     $pdo->commit();
 
-    // Возвращаем ответ
     echo json_encode([
         'success' => true,
         'message' => 'Регистрация успешна!',
@@ -82,7 +81,6 @@ try {
 
 } catch (PDOException $e) {
     $pdo->rollBack();
-    echo json_encode(['error' => 'Непредвиденная ошибка']);
 }
 
 
