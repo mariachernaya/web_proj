@@ -1315,7 +1315,7 @@ footer {
             box-sizing: border-box;
         }
         buttonf {
-            background-color: #4CAF50;
+            background-color: #2a2c3a;
             color: white;
             padding: 10px 15px;
             border: none;
@@ -1323,7 +1323,7 @@ footer {
             margin-right: 10px;
         }  
         buttonf:hover {
-            background-color: #45a049;
+            background-color: #4c4f62;
         }
         .close-btn {
             background-color: #dc3545;
