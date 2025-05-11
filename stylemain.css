@@ -796,7 +796,7 @@ span {
 }
 /*footer*/
 .footer {
-  padding: 36px 0;
+  padding: 10px;
   background: linear-gradient(254.72deg, rgba(255, 255, 255, 0.276) -114.85%, rgba(255, 255, 255, 0) 69.04%), url(foto/D-flying.svg) no-repeat top center, url(foto/D-footer.svg) no-repeat bottom right, #040613;
   color: #fff;
   font-family: Montserrat;
