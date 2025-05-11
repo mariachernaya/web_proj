@@ -9,17 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Обработка входных данных
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $message = trim($_POST['message'] ?? '');
 
-// Валидация
 $errors = [];
 
-
 if (empty($name)) $errors['name'] = 'Имя обязательно';
-if (!preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $name))  $errors['name'] = 'Можно использовать только кириллицу'
+if (!preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $name))  $errors['name'] = 'Можно использовать только кириллицу';
 if (empty($email)) $errors['email'] = 'Email обязателен';
 elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = 'Некорректный email';
 if (empty($message)) $errors['message'] = 'Сообщение обязательно';
