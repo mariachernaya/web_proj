@@ -198,7 +198,7 @@
 }
 
 .block:not(.blockh) {
-  min-height: 292px;
+ /* min-height: 292px;*/
   min-width: 200px;
 
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1), 
@@ -1086,7 +1086,7 @@ footer {
 #block-copyright {
   position: static;
   padding: 0;
-  margin-top: 71px;
+  /*margin-top: 71px;*/
 }
 #block-copyright:before {
   content: "";
