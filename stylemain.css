@@ -1319,6 +1319,7 @@ footer {
             color: white;
             padding: 10px 15px;
             border: none;
+            border-radius: 45%;
             cursor: pointer;
             margin-right: 10px;
         }  
@@ -1326,16 +1327,16 @@ footer {
             background-color: #4c4f62;
         }
         .close-btn {
-            background-color: #dc3545;
-            color: white;
+            /*background-color: #dc3545;*/
+            color: #676171;
             padding: 8px 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 45%;
             cursor: pointer;
             margin-top: 10px;
         }
         .close-btn:hover {
-            background-color: #c82333;
+            background-color: #48464a;
         }
         #responseContainer {
             margin-top: 15px;
@@ -1343,8 +1344,8 @@ footer {
             display: none;
         }
         .success {
-            background-color: #dff0d8;
-            color: #3c763d;
+            /*background-color: #dff0d8;*/
+            color: #76a477;
         }
         .error {
             background-color: #f2dede;
