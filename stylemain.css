@@ -1348,7 +1348,7 @@ footer {
             color: #76a477;
         }
         .error {
-            background-color: #f2dede;
+          /*  background-color: #f2dede;*/
             color: #a94442;
         }
         .alert-success {
