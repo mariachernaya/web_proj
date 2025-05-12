@@ -165,8 +165,8 @@ $(".b1").on("click", function () {
                             <div class="credentials-box">
                                 <h3>Ваши учетные данные:</h3>
                                 <table>
-                                    <tr><th>Логин:</th><td><code>${data.credentials.login}</code></td></tr>
-                                    <tr><th>Пароль:</th><td><code>${data.credentials.password}</code></td></tr>
+                                    <tr><th>Логин:</th><td><code style="color: black">${data.credentials.login}</code></td></tr>
+                                    <tr><th>Пароль:</th><td><code style="color: black">${data.credentials.password}</code></td></tr>
                                 </table>
                                 <p class="warning">Сохраните эти данные! Пароль нельзя восстановить!</p>
                                 <button class="close-btn">Закрыть</button>
