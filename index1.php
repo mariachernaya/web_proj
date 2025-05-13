@@ -944,6 +944,30 @@
       </form>
     </div>
 </footer>
+	<script>
+  // Находим форму
+  const form = document.querySelector("form");
+
+  // Навешиваем обработчик отправки
+  form.addEventListener("submit", function(e) {
+    e.preventDefault(); // Отключаем стандартную отправку
+
+    const formData = new FormData(form); // Собираем данные формы
+
+    fetch("index.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      // Показываем ответ сервера
+      document.getElementById("result").innerHTML = data;
+    })
+    .catch(error => {
+      document.getElementById("result").innerHTML = "Ошибка: " + error;
+    });
+  });
+</script>
 </body>
 </html> 
 
