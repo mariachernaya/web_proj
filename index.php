@@ -254,6 +254,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    include ('form.php');
+    include ('index1.php');
 }
 ?>
