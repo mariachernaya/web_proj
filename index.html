@@ -857,7 +857,11 @@
             <label for="name">Имя:</label>
             <input type="text" id="name" name="name" required>
         </div>
-        
+        <div class="form-group">
+            <label for="number">nomer:</label>
+            <input type="text" id="number" name="number" required>
+        </div>
+	    
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
@@ -868,6 +872,49 @@
             <textarea id="userMessage" name="message" rows="4" required></textarea>
         </div>
         
+      <div class="form-group">
+            <label for="date">data:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+      
+      
+      
+      <div>
+        <div>Пол</div>
+          <label>
+            <input name="radio" class="ml-2" type="radio" value="M" />
+            <span class=""> Мужской </span>
+          </label>
+          <label>
+            <input name="radio" class="ml-4" type="radio" value="W" />
+            <span class=""> Женский </span>
+          </label>
+        </div>
+       
+      
+      <div>
+        <div>Любимый язык программирования</div>
+        <select class="my-2" name="language[]" multiple="multiple">
+          <option value="Pascal" <?php echo (in_array('Pascal', $languages)) ? 'selected' : ''; ?>>Pascal</option>
+          <option value="C" <?php echo (in_array('C', $languages)) ? 'selected' : ''; ?>>C</option>
+          <option value="C++" <?php echo (in_array('C++', $languages)) ? 'selected' : ''; ?>>C++</option>
+          <option value="JavaScript" <?php echo (in_array('JavaScript', $languages)) ? 'selected' : ''; ?>>JavaScript</option>
+          <option value="PHP" <?php echo (in_array('PHP', $languages)) ? 'selected' : ''; ?>>PHP</option>
+          <option value="Python" <?php echo (in_array('Python', $languages)) ? 'selected' : ''; ?>>Python</option>
+          <option value="Java" <?php echo (in_array('Java', $languages)) ? 'selected' : ''; ?>>Java</option>
+          <option value="Haskel" <?php echo (in_array('Haskel', $languages)) ? 'selected' : ''; ?>>Haskel</option>
+          <option value="Clojure" <?php echo (in_array('Clojure', $languages)) ? 'selected' : ''; ?>>Clojure</option>
+          <option value="Scala" <?php echo (in_array('Scala', $languages)) ? 'selected' : ''; ?>>Scala</option>
+        </select>
+      </div>
+    
+      
+      <div>
+        <label>
+            <input name="check" type="checkbox" />
+              С контрактом ознакомлен(а)
+        </label>
+      </div>
         <button type="submit" style=" background-color: #2a2c3a; color: white; padding: 10px 15px; border: none;
             border-radius: 45%; cursor: pointer; margin-right: 10px;">Зарегистрироваться</button>
     </form>
