@@ -123,7 +123,8 @@ $(".b1").on("click", function () {
   aa(p);
 });
 
-  document.getElementById('showRegisterBtn').addEventListener('click', function() {
+// Переключение между формами
+        document.getElementById('showRegisterBtn').addEventListener('click', function() {
             showForm('registerForm');
         });
         
