@@ -844,7 +844,8 @@
  <footer class="footer">
     <div class="container">
 	    <div id="form-container">
-      <form action="" method="post" class="form">
+	      <form action="/index.php" method="post" class="form">
+		      <div class="error" data-field="fio"><?php echo $messages['fio'] ?></div>
         <div class="head">
           <h2><b>Форма обратной связи</b></h2>
         </div>
@@ -947,28 +948,71 @@
     </div>
 </footer>
 	<script>
-  // Находим форму
-  const form = document.querySelector("form");
-
-  // Навешиваем обработчик отправки
-  form.addEventListener("submit", function(e) {
-    e.preventDefault(); // Отключаем стандартную отправку
-
-    const formData = new FormData(form); // Собираем данные формы
-
-    fetch("index.php", {
-      method: "POST",
-      body: formData
+ document.querySelector('.form').addEventListener('submit', function(e) {
+    e.preventDefault(); // Предотвращаем стандартную отправку формы
+    
+    // Собираем данные формы
+    const formData = new FormData(this);
+    
+    // Добавляем обработчик для множественного выбора языков
+    const languageSelect = document.querySelector('select[name="language[]"]');
+    const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
+    formData.delete('language[]'); // Удаляем старые значения
+    selectedLanguages.forEach(lang => formData.append('language[]', lang));
+    
+    // Отправляем данные на сервер
+    fetch(this.action, {
+        method: this.method,
+        body: formData,
+        headers: {
+            'Accept': 'application/json' // Ожидаем JSON в ответе
+        }
     })
-    .then(response => response.text())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
-      // Показываем ответ сервера
-      document.getElementById("result").innerHTML = data;
+        // Обрабатываем ответ от сервера
+        if (data.success) {
+            // Успешная отправка
+            const successDiv = document.querySelector('.mess');
+            successDiv.textContent = data.message || 'Форма успешно отправлена!';
+            successDiv.style.display = 'block';
+            
+            // Можно очистить форму, если нужно
+            if (data.clearForm) {
+                this.reset();
+            }
+        } else {
+            // Ошибки валидации
+            if (data.errors) {
+                Object.keys(data.errors).forEach(field => {
+                    const errorDiv = document.querySelector(`.error[data-field="${field}"]`);
+                    if (errorDiv) {
+                        errorDiv.textContent = data.errors[field];
+                    }
+                    
+                    // Подсвечиваем поле с ошибкой
+                    const input = document.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        input.classList.add('red');
+                    }
+                });
+            }
+        }
     })
     .catch(error => {
-      document.getElementById("result").innerHTML = "Ошибка: " + error;
+        console.error('Error:', error);
+        alert('Произошла ошибка при отправке формы');
     });
-  });
+});
+		document.querySelector('.btnlike').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = this.href;
+});
 </script>
 </body>
 </html> 
