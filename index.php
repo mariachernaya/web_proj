@@ -22,20 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WIT
 
     // Обработка выхода
     if (isset($_POST['logout_form'])) {
-        if ($adminLog && empty($_SESSION['login'])) {
-            $response['redirect'] = 'admin.php';
-        } else {
-            // Очищаем куки
-            $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 'language_value', 'bio_value', 'check_value'];
-            // foreach ($cookies as $cookie) {
-            //     setcookie($cookie, '', time() - 3600);
-            // }
-            session_destroy();
-            $response['redirect'] = 'index.php' . (($getUid != NULL) ? '?uid=' . $uid : '';
+    if ($adminLog && empty($_SESSION['login'])) {
+        $response['redirect'] = 'admin.php';
+    } else {
+        // Очищаем куки
+        $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 'language_value', 'bio_value', 'check_value'];
+        foreach ($cookies as $cookie) {
+            setcookie($cookie, '', time() - 3600);
         }
-        echo json_encode($response);
-        exit();
+        session_destroy();
+        $response['redirect'] = 'index.php' . (($getUid != NULL) ? '?uid=' . $uid : '');
     }
+    echo json_encode($response);
+    exit();
+}
 
     // Получаем данные из POST
     $fio = isset($_POST['fio']) ? $_POST['fio'] : '';
