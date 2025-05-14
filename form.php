@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="bootstrap.min.css" />
 </head>
 <body>
+	<div id="message-container"></div>
+<div id="login-container"></div>
+<div id="password-container"></div>
 <div id="form-container">
 <form action="" method="post" class="form">
         <div class="head">
