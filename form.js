@@ -17,6 +17,7 @@ $(document).ready(function () {
       data: formData,
       processData: false,
       contentType: false,
+      dataType: 'html',
       success: function (response) {
         console.log("Успешный ответ от сервера");
         const newForm = $(response).find('#form-container').html();
