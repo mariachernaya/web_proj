@@ -843,6 +843,7 @@
 
  <footer class="footer">
     <div class="container">
+	    <div id="form-container">
       <form action="" method="post" class="form">
         <div class="head">
           <h2><b>Форма обратной связи</b></h2>
@@ -942,6 +943,7 @@
           echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
         ?>
       </form>
+    </div>
     </div>
 </footer>
 	<script>
