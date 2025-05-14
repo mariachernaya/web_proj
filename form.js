@@ -13,7 +13,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: 'POST',
-      url: 'form.php',
+      url: 'index.php',
       data: formData,
       processData: false,
       contentType: false,
