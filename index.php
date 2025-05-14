@@ -31,14 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('date_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('language_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
+            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
             session_destroy();
             header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
         
@@ -47,6 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     function check_pole($cook, $str, $flag)
     {
+        $response = [
+            'status' => 'error',
+            'message' => $str
+        ];
+
+        
+        echo json_encode($response);
         global $error;
         $res = false;
         $setval = isset($_POST[$cook]) ? $_POST[$cook] : '';
@@ -61,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         setcookie($cook . '_value', $setval, time() + 30 * 24 * 60 * 60);
         return $res;
+        
+        
+    }
     }
 
     if (!check_pole('fio', 'Это поле пустое', empty($fio)))
@@ -94,14 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (!$error) {
-        setcookie('fio_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('number_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('email_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('date_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('radio_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('language_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
+        setcookie('fio_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('number_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('email_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('date_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('radio_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('language_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('bio_error', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('check_error', '', time() - 30 * 24 * 60 * 60, '/');
 
         if ($log) {
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
@@ -114,16 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($languages as $row)
                 $stmt1->execute([$_SESSION['form_id'], $row['id']]);
             if ($adminLog)
-                setcookie('admin_value', '1', time() + 30 * 24 * 60 * 60);
+                setcookie('admin_value', '1', time() + 30 * 24 * 60 * 60, '/');
         } else {
             $login = uniqid();
             $pass = uniqid();
             setcookie('login', $login);
             setcookie('pass', $pass);
             $mpass = md5($pass);
-            $_SESSION['login'] = $login;
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['form_id'] = $fid;
             try {
                 $stmt = $db->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
                 $stmt->execute([$login, $mpass]);
@@ -133,6 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute([$user_id, $fio, $number, $email, $date, $radio, $bio]);
                 $fid = $db->lastInsertId();
 
+                $_SESSION['login'] = $login;
+$_SESSION['user_id'] = $user_id;
+$_SESSION['form_id'] = $fid;
+                
                 $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
                 foreach ($languages as $row)
                     $stmt1->execute([$fid, $row['id']]);
@@ -140,35 +151,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 print ('Error : ' . $e->getMessage());
                 exit();
             }
-            setcookie('fio_value', $fio, time() + 24 * 60 * 60 * 365);
-            setcookie('number_value', $number, time() + 24 * 60 * 60 * 365);
-            setcookie('email_value', $email, time() + 24 * 60 * 60 * 365);
-            setcookie('date_value', $date, time() + 24 * 60 * 60 * 365);
-            setcookie('radio_value', $radio, time() + 24 * 60 * 60 * 365);
-            setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
-            setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
-            setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
+            setcookie('fio_value', $fio, time() + 24 * 60 * 60 * 365, '/');
+            setcookie('number_value', $number, time() + 24 * 60 * 60 * 365, '/');
+            setcookie('email_value', $email, time() + 24 * 60 * 60 * 365, '/');
+            setcookie('date_value', $date, time() + 24 * 60 * 60 * 365, '/');
+            setcookie('radio_value', $radio, time() + 24 * 60 * 60 * 365, '/');
+            setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365, '/');
+            setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365, '/');
+            setcookie('check_value', $check, time() + 24 * 60 * 60 * 365, '/');
         }
         setcookie('save', '1');
-        $response = [
-            'status' => 'success',
-            'message' => 'Спасибо, результаты сохранены.',
-            'login' => isset($_COOKIE['login']) ? $_COOKIE['login'] : '',
-            'password' => isset($_COOKIE['pass']) ? $_COOKIE['pass'] : ''
-        ];
-        echo json_encode($response);
-        exit();
-    } else {
-        // Ошибка в валидации, отправляем ошибку в JSON
-        $response = [
-            'status' => 'error',
-            'message' => 'Пожалуйста, исправьте ошибки в форме.'
-        ];
-
-        // Отправляем ответ с ошибками
-        echo json_encode($response);
-        exit();
-    }
+        
+    } 
     
     
      header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
@@ -176,14 +170,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (($adminLog && !empty($getUid)) || !$adminLog) {
         $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
         if ($cookAdmin == '1') {
-            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('date_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('language_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
+            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         }
     }
 
@@ -220,13 +214,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (!empty($_COOKIE['save'])) {
-        setcookie('save', '', 100000);
-        setcookie('login', '', 100000);
-        setcookie('pass', '', 100000);
+        setcookie('save', '', 100000, '/');
+        setcookie('login', '', 100000, '/');
+        setcookie('pass', '', 100000, '/');
         $messages['success'] = 'Спасибо, результаты сохранены.';
         if (!empty($_COOKIE['pass']))
             $messages['info'] = sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong><br>
             и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
+        $response = [
+            'status' => 'success',
+            'message' => 'Спасибо, результаты сохранены.',
+            'login' => isset($_COOKIE['login']) ? $_COOKIE['login'] : '',
+            'password' => isset($_COOKIE['pass']) ? $_COOKIE['pass'] : ''
+        ];
+        echo json_encode($response);
     }
 
     check_pole('fio', $fio);
