@@ -369,4 +369,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WIT
 //     }
 
 include('form.php');
-}
+//}
+?>
