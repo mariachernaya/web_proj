@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         
     }
-    }
+    
 
     if (!check_pole('fio', 'Это поле пустое', empty($fio)))
         check_pole('fio', 'Неправильный формат: Имя Фамилия (Отчество), только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
@@ -162,8 +162,8 @@ $_SESSION['form_id'] = $fid;
         }
         setcookie('save', '1');
         
-    } 
-    
+
+    }
     
      header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
 } else {
