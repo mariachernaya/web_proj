@@ -1,3 +1,4 @@
+console.log("form.js подключен");
 $(document).ready(function () {
   // Отправка формы
   $('.form').on('submit', function (e) {
