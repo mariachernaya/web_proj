@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         setcookie('save', '1');
     }
-    header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+    // header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
 } else {
     if (($adminLog && !empty($getUid)) || !$adminLog) {
         $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
