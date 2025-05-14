@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-session_start();
+//session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -13,13 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $message = trim($_POST['message'] ?? '');
-    $number = isset($_POST['number']) ? $_POST['number'] : '';
+    // $number = isset($_POST['number']) ? $_POST['number'] : '';
   
-    $date = isset($_POST['date']) ? $_POST['date'] : '';
-    $radio = isset($_POST['radio']) ? $_POST['radio'] : '';
-    $language = isset($_POST['language']) ? $_POST['language'] : [];
+    // $date = isset($_POST['date']) ? $_POST['date'] : '';
+    // $radio = isset($_POST['radio']) ? $_POST['radio'] : '';
+    // $language = isset($_POST['language']) ? $_POST['language'] : [];
   
-    $check = isset($_POST['check']) ? $_POST['check'] : '';
+    // $check = isset($_POST['check']) ? $_POST['check'] : '';
 
 $errors = [];
 
