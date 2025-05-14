@@ -31,9 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-        if ($adminLog && empty($_SESSION['login']))
-            header('Location: admin.php');
-        else {
             setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
             setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
             setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
@@ -44,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
             session_destroy();
             header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
-        }
+        
         exit();
     }
 
@@ -124,6 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('login', $login);
             setcookie('pass', $pass);
             $mpass = md5($pass);
+            $_SESSION['login'] = $login;
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['form_id'] = $fid;
             try {
                 $stmt = $db->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
                 $stmt->execute([$login, $mpass]);
