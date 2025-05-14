@@ -1012,16 +1012,16 @@ document.querySelector('.form').addEventListener('submit', async function(e) {
             }
         }
     } catch (error) {
-	    console.error('Full error:', error);
-    console.error('Response:', error.response); // Если используется axios/fetch
-    alert('Произошла ошибка: ' + error.message);
+	   //  console.error('Full error:', error);
+    // console.error('Response:', error.response); // Если используется axios/fetch
+    // alert('Произошла ошибка: ' + error.message);
     
-    // Для fetch можно добавить:
-    if (error.response) {
-        error.response.text().then(text => {
-            console.error('Server response:', text);
-        });
-    }
+    // // Для fetch можно добавить:
+    // if (error.response) {
+    //     error.response.text().then(text => {
+    //         console.error('Server response:', text);
+    //     });
+    // }
        
     }
 });
