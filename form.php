@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="ru"> 
+<head> 
+    	<title>project</title>
+	<meta charset="UTF-8">
+    	 <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="bootstrap.min.css" />
+</head>
+<body>
 <div id="form-container">
 <form action="" method="post" class="form">
         <div class="head">
@@ -99,3 +108,7 @@
     ?>
   </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="form.js"></script>
+</body>
+</html> 
