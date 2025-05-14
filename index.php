@@ -257,3 +257,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include ('index1.php');
 }
 ?>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector(".form");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form); 
+
+      fetch("index.php", {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+          const newForm = doc.querySelector("#form-container");
+          document.querySelector("#form-container").innerHTML = newForm.innerHTML;
+        })
+        .catch(error => {
+          console.error("Ошибка при отправке формы:", error);
+        });
+    });
+  });
+</script>
