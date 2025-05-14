@@ -150,7 +150,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
+        $response = [
+            'status' => 'success',
+            'message' => 'Спасибо, результаты сохранены.',
+            'login' => isset($_COOKIE['login']) ? $_COOKIE['login'] : '',
+            'password' => isset($_COOKIE['pass']) ? $_COOKIE['pass'] : ''
+        ];
+        echo json_encode($response);
+        exit();
+    } else {
+        // Ошибка в валидации, отправляем ошибку в JSON
+        $response = [
+            'status' => 'error',
+            'message' => 'Пожалуйста, исправьте ошибки в форме.'
+        ];
+
+        // Отправляем ответ с ошибками
+        echo json_encode($response);
+        exit();
     }
+    
+    
      header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
 } else {
     if (($adminLog && !empty($getUid)) || !$adminLog) {
