@@ -1,4 +1,5 @@
 console.log("form.js подключен");
+
 $(document).ready(function () {
   console.log("Документ готов");
 
@@ -10,46 +11,35 @@ $(document).ready(function () {
     console.log("Форма отправлена");
 
     var formData = new FormData(this);
+$.ajax({
+  type: 'POST',
+  url: 'index.php',
+  data: formData,
+  processData: false,
+  contentType: false,
+  dataType: 'json', // Указываем, что ожидаем JSON
+  success: function (response) {
+    if (response.status === 'success') {
+      console.log("Успешный ответ от сервера");
+      // Если форма отправлена успешно, показываем логин и сообщение
+      $('#message-container').html('<p>' + response.message + '</p>');
+      $('#login-container').html('<p>Ваш логин: ' + response.login + '</p>');
+      $('#password-container').html('<p>Ваш пароль: ' + response.password + '</p>');
 
-    $.ajax({
-      type: 'POST',
-      url: 'index.php',
-      data: formData,
-      processData: false,
-      contentType: false,
-      dataType: 'html',
-      success: function (response) {
-        console.log("Успешный ответ от сервера");
-        const newForm = $(response).find('#form-container').html();
-        $('#form-container').html(newForm);
-      },
-      error: function (xhr, status, error) {
-        console.error("Ошибка AJAX", error);
-      }
-    });
+      // Очищаем поля формы
+      $('form')[0].reset();
+    } else {
+      // В случае ошибки, показываем сообщение об ошибке
+      $('#message-container').html('<p>' + response.message + '</p>');
+    }
+  },
+  error: function (xhr, status, error) {
+    console.error("Ошибка AJAX:", error);
+    $('#message-container').html('<p>Произошла ошибка. Попробуйте позже.</p>');
+  }
+});
+
+    
   });
 });
-// $(document).ready(function () {
-//   // Отправка формы
-//   $('.form').on('submit', function (e) {
-//     e.preventDefault(); // Остановить стандартную отправку формы
 
-//     var formData = new FormData(this); // Собираем данные формы
-
-//     $.ajax({
-//       type: 'POST',
-//       url: 'form.php', // тот же файл
-//       data: formData,
-//       processData: false,
-//       contentType: false,
-//       success: function (response) {
-//         // Заменяем всю форму (снаружи до </form>)
-//         const newForm = $(response).find('#form-container').html();
-//         $('#form-container').html(newForm);
-//       },
-//       error: function (xhr, status, error) {
-//         alert('Ошибка при отправке формы: ' + error);
-//       }
-//     });
-//   });
-// });
