@@ -843,15 +843,13 @@
 
  <footer class="footer">
     <div class="container">
-	    <div id="form-container">
 	     <form action="index.php" method="post" class="form">
-		      <div class="error" data-field="fio"><?php echo $messages['fio'] ?></div>
         <div class="head">
           <h2><b>Форма обратной связи</b></h2>
         </div>
     
         <div class="mess"><?php if (isset($messages['success']))
-          echo $messages['success']; ?></div>
+          echo $messages['success']; ?> </div>
         <div class="mess mess_info"><?php if (isset($messages['info']))
           echo $messages['info']; ?></div>
         <div>
@@ -944,7 +942,6 @@
           echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
         ?>
       </form>
-    </div>
     </div>
 </footer>
 	<script>
