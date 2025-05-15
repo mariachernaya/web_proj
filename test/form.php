@@ -108,7 +108,7 @@
 
       
         <!-- Кнопки входа/выхода обрабатываются через JS -->
-    <div id="authButtons">
+<!--     <div id="authButtons"> -->
  <?php
     if ($log)
       echo '<button class="button edbut" type="submit">Изменить</button>';
@@ -120,7 +120,7 @@
       echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
     ?>
     
-</div>
+<!-- </div> -->
     </form>
 
    <script>
@@ -131,23 +131,7 @@
             
             $('#mainForm')[0].reset();
     
-    // Заполнение даты
-   // $('input[name="date"]').val(getCookie('date_value') || '');
-    
-    // Чекбокс
-    $('input[name="check"]').prop('checked', getCookie('check_value') === '1');
-    
-    // Множественный выбор языков
-//    const langs = (getCookie('language_value') || '').split(',');
-  //  $('select[name="language[]"]').val(langs);
-            
-    // Сброс всех полей перед заполнением
-  
-             // $('#fio').val(getCookie('fio_value') || '');
-             // $('#number').val(getCookie('number_value') || '');
-             // $('#email').val(getCookie('email_value') || '');
-             // $('#radio').val(getCookie('radio_value') || '');
-             // $('#bio').val(getCookie('bio_value') || '');
+
 
              console.log("Загружаемые куки:");
     console.log("fio_value:", getCookie('fio_value'));
@@ -210,7 +194,7 @@ const response = await fetch('index.php', {
     }
 });
                 if (response.redirected) {
-                    window.location.href = response.url; // Редирект при успехе
+                    window.location.href = response.url; 
                 } else {
                     const text = await response.text();
                     parseCookies();
@@ -255,21 +239,7 @@ const response = await fetch('index.php', {
         parseCookies();
     });
 
-//     function logout() {
-//     fetch('index.php', {
-//         method: 'POST',
-//         body: new URLSearchParams({ 'logout_form': '1' }),
-//         credentials: 'include'
-//     }).then(() => {
-//         // Явное удаление всех кук
-//         document.cookie.split(";").forEach(cookie => {
-//             const eqPos = cookie.indexOf("=");
-//             const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-//             document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-//         });
-//         window.location.reload();
-//     });
-// }
+
 </script>
 </body>
 </html>
