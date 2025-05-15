@@ -283,7 +283,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             set_val('language', $language);
             set_val('bio', $user_inf['bio']);
             set_val('check', "1");
-
+            
+     setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
             // echo "1 = " . $user_inf['fio'] . "\n";
             //  echo "2 = " . $user_inf['number'] . "\n";
             //  echo "3 = " . $user_inf['email'] . "\n";
