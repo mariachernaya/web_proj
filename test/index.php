@@ -35,14 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($adminLog && empty($_SESSION['login']))
             header('Location: admin.php');
         else {
-            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('date_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('language_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
+            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
+            setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
             session_destroy();
             header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
         }
