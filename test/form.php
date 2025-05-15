@@ -108,19 +108,17 @@
 
       
         <!-- Кнопки входа/выхода обрабатываются через JS -->
-<!--     <div id="authButtons"> -->
- <?php
-    if ($log)
-      echo '<button class="button edbut" type="submit">Изменить</button>';
-    else
-      echo '<button class="button" type="submit">Отправить</button>';
-    if ($log)
-      echo '<button class="button" type="submit" name="logout_form">Выйти</button>';
-    else
-      echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
-    ?>
+
+<div id="authButtons">
+    <?php if ($log): ?>
+        <button class="button edbut" type="submit">Изменить</button>
+        <button class="button" type="submit" name="logout_form">Выйти</button>
+    <?php else: ?>
+        <button class="button" type="submit">Отправить</button>
+        <a class="btnlike" href="login.php">Войти</a>
+    <?php endif; ?>
+</div>
     
-<!-- </div> -->
     </form>
 
    <script>
@@ -171,40 +169,37 @@
     });
 }
 
-        // Обработка отправки формы
-        $('#mainForm').submit(async function(e) {
-            e.preventDefault();
-            
-            // Собираем данные формы
-            const formData = new FormData(this);
-            
-            // Для чекбокса (если не отмечен - добавляем пустое значение)
-            if (!$('input[name="check"]').prop('checked')) {
-                formData.set('check', '');
-            }
-
-            try {
-                
-const response = await fetch('index.php', {
-    method: 'POST',
-    body: formData,
-    credentials: 'include',
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest' // Добавьте эту строку
-    }
-});
-                if (response.redirected) {
-                    window.location.href = response.url; 
-                } else {
-                    const text = await response.text();
-                    parseCookies();
-                    showMessages();
-                    updateUI();
-                }
-            } catch (error) {
-                console.error('Error:', error);
+      $('#mainForm').submit(async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('index.php', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
         });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.status === 'success') {
+                $('#successMessage').text('Результаты сохранены');
+                $('#infoMessage').html(`
+                    Логин: <strong>${result.login}</strong><br>
+                    Пароль: <strong>${result.password}</strong>
+                `);
+                $('#authButtons').html(`
+                    <a class="btnlike" href="login.php">Войти</a>
+                `);
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
 
         function parseCookies() {
             // Ошибки
