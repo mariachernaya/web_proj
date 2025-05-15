@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 $db;
 include ('database.php');
 header("Content-Type: text/html; charset=UTF-8");
@@ -109,10 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
-         $errorFields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
-    foreach ($errorFields as $field) {
-        setcookie($field . '_error', '', time() - 3600, '/');
-    }
+    //      $errorFields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
+    // foreach ($errorFields as $field) {
+    //     setcookie($field . '_error', '', time() - 3600, '/');
+    // }
         
         if ($log) {
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
@@ -158,27 +159,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', $check ? '1' : '', time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
-         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            echo json_encode(['status' => 'success']);
-            exit();
-        } else {
-            header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
-            exit();
-        }
+        //  if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        //     echo json_encode(['status' => 'success']);
+        //     exit();
+        // } else {
+        //     header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+        //     exit();
+        // }
     } 
-   
-  
+   header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+         
 } else {
-     if ($log) {
-        setcookie('fio_error', '', time() - 3600, '/');
-        setcookie('number_error', '', time() - 3600, '/');
-        setcookie('email_error', '', time() - 3600, '/');
-        setcookie('date_error', '', time() - 3600, '/');
-        setcookie('radio_error', '', time() - 3600, '/');
-        setcookie('language_error', '', time() - 3600, '/');
-        setcookie('bio_error', '', time() - 3600, '/');
-        setcookie('check_error', '', time() - 3600, '/');
-    }
+    //  if ($log) {
+    //     setcookie('fio_error', '', time() - 3600, '/');
+    //     setcookie('number_error', '', time() - 3600, '/');
+    //     setcookie('email_error', '', time() - 3600, '/');
+    //     setcookie('date_error', '', time() - 3600, '/');
+    //     setcookie('radio_error', '', time() - 3600, '/');
+    //     setcookie('language_error', '', time() - 3600, '/');
+    //     setcookie('bio_error', '', time() - 3600, '/');
+    //     setcookie('check_error', '', time() - 3600, '/');
+    // }
     if (($adminLog && !empty($getUid)) || !$adminLog) {
         $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
         if ($cookAdmin == '1') {
@@ -252,8 +253,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dbLangs->execute([$uid]);
             $user_inf = $dbLangs->fetchAll(PDO::FETCH_ASSOC)[0];
 
-            
-            
             $form_id = $user_inf['id'];
             $_SESSION['form_id'] = $form_id;
 
@@ -267,16 +266,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($dbL->fetchAll(PDO::FETCH_ASSOC) as $item)
                 $languages[] = $item['name'];
 
-             setcookie('fio_value',     $user_inf['fio'],   time() + 365*86400, '/');
-    setcookie('number_value',  $user_inf['number'],time() + 365*86400, '/');
-    setcookie('email_value',   $user_inf['email'], time() + 365*86400, '/');
-    setcookie('date_value',    $user_inf['dat'],   time() + 365*86400, '/');
-    setcookie('radio_value',   $user_inf['radio'], time() + 365*86400, '/');
-    setcookie('bio_value',     $user_inf['bio'],   time() + 365*86400, '/');
+    //          setcookie('fio_value',     $user_inf['fio'],   time() + 365*86400, '/');
+    // setcookie('number_value',  $user_inf['number'],time() + 365*86400, '/');
+    // setcookie('email_value',   $user_inf['email'], time() + 365*86400, '/');
+    // setcookie('date_value',    $user_inf['dat'],   time() + 365*86400, '/');
+    // setcookie('radio_value',   $user_inf['radio'], time() + 365*86400, '/');
+    // setcookie('bio_value',     $user_inf['bio'],   time() + 365*86400, '/');
 
-    setcookie('language_value', implode(',', $languages), time() + 365*86400, '/');
+    // setcookie('language_value', implode(',', $languages), time() + 365*86400, '/');
 
-    setcookie('check_value', '1', time() + 365*86400, '/');
+    // setcookie('check_value', '1', time() + 365*86400, '/');
             
             set_val('fio', $user_inf['fio']);
             set_val('number', $user_inf['number']);
@@ -287,36 +286,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             set_val('bio', $user_inf['bio']);
             set_val('check', "1");
             
-     setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
+     // setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
+     //        setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
 
         } catch (PDOException $e) {
             print ('Error : ' . $e->getMessage());
             exit();
         }
     }
-$values = array();
-$errors = array();
-$messages = array();
+// $values = array();
+// $errors = array();
+// $messages = array();
 
-$fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
-foreach ($fields as $field) {
-    $cookie_key = $field . '_value';
-    $values[$field] = isset($_COOKIE[$cookie_key]) ? $_COOKIE[$cookie_key] : '';
-}
+// $fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
+// foreach ($fields as $field) {
+//     $cookie_key = $field . '_value';
+//     $values[$field] = isset($_COOKIE[$cookie_key]) ? $_COOKIE[$cookie_key] : '';
+// }
 
 
-$error_fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
-foreach ($error_fields as $field) {
-    $error_key = $field . '_error';
-    $errors[$field] = !empty($_COOKIE[$error_key]) ? true : NULL;
-}
+// $error_fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
+// foreach ($error_fields as $field) {
+//     $error_key = $field . '_error';
+//     $errors[$field] = !empty($_COOKIE[$error_key]) ? true : NULL;
+// }
 
     include ('form.php');
 }
