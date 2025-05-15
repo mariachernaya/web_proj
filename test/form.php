@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="bootstrap.min.css" />
-    <title>Задание_6</title>
+    <title>project</title>
     <!-- Добавляем jQuery для удобства работы с DOM и AJAX -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -110,24 +110,37 @@
     $(document).ready(function() {
         // Функция для обновления сообщений и полей
         function updateUI() {
-            // Заполняем поля из cookies
-            $('#fio').val(getCookie('fio_value') || '');
-            $('#number').val(getCookie('number_value') || '');
-            $('input[name="email"]').val(getCookie('email_value') || '');
-            $('input[name="date"]').val(getCookie('date_value') || '');
-            // Радио-кнопки
-            const radioValue = getCookie('radio_value');
-            if (radioValue) $(`input[name="radio"][value="${radioValue}"]`).prop('checked', true);
-            // Множественный выбор языков
-            const langs = (getCookie('language_value') || '').split(',');
-            $('select[name="language[]"] option').each(function() {
-                $(this).prop('selected', langs.includes(this.value));
-            });
-            // Биография
-            $('textarea[name="bio"]').val(getCookie('bio_value') || '');
-            // Чекбокс
-            $('input[name="check"]').prop('checked', !!getCookie('check_value'));
+    // Сброс всех полей перед заполнением
+    $('#mainForm')[0].reset();
+    
+    // Заполнение из кук
+    const cookiesToFields = {
+        'fio_value': '#fio',
+        'number_value': '#number',
+        'email_value': 'input[name="email"]',
+        'date_value': 'input[name="date"]',
+        'radio_value': 'input[name="radio"]',
+        'language_value': 'select[name="language[]"]',
+        'bio_value': 'textarea[name="bio"]',
+        'check_value': 'input[name="check"]'
+    };
+
+    Object.entries(cookiesToFields).forEach(([cookie, selector]) => {
+        const value = getCookie(cookie);
+        if (!value) return;
+
+        if (cookie === 'radio_value') {
+            $(`${selector}[value="${value}"]`).prop('checked', true);
+        } else if (cookie === 'language_value') {
+            const langs = value.split(',');
+            $(selector).val(langs);
+        } else if (cookie === 'check_value') {
+            $(selector).prop('checked', value === '1');
+        } else {
+            $(selector).val(value);
         }
+    });
+}
 
         // Обработка отправки формы
         $('#mainForm').submit(async function(e) {
@@ -195,12 +208,20 @@ const response = await fetch('index.php', {
     });
 
     function logout() {
-        fetch('index.php', {
-            method: 'POST',
-            body: new URLSearchParams({ 'logout_form': '1' }),
-            credentials: 'include'
-        }).then(() => window.location.reload());
-    }
+    fetch('index.php', {
+        method: 'POST',
+        body: new URLSearchParams({ 'logout_form': '1' }),
+        credentials: 'include'
+    }).then(() => {
+        // Явное удаление всех кук
+        document.cookie.split(";").forEach(cookie => {
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+        });
+        window.location.reload();
+    });
+}
 </script>
 </body>
 </html>
