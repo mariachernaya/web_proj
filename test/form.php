@@ -109,7 +109,7 @@
     <div id="authButtons">
     <?php
     if ($log)
-        echo '<button class="button edbut" type="button" onclick="logout()">Выйти</button>';
+       echo '<button class="button edbut" type="button">Выйти</button>';
     else
         echo '<a class="btnlike" href="login.php">Войти</a>';
     ?>
@@ -125,14 +125,14 @@
             $('#mainForm')[0].reset();
     
     // Заполнение даты
-    $('input[name="date"]').val(getCookie('date_value') || '');
+   // $('input[name="date"]').val(getCookie('date_value') || '');
     
     // Чекбокс
     $('input[name="check"]').prop('checked', getCookie('check_value') === '1');
     
     // Множественный выбор языков
-    const langs = (getCookie('language_value') || '').split(',');
-    $('select[name="language[]"]').val(langs);
+//    const langs = (getCookie('language_value') || '').split(',');
+  //  $('select[name="language[]"]').val(langs);
             
     // Сброс всех полей перед заполнением
   
@@ -248,21 +248,21 @@ const response = await fetch('index.php', {
         parseCookies();
     });
 
-    function logout() {
-    fetch('index.php', {
-        method: 'POST',
-        body: new URLSearchParams({ 'logout_form': '1' }),
-        credentials: 'include'
-    }).then(() => {
-        // Явное удаление всех кук
-        document.cookie.split(";").forEach(cookie => {
-            const eqPos = cookie.indexOf("=");
-            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-            document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-        });
-        window.location.reload();
-    });
-}
+//     function logout() {
+//     fetch('index.php', {
+//         method: 'POST',
+//         body: new URLSearchParams({ 'logout_form': '1' }),
+//         credentials: 'include'
+//     }).then(() => {
+//         // Явное удаление всех кук
+//         document.cookie.split(";").forEach(cookie => {
+//             const eqPos = cookie.indexOf("=");
+//             const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+//             document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+//         });
+//         window.location.reload();
+//     });
+// }
 </script>
 </body>
 </html>
