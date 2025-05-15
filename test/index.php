@@ -48,11 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_destroy();
             header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
         }
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) {
-        header('Content-Type: application/json');
-        echo json_encode({ status: 'logout' });
-        exit();
-    }
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'] ))
+            {
+            header('Content-Type: application/json');
+            echo json_encode({ status: 'logout' });
+            exit();
+        }
         exit();
     }
 
