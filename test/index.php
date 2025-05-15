@@ -145,10 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('number_value', $number, time() + 24 * 60 * 60 * 365);
             setcookie('email_value', $email, time() + 24 * 60 * 60 * 365);
             setcookie('date_value', $date, time() + 24 * 60 * 60 * 365);
-            setcookie('radio_value', $radio, time() + 24 * 60 * 60 * 365);
+            setcookie('radio_value', $radio ? $radio : '', time() + 24 * 60 * 60 * 365);
             setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
             setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
-            setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
+            setcookie('check_value', $check ? '1' : '', time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
          if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
@@ -162,6 +162,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    
   
 } else {
+     if ($log) {
+        setcookie('fio_error', '', time() - 3600, '/');
+        setcookie('number_error', '', time() - 3600, '/');
+        setcookie('email_error', '', time() - 3600, '/');
+        setcookie('date_error', '', time() - 3600, '/');
+        setcookie('radio_error', '', time() - 3600, '/');
+        setcookie('language_error', '', time() - 3600, '/');
+        setcookie('bio_error', '', time() - 3600, '/');
+        setcookie('check_error', '', time() - 3600, '/');
+    }
     if (($adminLog && !empty($getUid)) || !$adminLog) {
         $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
         if ($cookAdmin == '1') {
@@ -235,6 +245,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dbLangs->execute([$uid]);
             $user_inf = $dbLangs->fetchAll(PDO::FETCH_ASSOC)[0];
 
+            setcookie('fio_value', $user_inf['fio'], time() + 365*86400, '/');
+            setcookie('number_value', $user_inf['number'], time() + 365*86400, '/');
+             setcookie('radio_value', $user_inf['radio'], time() + 365*86400, '/');
+        setcookie('bio_value', $user_inf['bio'], time() + 365*86400, '/');
+             setcookie('email_value', $user_inf['email'], time() + 365*86400, '/');
+        setcookie('date_value', $user_inf['dat'], time() + 365*86400, '/');
+            
             $form_id = $user_inf['id'];
             $_SESSION['form_id'] = $form_id;
 
