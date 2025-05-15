@@ -20,34 +20,34 @@
         <div class="mess" id="successMessage"></div>
         <div class="mess mess_info" id="infoMessage"></div>
         
-        <!-- Поля формы (остаются без изменений, но добавляем ID для удобства) -->
-     <div>
-            <label> <input name="fio"  id="fio"  class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>"
-          value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> 
-            </label>
-            <div class="error" id="fioError"></div>
-        </div>
+    <div class="mess"><?php if (isset($messages['success']))
+      echo $messages['success']; ?></div>
+    <div class="mess mess_info"><?php if (isset($messages['info']))
+      echo $messages['info']; ?></div>
     <div>
-        <label> <input name="number" id="number" class="input <?php echo ($errors['number'] != NULL) ? 'red' : ''; ?>"
-          value="<?php echo $values['number']; ?>" type="tel" placeholder="Номер телефона" /> </label>
-      
-      <div class="error" id="numberError"></div>
+      <label> <input name="fio" class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>"
+          value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> </label>
+      <div class="error"> <?php echo $messages['fio'] ?> </div>
     </div>
 
     <div>
-         <label> <input name="email" id="email" class="input <?php echo ($errors['email'] != NULL) ? 'red' : ''; ?>"
-          value="<?php echo $values['email']; ?>" type="text" placeholder="Почта" /> </label>
-  
-  
-      <div class="error" id="emailError"></div>
+      <label> <input name="number" class="input <?php echo ($errors['number'] != NULL) ? 'red' : ''; ?>"
+          value="<?php echo $values['number']; ?>" type="tel" placeholder="Номер телефона" /> </label>
+      <div class="error"> <?php echo $messages['number'] ?> </div>
     </div>
+
     <div>
-       <label>
-        <input name="date" class="input <?php echo ($errors['dat'] != NULL) ? 'red' : ''; ?>" value="<?php if (strtotime($values['dat']) > 100000)
-                   echo $values['dat']; ?>" type="date" />
-       
+      <label> <input name="email" class="input <?php echo ($errors['email'] != NULL) ? 'red' : ''; ?>"
+          value="<?php echo $values['email']; ?>" type="text" placeholder="Почта" /> </label>
+      <div class="error"> <?php echo $messages['email'] ?> </div>
+    </div>
+
+    <div>
+      <label>
+        <input name="date" class="input <?php echo ($errors['date'] != NULL) ? 'red' : ''; ?>" value="<?php if (strtotime($values['date']) > 100000)
+                   echo $values['date']; ?>" type="date" />
+        <div class="error"> <?php echo $messages['date'] ?> </div>
       </label>
-       <div class="error" id="dateError"></div>
     </div>
 
     <div>
@@ -64,12 +64,12 @@
           <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Женский </span>
         </label>
       </div>
-       <div class="error" id="radioError"></div>
+      <div class="error"> <?php echo $messages['radio'] ?> </div>
     </div>
 
     <div>
       <div>Любимый язык программирования</div>
-     <select class="my-2 <?php echo ($errors['language'] != NULL) ? 'red' : ''; ?>" name="language[]"
+      <select class="my-2 <?php echo ($errors['language'] != NULL) ? 'red' : ''; ?>" name="language[]"
         multiple="multiple">
         <option value="Pascal" <?php echo (in_array('Pascal', $languages)) ? 'selected' : ''; ?>>Pascal</option>
         <option value="C" <?php echo (in_array('C', $languages)) ? 'selected' : ''; ?>>C</option>
@@ -83,28 +83,27 @@
         <option value="Clojure" <?php echo (in_array('Clojure', $languages)) ? 'selected' : ''; ?>>Clojure</option>
         <option value="Scala" <?php echo (in_array('Scala', $languages)) ? 'selected' : ''; ?>>Scala</option>
       </select>
-      <div class="error" id="languageError"></div>
+      <div class="error"> <?php echo $messages['language'] ?> </div>
     </div>
 
     <div class="my-2">
       <div>Биография</div>
-       <label>
+      <label>
         <textarea name="bio" class="input <?php echo ($errors['bio'] != NULL) ? 'red' : ''; ?>"
           placeholder="Биография"><?php echo $values['bio']; ?></textarea>
+        <div class="error"> <?php echo $messages['bio'] ?> </div>
       </label>
-       <div class="error" id="bioError"></div>
     </div>
 
     <div>
       <label>
         <input name="check" type="checkbox" <?php echo ($values['check'] != NULL) ? 'checked' : ''; ?> />
         С контрактом ознакомлен(а)
-
+        <div class="error"> <?php echo $messages['check'] ?> </div>
       </label>
-       <div class="error" id="checkError"></div>
     </div>
 
-        <button class="button" type="submit">Отправить</button>
+      
         <!-- Кнопки входа/выхода обрабатываются через JS -->
     <div id="authButtons">
  <?php
