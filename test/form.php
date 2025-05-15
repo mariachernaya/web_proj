@@ -96,87 +96,108 @@
 
         <button class="button" type="submit">Отправить</button>
         <!-- Кнопки входа/выхода обрабатываются через JS -->
-        <div id="authButtons"></div>
+    <div id="authButtons">
+    <?php
+    if ($log)
+        echo '<button class="button edbut" type="button" onclick="logout()">Выйти</button>';
+    else
+        echo '<a class="btnlike" href="login.php">Войти</a>';
+    ?>
+</div>
     </form>
 
-    <script>
-        $(document).ready(function() {
-            // Функция для обновления сообщений и полей
-            function updateUI() {
-                // Очищаем сообщения
-                $('.error').text('');
-                $('#successMessage, #infoMessage').text('');
+   <script>
+    $(document).ready(function() {
+        // Функция для обновления сообщений и полей
+        function updateUI() {
+            // Заполняем поля из cookies
+            $('#fio').val(getCookie('fio_value') || '');
+            $('#number').val(getCookie('number_value') || '');
+            $('input[name="email"]').val(getCookie('email_value') || '');
+            $('input[name="date"]').val(getCookie('date_value') || '');
+            // Радио-кнопки
+            const radioValue = getCookie('radio_value');
+            if (radioValue) $(`input[name="radio"][value="${radioValue}"]`).prop('checked', true);
+            // Множественный выбор языков
+            const langs = (getCookie('language_value') || '').split(',');
+            $('select[name="language[]"] option').each(function() {
+                $(this).prop('selected', langs.includes(this.value));
+            });
+            // Биография
+            $('textarea[name="bio"]').val(getCookie('bio_value') || '');
+            // Чекбокс
+            $('input[name="check"]').prop('checked', !!getCookie('check_value'));
+        }
 
-                // Заполняем поля из cookies (если есть)
-                $('#fio').val(getCookie('fio_value') || '');
-               $('#number').val(getCookie('number_value') || '');
-               $('#email').val(getCookie('email_value') || '');
-               $('#date').val(getCookie('date_value') || '');
-               $('#radio').val(getCookie('radio_value') || '');
-               $('#language').val(getCookie('language_value') || '');
-               $('#bio').val(getCookie('bio_value') || '');
+        // Обработка отправки формы
+        $('#mainForm').submit(async function(e) {
+            e.preventDefault();
+            
+            // Собираем данные формы
+            const formData = new FormData(this);
+            
+            // Для чекбокса (если не отмечен - добавляем пустое значение)
+            if (!$('input[name="check"]').prop('checked')) {
+                formData.set('check', '');
             }
 
-            // Обработка отправки формы
-            $('#mainForm').submit(function(e) {
-                e.preventDefault();
-                
-                // Собираем данные формы
-                const formData = new FormData(this);
-                
-                // Для полей с multiple (языки)
-                const languages = Array.from($('[name="language[]"]'))
-                    .filter(option => option.selected)
-                    .map(option => option.value);
-                formData.delete('language[]');
-                languages.forEach(lang => formData.append('language[]', lang));
-
-                // Отправляем запрос
-                fetch('index.php', {
+            try {
+                const response = await fetch('index.php', {
                     method: 'POST',
                     body: formData,
-                    credentials: 'include' // Для сохранения cookies
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
-                        return response.text().then(text => {
-                            updateUI();
-                            // Парсим новые куки
-                            parseCookies();
-                            showMessages();
-                        });
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
-
-            // Функции для работы с cookies
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-            }
-
-            function parseCookies() {
-                // Обновляем сообщения об ошибках
-                document.querySelectorAll('[id$="Error"]').forEach(element => {
-                    const field = element.id.replace('Error', '');
-                    const error = getCookie(`${field}_error`);
-                    if (error) element.textContent = error;
+                    credentials: 'include'
                 });
 
-                // Показываем успешные сообщения
-                if (getCookie('save')) {
-                    $('#successMessage').text('Спасибо, результаты сохранены.');
+                if (response.redirected) {
+                    window.location.href = response.url; // Редирект при успехе
+                } else {
+                    const text = await response.text();
+                    parseCookies();
+                    showMessages();
+                    updateUI();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        function parseCookies() {
+            // Ошибки
+            const fields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
+            fields.forEach(field => {
+                const error = getCookie(`${field}_error`);
+                if (error) $(`#${field}Error`).text(error);
+            });
+
+            // Успешные сообщения
+            if (getCookie('save')) {
+                $('#successMessage').text('Спасибо, результаты сохранены.');
+                if (getCookie('pass')) {
+                    $('#infoMessage').html(
+                        `Вы можете <a href="login.php">войти</a> с логином <strong>${getCookie('login')}</strong> и паролем <strong>${getCookie('pass')}</strong>`
+                    );
                 }
             }
+        }
 
-            // Инициализация при загрузке
-            updateUI();
-            parseCookies();
-        });
-    </script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            return parts.length === 2 ? decodeURIComponent(parts.pop().split(';').shift()) : null;
+        }
+
+        // Инициализация
+        updateUI();
+        parseCookies();
+    });
+
+    function logout() {
+        fetch('index.php', {
+            method: 'POST',
+            body: new URLSearchParams({ 'logout_form': '1' }),
+            credentials: 'include'
+        }).then(() => window.location.reload());
+    }
+</script>
 </body>
 </html>
