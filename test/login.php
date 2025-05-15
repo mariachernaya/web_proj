@@ -20,21 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $db->prepare("SELECT id FROM users WHERE login = ? and password = ?");
         $stmt->execute([$login, $password]);
         $its = $stmt->rowCount();
-        if ($its) {
-            $uid = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['id'];
-             $_SESSION['login'] = $_POST['login'];
-    $_SESSION['user_id'] = $uid;
-            
+       
+    if ($its) {
+                $uid = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['id'];
+    $_SESSION['login'] = $_POST['login'];
+    $_SESSION['user_id'] = $uid; 
+    header('Location: index.php');
+    exit();
            
-
-   // $errorCookies = ['fio_error', 'number_error', 'email_error', 'date_error', 'radio_error', 'language_error', 'bio_error', 'check_error'];
-   //  foreach ($errorCookies as $cookie) {
-   //      setcookie($cookie, '', time() - 3600, '/');
-   //  }
-   
-           
-    header('Location: ./');
-  //  exit();
 } else
             $error = 'Неверный логин или пароль';
     } catch (PDOException $e) {
