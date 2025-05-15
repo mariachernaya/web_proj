@@ -110,6 +110,16 @@
     $(document).ready(function() {
         // Функция для обновления сообщений и полей
         function updateUI() {
+             console.log("Загружаемые куки:");
+    console.log("fio_value:", getCookie('fio_value'));
+    console.log("number_value:", getCookie('number_value'));
+             console.log("email_value:", getCookie('email_value'));
+             console.log("date_value:", getCookie('date_value'));
+             console.log("radio_value:", getCookie('radio_value'));
+             console.log("bio_value:", getCookie('bio_value'));
+             console.log("language_value:", getCookie('language_value'));
+            console.log("check_value:", getCookie('check_value'));
+            
             $('#mainForm')[0].reset();
     
     // Заполнение даты
