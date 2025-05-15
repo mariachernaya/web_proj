@@ -88,7 +88,7 @@
 
     <div>
       <label>
-        <input name="check" type="checkbox"/>
+          <input name="check" type="checkbox" value="1" />
         С контрактом ознакомлен(а)
       </label>
        <div class="error" id="checkError"></div>
@@ -142,12 +142,15 @@
             }
 
             try {
-                const response = await fetch('index.php', {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
-
+                
+const response = await fetch('index.php', {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest' // Добавьте эту строку
+    }
+});
                 if (response.redirected) {
                     window.location.href = response.url; // Редирект при успехе
                 } else {
