@@ -252,16 +252,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dbLangs->execute([$uid]);
             $user_inf = $dbLangs->fetchAll(PDO::FETCH_ASSOC)[0];
 
-        //     setcookie('fio_value', $user_inf['fio'], time() + 365*86400, '/');
-        //     setcookie('number_value', $user_inf['number'], time() + 365*86400, '/');
-        //      setcookie('radio_value', $user_inf['radio'], time() + 365*86400, '/');
-        // setcookie('bio_value', $user_inf['bio'], time() + 365*86400, '/');
-        //      setcookie('email_value', $user_inf['email'], time() + 365*86400, '/');
-        // setcookie('date_value', $user_inf['dat'], time() + 365*86400, '/');
-      
-        //     setcookie('language_value', implode(",", $languages), time() + 365*86400, '/');
-     
-        //       setcookie('check_value', '1', time() + 365*86400, '/');
+            
+            
             $form_id = $user_inf['id'];
             $_SESSION['form_id'] = $form_id;
 
@@ -275,6 +267,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($dbL->fetchAll(PDO::FETCH_ASSOC) as $item)
                 $languages[] = $item['name'];
 
+             setcookie('fio_value',     $user_inf['fio'],   time() + 365*86400, '/');
+    setcookie('number_value',  $user_inf['number'],time() + 365*86400, '/');
+    setcookie('email_value',   $user_inf['email'], time() + 365*86400, '/');
+    setcookie('date_value',    $user_inf['dat'],   time() + 365*86400, '/');
+    setcookie('radio_value',   $user_inf['radio'], time() + 365*86400, '/');
+    setcookie('bio_value',     $user_inf['bio'],   time() + 365*86400, '/');
+    // для поля «выбранные языки» склеиваем массив обратно в строку
+    setcookie('language_value', implode(',', $languages), time() + 365*86400, '/');
+    // отмечаем checkbox как «включён»
+    setcookie('check_value', '1', time() + 365*86400, '/');
+            
             set_val('fio', $user_inf['fio']);
             set_val('number', $user_inf['number']);
             set_val('email', $user_inf['email']);
