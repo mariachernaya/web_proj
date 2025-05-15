@@ -112,7 +112,14 @@
         function updateUI() {
     // Сброс всех полей перед заполнением
     $('#mainForm')[0].reset();
-    
+    const langs = (getCookie('language_value') || '').split(',');
+    $('select[name="language[]"]').val(langs);
+             $('#fio').val(getCookie('fio_value') || '');
+             $('#number').val(getCookie('number_value') || '');
+             $('#email').val(getCookie('email_value') || '');
+             $('#radio').val(getCookie('radio_value') || '');
+             $('#bio').val(getCookie('bio_value') || '');
+             $('#check').val(getCookie('check_value') || '');
     // Заполнение из кук
     const cookiesToFields = {
         'fio_value': '#fio',
@@ -179,11 +186,14 @@ const response = await fetch('index.php', {
 
         function parseCookies() {
             // Ошибки
-            const fields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
-            fields.forEach(field => {
-                const error = getCookie(`${field}_error`);
-                if (error) $(`#${field}Error`).text(error);
-            });
+             $('.error').text('');
+    
+    // Обновление ошибок
+    const fields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
+    fields.forEach(field => {
+        const error = getCookie(`${field}_error`);
+        if (error) $(`#${field}Error`).text(error);
+    });
 
             // Успешные сообщения
             if (getCookie('save')) {
