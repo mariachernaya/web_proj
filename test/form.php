@@ -43,8 +43,8 @@
     </div>
     <div>
        <label>
-        <input name="date" class="input <?php echo ($errors['date'] != NULL) ? 'red' : ''; ?>" value="<?php if (strtotime($values['date']) > 100000)
-                   echo $values['date']; ?>" type="date" />
+        <input name="date" class="input <?php echo ($errors['dat'] != NULL) ? 'red' : ''; ?>" value="<?php if (strtotime($values['dat']) > 100000)
+                   echo $values['dat']; ?>" type="date" />
        
       </label>
        <div class="error" id="dateError"></div>
