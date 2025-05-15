@@ -122,6 +122,24 @@
     </form>
 
    <script>
+   
+$(document).on('submit', 'form[action="index.php"]', async function(e) {
+    e.preventDefault();
+    try {
+        const response = await fetch('index.php', {
+            method: 'POST',
+            body: new FormData(this),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
     $(document).ready(function() {
         // Функция для обновления сообщений и полей
         function updateUI() {
