@@ -1,5 +1,6 @@
 <?php
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 $db;
 include ('database.php');
 header("Content-Type: text/html; charset=UTF-8");
@@ -67,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return $res;
     }
 
-     check_pole('fio', 'Это поле пустое', empty($fio));
-    //if (!check_pole('fio', 'Это поле пустое', empty($fio)))
-       // check_pole('fio', 'Неправильный формат: Имя Фамилия (Отчество), только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
+    
+    if (!check_pole('fio', 'Это поле пустое', empty($fio)))
+       check_pole('fio', 'Неправильный формат: Имя Фамилия (Отчество), только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
     if (!check_pole('number', 'Это поле пустое', empty($number))) {
         check_pole('number', 'Неправильный формат, должно быть 11 символов', strlen($number) != 11);
         check_pole('number', 'Поле должно содержать только цифры', $number != preg_replace('/\D/', '', $number));
