@@ -307,6 +307,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
     }
+$values = array();
+$errors = array();
+$messages = array();
+
+// Заполнение значений из куков
+$fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
+foreach ($fields as $field) {
+    $cookie_key = $field . '_value';
+    $values[$field] = isset($_COOKIE[$cookie_key]) ? $_COOKIE[$cookie_key] : '';
+}
+
+// Заполнение ошибок из куков
+$error_fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
+foreach ($error_fields as $field) {
+    $error_key = $field . '_error';
+    $errors[$field] = !empty($_COOKIE[$error_key]) ? true : NULL;
+}
 
     include ('form.php');
 }
