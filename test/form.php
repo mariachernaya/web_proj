@@ -21,27 +21,30 @@
         <div class="mess mess_info" id="infoMessage"></div>
         
         <!-- Поля формы (остаются без изменений, но добавляем ID для удобства) -->
-        <div>
-            <label> 
-                <input name="fio" id="fio" class="input" type="text" placeholder="ФИО" /> 
+     <div>
+            <label> <input name="fio"  id="fio"  class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>"
+          value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> 
             </label>
             <div class="error" id="fioError"></div>
         </div>
     <div>
-      <label> 
-        <input name="number" id="number" class="input" type="tel" placeholder="Номер телефона" /> 
-      </label>
+        <label> <input name="number" id="number" class="input <?php echo ($errors['number'] != NULL) ? 'red' : ''; ?>"
+          value="<?php echo $values['number']; ?>" type="tel" placeholder="Номер телефона" /> </label>
+      
       <div class="error" id="numberError"></div>
     </div>
 
     <div>
-      <label> <input name="email" class="input" type="text" placeholder="Почта" /> 
-      </label>
+         <label> <input name="email" id="email" class="input <?php echo ($errors['email'] != NULL) ? 'red' : ''; ?>"
+          value="<?php echo $values['email']; ?>" type="text" placeholder="Почта" /> </label>
+  
+  
       <div class="error" id="emailError"></div>
     </div>
     <div>
-      <label>
-        <input name="date" class="input" type="date" />
+       <label>
+        <input name="date" id="date" class="input <?php echo ($errors['date'] != NULL) ? 'red' : ''; ?>" value="<?php if (strtotime($values['date']) > 100000)
+        
       </label>
        <div class="error" id="dateError"></div>
     </div>
@@ -50,12 +53,14 @@
       <div>Пол</div>
       <div class="mb-1">
         <label>
-          <input name="radio" class="ml-2" type="radio" value="M"/>
-          <span> Мужской </span>
+          <input name="radio" class="ml-2" type="radio" value="M" <?php if ($values['radio'] == 'M')
+            echo 'checked'; ?> />
+          <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Мужской </span>
         </label>
         <label>
-          <input name="radio" class="ml-4" type="radio" value="W"/>
-          <span> Женский </span>
+          <input name="radio" class="ml-4" type="radio" value="W" <?php if ($values['radio'] == 'W')
+            echo 'checked'; ?> />
+          <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Женский </span>
         </label>
       </div>
        <div class="error" id="radioError"></div>
@@ -63,33 +68,37 @@
 
     <div>
       <div>Любимый язык программирования</div>
-      <select class="my-2" name="language[]" multiple="multiple">
-        <option value="Pascal" >Pascal</option>
-        <option value="C" >C</option>
-        <option value="C++">C++</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="PHP">PHP</option>
-        <option value="Python">Python</option>
-        <option value="Java">Java</option>
-        <option value="Haskel">Haskel</option>
-        <option value="Clojure">Clojure</option>
-        <option value="Scala">Scala</option>
+     <select class="my-2 <?php echo ($errors['language'] != NULL) ? 'red' : ''; ?>" name="language[]"
+        multiple="multiple">
+        <option value="Pascal" <?php echo (in_array('Pascal', $languages)) ? 'selected' : ''; ?>>Pascal</option>
+        <option value="C" <?php echo (in_array('C', $languages)) ? 'selected' : ''; ?>>C</option>
+        <option value="C++" <?php echo (in_array('C++', $languages)) ? 'selected' : ''; ?>>C++</option>
+        <option value="JavaScript" <?php echo (in_array('JavaScript', $languages)) ? 'selected' : ''; ?>>JavaScript
+        </option>
+        <option value="PHP" <?php echo (in_array('PHP', $languages)) ? 'selected' : ''; ?>>PHP</option>
+        <option value="Python" <?php echo (in_array('Python', $languages)) ? 'selected' : ''; ?>>Python</option>
+        <option value="Java" <?php echo (in_array('Java', $languages)) ? 'selected' : ''; ?>>Java</option>
+        <option value="Haskel" <?php echo (in_array('Haskel', $languages)) ? 'selected' : ''; ?>>Haskel</option>
+        <option value="Clojure" <?php echo (in_array('Clojure', $languages)) ? 'selected' : ''; ?>>Clojure</option>
+        <option value="Scala" <?php echo (in_array('Scala', $languages)) ? 'selected' : ''; ?>>Scala</option>
       </select>
       <div class="error" id="languageError"></div>
     </div>
 
     <div class="my-2">
       <div>Биография</div>
-      <label>
-        <textarea name="bio" class="input"placeholder="Биография"> </textarea>
+       <label>
+        <textarea name="bio" class="input <?php echo ($errors['bio'] != NULL) ? 'red' : ''; ?>"
+          placeholder="Биография"><?php echo $values['bio']; ?></textarea>
       </label>
        <div class="error" id="bioError"></div>
     </div>
 
     <div>
       <label>
-          <input name="check" type="checkbox" value="1" />
+        <input name="check" type="checkbox" <?php echo ($values['check'] != NULL) ? 'checked' : ''; ?> />
         С контрактом ознакомлен(а)
+
       </label>
        <div class="error" id="checkError"></div>
     </div>
