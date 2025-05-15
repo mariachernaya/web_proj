@@ -151,8 +151,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
-    }
-    header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            echo json_encode(['status' => 'success']);
+            exit();
+        } else {
+            header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+            exit();
+        }
+    } 
+   
+  
 } else {
     if (($adminLog && !empty($getUid)) || !$adminLog) {
         $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
