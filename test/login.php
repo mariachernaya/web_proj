@@ -19,10 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $its = $stmt->rowCount();
         if ($its) {
             $uid = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['id'];
-            $_SESSION['login'] = $_POST['login'];
-            $_SESSION['user_id'] = $uid;
-            header('Location: ./');
-        } else
+    $_SESSION['login'] = $_POST['login'];
+    $_SESSION['user_id'] = $uid;
+
+    // Удалите старые куки ошибок
+    setcookie('fio_error', '', time() - 3600);
+    setcookie('number_error', '', time() - 3600);
+    setcookie('email_error', '', time() - 3600);
+    setcookie('bio_error', '', time() - 3600);
+    setcookie('radio_error', '', time() - 3600);
+    setcookie('date_error', '', time() - 3600);
+    header('Location: ./');
+    exit();
+} else
             $error = 'Неверный логин или пароль';
     } catch (PDOException $e) {
         print ('Error : ' . $e->getMessage());
