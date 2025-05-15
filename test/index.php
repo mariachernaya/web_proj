@@ -273,9 +273,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     setcookie('date_value',    $user_inf['dat'],   time() + 365*86400, '/');
     setcookie('radio_value',   $user_inf['radio'], time() + 365*86400, '/');
     setcookie('bio_value',     $user_inf['bio'],   time() + 365*86400, '/');
-    // для поля «выбранные языки» склеиваем массив обратно в строку
+
     setcookie('language_value', implode(',', $languages), time() + 365*86400, '/');
-    // отмечаем checkbox как «включён»
+
     setcookie('check_value', '1', time() + 365*86400, '/');
             
             set_val('fio', $user_inf['fio']);
@@ -295,13 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
             setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
             setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
-            // echo "1 = " . $user_inf['fio'] . "\n";
-            //  echo "2 = " . $user_inf['number'] . "\n";
-            //  echo "3 = " . $user_inf['email'] . "\n";
-            //  echo "4 = " . $user_inf['dat'] . "\n";
-            //  echo "5 = " . $user_inf['radio'] . "\n";
-            // echo "6 = " . $language . "\n";
-            // echo "7 = " . $user_inf['bio'] . "\n";
+
         } catch (PDOException $e) {
             print ('Error : ' . $e->getMessage());
             exit();
@@ -311,14 +305,13 @@ $values = array();
 $errors = array();
 $messages = array();
 
-// Заполнение значений из куков
 $fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
 foreach ($fields as $field) {
     $cookie_key = $field . '_value';
     $values[$field] = isset($_COOKIE[$cookie_key]) ? $_COOKIE[$cookie_key] : '';
 }
 
-// Заполнение ошибок из куков
+
 $error_fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
 foreach ($error_fields as $field) {
     $error_key = $field . '_error';
