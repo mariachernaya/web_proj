@@ -107,12 +107,17 @@
         <button class="button" type="submit">Отправить</button>
         <!-- Кнопки входа/выхода обрабатываются через JS -->
     <div id="authButtons">
-    <?php
+ <?php
     if ($log)
-       echo '<button class="button edbut" type="button">Выйти</button>';
+      echo '<button class="button edbut" type="submit">Изменить</button>';
     else
-        echo '<a class="btnlike" href="login.php">Войти</a>';
+      echo '<button class="button" type="submit">Отправить</button>';
+    if ($log)
+      echo '<button class="button" type="submit" name="logout_form">Выйти</button>';
+    else
+      echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
     ?>
+    
 </div>
     </form>
 
