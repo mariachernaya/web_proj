@@ -136,11 +136,11 @@
             
     // Сброс всех полей перед заполнением
   
-             $('#fio').val(getCookie('fio_value') || '');
-             $('#number').val(getCookie('number_value') || '');
-             $('#email').val(getCookie('email_value') || '');
-             $('#radio').val(getCookie('radio_value') || '');
-             $('#bio').val(getCookie('bio_value') || '');
+             // $('#fio').val(getCookie('fio_value') || '');
+             // $('#number').val(getCookie('number_value') || '');
+             // $('#email').val(getCookie('email_value') || '');
+             // $('#radio').val(getCookie('radio_value') || '');
+             // $('#bio').val(getCookie('bio_value') || '');
 
              console.log("Загружаемые куки:");
     console.log("fio_value:", getCookie('fio_value'));
