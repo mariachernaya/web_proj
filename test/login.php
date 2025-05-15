@@ -33,10 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    //  }
 
     // Временный вывод для отладки
-    // echo "<pre>Cookies после входа:\n";
-    // print_r($_COOKIE);
-    // echo "</pre>";
-    // exit(); // Удалите эту строку после отладки         
+    echo "<pre>Cookies после входа:\n";
+    print_r($_COOKIE);
+    echo "</pre>";
+    exit(); // Удалите эту строку после отладки         
            
     header('Location: ./');
     exit();
