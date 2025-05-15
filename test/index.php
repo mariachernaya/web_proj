@@ -107,6 +107,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
+         $errorFields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
+    foreach ($errorFields as $field) {
+        setcookie($field . '_error', '', time() - 3600, '/');
+    }
+        
         if ($log) {
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
@@ -251,6 +256,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_value', $user_inf['bio'], time() + 365*86400, '/');
              setcookie('email_value', $user_inf['email'], time() + 365*86400, '/');
         setcookie('date_value', $user_inf['dat'], time() + 365*86400, '/');
+            setcookie('language_value', implode(",", $languages), time() + 365*86400, '/');
+        setcookie('check_value', '1', time() + 365*86400, '/');
             
             $form_id = $user_inf['id'];
             $_SESSION['form_id'] = $form_id;
