@@ -143,8 +143,8 @@
             console.log("check_value:", getCookie('check_value'));
     // Заполнение из кук
     const cookiesToFields = {
-        'fio_value': '#fio',
-        'number_value': '#number',
+        'fio_value': 'input[name="fio"]',
+        'number_value': 'input[name="number"]',
         'email_value': 'input[name="email"]',
         'date_value': 'input[name="date"]',
         'radio_value': 'input[name="radio"]',
