@@ -109,10 +109,13 @@
       
         <!-- Кнопки входа/выхода обрабатываются через JS -->
 
+<!-- Изменим кнопку "Выйти" на отдельную форму -->
 <div id="authButtons">
     <?php if ($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
-        <button class="button" type="submit" name="logout_form">Выйти</button>
+        <form action="index.php" method="post" style="display:inline;">
+            <button class="button" type="submit" name="logout_form">Выйти</button>
+        </form>
     <?php else: ?>
         <button class="button" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
