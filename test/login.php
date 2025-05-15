@@ -29,6 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     setcookie('bio_error', '', time() - 3600);
     setcookie('radio_error', '', time() - 3600);
     setcookie('date_error', '', time() - 3600);
+    
+
+
+            $errorCookies = ['fio_error', 'number_error', 'email_error', 'date_error', 'radio_error', 'language_error', 'bio_error', 'check_error'];
+    foreach ($errorCookies as $cookie) {
+        setcookie($cookie, '', time() - 3600, '/');
+    }
     header('Location: ./');
     exit();
 } else
