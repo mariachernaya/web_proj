@@ -110,10 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
-    //      $errorFields = ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'];
-    // foreach ($errorFields as $field) {
-    //     setcookie($field . '_error', '', time() - 3600, '/');
-    // }
         
         if ($log) {
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
@@ -159,15 +155,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', $check ? '1' : '', time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
-        //  if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        //     echo json_encode(['status' => 'success']);
-        //     exit();
-        // } else {
-        //     header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
-        //     exit();
-        // }
-    } 
-   header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+       
+    } if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'login' => $login,
+            'password' => $pass
+        ]);
+        exit();
+    } else {
+        // Редирект для обычных запросов
+        header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
+        exit();
+    }
+ 
          
 } else {
     //  if ($log) {
