@@ -280,17 +280,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             set_val('email', $user_inf['email']);
             set_val('date', $user_inf['dat']);
             set_val('radio', $user_inf['radio']);
-            //set_val('language', $language);
+            set_val('language', $language);
             set_val('bio', $user_inf['bio']);
             set_val('check', "1");
 
-            echo "1 = " . $user_inf['fio'] . "\n";
-             echo "2 = " . $user_inf['number'] . "\n";
-             echo "3 = " . $user_inf['email'] . "\n";
-             echo "4 = " . $user_inf['dat'] . "\n";
-             echo "5 = " . $user_inf['radio'] . "\n";
+            // echo "1 = " . $user_inf['fio'] . "\n";
+            //  echo "2 = " . $user_inf['number'] . "\n";
+            //  echo "3 = " . $user_inf['email'] . "\n";
+            //  echo "4 = " . $user_inf['dat'] . "\n";
+            //  echo "5 = " . $user_inf['radio'] . "\n";
             // echo "6 = " . $language . "\n";
-            echo "7 = " . $user_inf['bio'] . "\n";
+            // echo "7 = " . $user_inf['bio'] . "\n";
         } catch (PDOException $e) {
             print ('Error : ' . $e->getMessage());
             exit();
