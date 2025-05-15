@@ -258,7 +258,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('date_value', $user_inf['dat'], time() + 365*86400, '/');
       
             setcookie('language_value', implode(",", $languages), time() + 365*86400, '/');
-        setcookie('check_value', $user_inf['check'], time() + 365*86400, '/');
+     
+              setcookie('check_value', '1', time() + 365*86400, '/');
             $form_id = $user_inf['id'];
             $_SESSION['form_id'] = $form_id;
 
