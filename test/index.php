@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'] ))
             {
             header('Content-Type: application/json');
-            echo json_encode([ status: 'logout' ]);
-            exit();
+            echo json_encode([ 'status' => 'logout' ]);
+           
         }
         exit();
     }
@@ -178,16 +178,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
          
 } else {
-    //  if ($log) {
-    //     setcookie('fio_error', '', time() - 3600, '/');
-    //     setcookie('number_error', '', time() - 3600, '/');
-    //     setcookie('email_error', '', time() - 3600, '/');
-    //     setcookie('date_error', '', time() - 3600, '/');
-    //     setcookie('radio_error', '', time() - 3600, '/');
-    //     setcookie('language_error', '', time() - 3600, '/');
-    //     setcookie('bio_error', '', time() - 3600, '/');
-    //     setcookie('check_error', '', time() - 3600, '/');
-    // }
     if (($adminLog && !empty($getUid)) || !$adminLog) {
         $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
         if ($cookAdmin == '1') {
