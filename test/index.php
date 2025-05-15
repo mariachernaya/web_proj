@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'] ))
             {
             header('Content-Type: application/json');
-            echo json_encode({ status: 'logout' });
+            echo json_encode([ status: 'logout' ]);
             exit();
         }
         exit();
