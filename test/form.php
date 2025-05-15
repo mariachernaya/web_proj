@@ -110,16 +110,25 @@
     $(document).ready(function() {
         // Функция для обновления сообщений и полей
         function updateUI() {
-    // Сброс всех полей перед заполнением
-    $('#mainForm')[0].reset();
+            $('#mainForm')[0].reset();
+    
+    // Заполнение даты
+    $('input[name="date"]').val(getCookie('date_value') || '');
+    
+    // Чекбокс
+    $('input[name="check"]').prop('checked', getCookie('check_value') === '1');
+    
+    // Множественный выбор языков
     const langs = (getCookie('language_value') || '').split(',');
     $('select[name="language[]"]').val(langs);
+            
+    // Сброс всех полей перед заполнением
+  
              $('#fio').val(getCookie('fio_value') || '');
              $('#number').val(getCookie('number_value') || '');
              $('#email').val(getCookie('email_value') || '');
              $('#radio').val(getCookie('radio_value') || '');
              $('#bio').val(getCookie('bio_value') || '');
-             $('#check').val(getCookie('check_value') || '');
     // Заполнение из кук
     const cookiesToFields = {
         'fio_value': '#fio',
