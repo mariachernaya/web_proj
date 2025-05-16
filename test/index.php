@@ -1,29 +1,21 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 $db;
+// подключение к базе данных
 include ('database.php');
+// отправка браузеру кодировку
 header("Content-Type: text/html; charset=UTF-8");
 session_start();
 
-if (strpos($_SERVER['REQUEST_URI'], 'index.php') === false) {
-    header('Location: index.php');
-    exit();
-}
+$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 $error = false;
-$log = isset($_SESSION['login']);
-$adminLog = isset($_SERVER['PHP_AUTH_USER']);
-$uid = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '';
-$getUid = isset($_GET['uid']) ? strip_tags($_GET['uid']) : '';
-
-if ($adminLog && preg_match('/^[0-9]+$/', $getUid)) {
-    $uid = $getUid;
-    $log = true;
-}
+$log = !empty($_SESSION['login']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	
+	
+	
     $fio = isset($_POST['fio']) ? $_POST['fio'] : '';
     $number = isset($_POST['number']) ? $_POST['number'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -34,30 +26,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-        if ($adminLog && empty($_SESSION['login']))
-            header('Location: admin.php');
-        else {
-            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
-            setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
-            session_destroy();
-            header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
-        }
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'] ))
-            {
-            header('Content-Type: application/json');
-            echo json_encode([ 'status' => 'logout' ]);
-           
-        }
+        setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('date_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('radio_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('language_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('bio_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
+        session_destroy();
+        header('Location: ./');
         exit();
     }
-
-    function check_pole($cook, $str, $flag)
+	// функция проверки полей
+    function check_field($cook, $str, $flag)
     {
         global $error;
         $res = false;
@@ -75,23 +57,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return $res;
     }
 
-    
-    if (!check_pole('fio', 'Это поле пустое', empty($fio)))
-       check_pole('fio', 'Неправильный формат: Имя Фамилия (Отчество), только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
-    if (!check_pole('number', 'Это поле пустое', empty($number))) {
-        check_pole('number', 'Неправильный формат, должно быть 11 символов', strlen($number) != 11);
-        check_pole('number', 'Поле должно содержать только цифры', $number != preg_replace('/\D/', '', $number));
+    if (!check_field('fio', 'Это поле пустое', empty($fio)))
+        check_field('fio', 'Неправильный формат: Имя Фамилия, только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
+    if (!check_field('number', 'Это поле пустое', empty($number))) {
+        check_field('number', 'Неправильный формат телефона', strlen($number) != 11);
+        check_field('number', 'Поле должно содержать только цифры, начиная с 8', $number != preg_replace('/\D/', '', $number));
     }
-    if (!check_pole('email', 'Это поле пустое', empty($email)))
-        check_pole('email', 'Неправильный формат: example@mail.ru', !preg_match('/^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/', $email));
-    if (!check_pole('date', 'Это поле пустое', empty($date)))
-        check_pole('date', 'Неправильная дата', strtotime('now') < strtotime($date));
-    check_pole('radio', "Не выбран пол", empty($radio) || !preg_match('/^(M|W)$/', $radio));
-    if (!check_pole('bio', 'Это поле пустое', empty($bio)))
-        check_pole('bio', 'Слишком длинное поле, максимум символов - 65535', strlen($bio) > 65535);
-    check_pole('check', 'Не ознакомлены с контрактом', empty($check));
+    if (!check_field('email', 'Это поле пустое', empty($email)))
+        check_field('email', 'Неправильный формат: example@mail.ru', !preg_match('/^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/', $email));
+    if (!check_field('date', 'Это поле пустое', empty($date)))
+        check_field('date', 'Неверная дата', strtotime('now') < strtotime($date));
+    check_field('radio', "Не выбран пол", empty($radio) || !preg_match('/^(M|W)$/', $radio));
+    if (!check_field('bio', 'Это поле пустое', empty($bio)))
+        check_field('bio', 'Слишком длинное поле', strlen($bio) > 65535);
+    check_field('check', 'Не ознакомлены с контрактом', empty($check));
 
-    if (!check_pole('language', 'Не выбран язык', empty($language))) {
+    if (!check_field('language', 'Не выбран язык', empty($language))) {
         try {
             $inQuery = implode(',', array_fill(0, count($language), '?'));
             $dbLangs = $db->prepare("SELECT id, name FROM languages WHERE name IN ($inQuery)");
@@ -103,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             print ('Error : ' . $e->getMessage());
             exit();
         }
-        check_pole('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
+        check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
     }
 
     if (!$error) {
@@ -116,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
-        
         if ($log) {
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
@@ -127,14 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
             foreach ($languages as $row)
                 $stmt1->execute([$_SESSION['form_id'], $row['id']]);
-            if ($adminLog)
-                setcookie('admin_value', '1', time() + 30 * 24 * 60 * 60);
         } else {
-            $login = uniqid();
+            $login = uniqid();//генерация рандом значения
             $pass = uniqid();
             setcookie('login', $login);
             setcookie('pass', $pass);
-            $mpass = md5($pass);
+            $mpass = md5($pass);//хеш
             try {
                 $stmt = $db->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
                 $stmt->execute([$login, $mpass]);
@@ -155,43 +133,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('number_value', $number, time() + 24 * 60 * 60 * 365);
             setcookie('email_value', $email, time() + 24 * 60 * 60 * 365);
             setcookie('date_value', $date, time() + 24 * 60 * 60 * 365);
-            setcookie('radio_value', $radio ? $radio : '', time() + 24 * 60 * 60 * 365);
+            setcookie('radio_value', $radio, time() + 24 * 60 * 60 * 365);
             setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
             setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
-            setcookie('check_value', $check ? '1' : '', time() + 24 * 60 * 60 * 365);
+            setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
-       
-    } if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        header('Content-Type: application/json');
-        echo json_encode([
-            'status' => 'success',
-            'login' => $login,
-            'password' => $pass
-        ]);
-        exit();
-    } else {
-        // Редирект для обычных запросов
-        header('Location: index.php' . (($getUid != NULL) ? '?uid=' . $uid : ''));
-        exit();
     }
- 
-         
+   
+    if ($is_ajax) {
+    header('Content-Type: application/json');
+    $response = [
+        'messages' => $messages,
+        'errors' => $errors,
+        'values' => $values,
+        'languages' => $languages,
+        'log' => $log,
+        'success' => !$error
+    ];
+    echo json_encode($response);
+    exit();
 } else {
-    if (($adminLog && !empty($getUid)) || !$adminLog) {
-        $cookAdmin = (!empty($_COOKIE['admin_value']) ? $_COOKIE['admin_value'] : '');
-        if ($cookAdmin == '1') {
-            setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('date_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('radio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('language_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('bio_value', '', time() - 30 * 24 * 60 * 60);
-            setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
-        }
-    }
-
+    header('Location: index.php');
+    exit();
+}
+} else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
     $number = !empty($_COOKIE['number_error']) ? $_COOKIE['number_error'] : '';
     $email = !empty($_COOKIE['email_error']) ? $_COOKIE['email_error'] : '';
@@ -212,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $values[$str] = empty($pole) ? '' : strip_tags($pole);
     }
 
-    function check_pole($str, $pole)
+    function check_field($str, $pole)
     {
         global $errors, $messages, $values, $error;
         if ($error)
@@ -224,7 +190,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return;
     }
 
-    if (!empty($_COOKIE['save'])) {
+    // Выдаем сообщение об успешном сохранении.
+	if (!empty($_COOKIE['save'])) {
         setcookie('save', '', 100000);
         setcookie('login', '', 100000);
         setcookie('pass', '', 100000);
@@ -234,21 +201,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
     }
 
-    check_pole('fio', $fio);
-    check_pole('number', $number);
-    check_pole('email', $email);
-    check_pole('date', $date);
-    check_pole('radio', $radio);
-    check_pole('language', $language);
-    check_pole('bio', $bio);
-    check_pole('check', $check);
+    check_field('fio', $fio);
+    check_field('number', $number);
+    check_field('email', $email);
+    check_field('date', $date);
+    check_field('radio', $radio);
+    check_field('language', $language);
+    check_field('bio', $bio);
+    check_field('check', $check);
 
     $languages = explode(',', $values['language']);
-
-    if ($error && $log) {
+	// вставка значений после авторизации 
+    if ($error && !empty($_SESSION['login'])) {
         try {
+			
             $dbLangs = $db->prepare("SELECT * FROM form_data WHERE user_id = ?");
-            $dbLangs->execute([$uid]);
+            $dbLangs->execute([$_SESSION['user_id']]);
             $user_inf = $dbLangs->fetchAll(PDO::FETCH_ASSOC)[0];
 
             $form_id = $user_inf['id'];
@@ -264,17 +232,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($dbL->fetchAll(PDO::FETCH_ASSOC) as $item)
                 $languages[] = $item['name'];
 
-    //          setcookie('fio_value',     $user_inf['fio'],   time() + 365*86400, '/');
-    // setcookie('number_value',  $user_inf['number'],time() + 365*86400, '/');
-    // setcookie('email_value',   $user_inf['email'], time() + 365*86400, '/');
-    // setcookie('date_value',    $user_inf['dat'],   time() + 365*86400, '/');
-    // setcookie('radio_value',   $user_inf['radio'], time() + 365*86400, '/');
-    // setcookie('bio_value',     $user_inf['bio'],   time() + 365*86400, '/');
-
-    // setcookie('language_value', implode(',', $languages), time() + 365*86400, '/');
-
-    // setcookie('check_value', '1', time() + 365*86400, '/');
-            
             set_val('fio', $user_inf['fio']);
             set_val('number', $user_inf['number']);
             set_val('email', $user_inf['email']);
@@ -283,37 +240,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             set_val('language', $language);
             set_val('bio', $user_inf['bio']);
             set_val('check', "1");
-            
-     // setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
-     //        setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
-
+			
         } catch (PDOException $e) {
             print ('Error : ' . $e->getMessage());
             exit();
         }
     }
-// $values = array();
-// $errors = array();
-// $messages = array();
-
-// $fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
-// foreach ($fields as $field) {
-//     $cookie_key = $field . '_value';
-//     $values[$field] = isset($_COOKIE[$cookie_key]) ? $_COOKIE[$cookie_key] : '';
-// }
-
-
-// $error_fields = ['fio', 'number', 'email', 'dat', 'radio', 'bio', 'language', 'check'];
-// foreach ($error_fields as $field) {
-//     $error_key = $field . '_error';
-//     $errors[$field] = !empty($_COOKIE[$error_key]) ? true : NULL;
-// }
 
     include ('form.php');
 }
