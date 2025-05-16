@@ -1,11 +1,14 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 0);
+ob_start(); // Буферизация вывода
+error_reporting(0); // Отключаем вывод ошибок
+header_remove(); // Очищаем все заголовки
 
 $db;
 include ('database.php');
-header("Content-Type: application/json; charset=UTF-8");
 session_start();
+
+header('Content-Type: application/json; charset=UTF-8');
+header('Cache-Control: no-cache, must-revalidate');
 
 file_put_contents('debug.log', "=== NEW REQUEST ===\n", FILE_APPEND);
 file_put_contents('debug.log', "Headers: " . print_r(getallheaders(), true) . "\n", FILE_APPEND);
@@ -85,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
     }
- header('Content-Type: application/json'); 
     if (!$error) {
         setcookie('fio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('number_error', '', time() - 30 * 24 * 60 * 60);
@@ -141,23 +143,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	 
 	    file_put_contents('debug.log', "Response data: " . print_r($response, true) . "\n", FILE_APPEND);
 
-	    // Перед любым выводом
-ob_clean();
+	     $response = [
+            'status' => !$error ? 'success' : 'error',
+            'messages' => $messages,
+            'errors' => $errors,
+            'values' => $values,
+            'languages' => $languages,
+            'log' => $log
+        ];
+        
+        // Очищаем буфер и выводим JSON
+        ob_end_clean();
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
-// Формируем ответ
-$response = [
-    'status' => !$error ? 'success' : 'error',
-    'messages' => $messages,
-    'errors' => $errors,
-    'values' => $values,
-    'languages' => $languages,
-    'log' => $log
-];
-
-// Чистый вывод JSON
-header('Content-Type: application/json');
-echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-exit();
     }
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
@@ -253,6 +251,4 @@ exit();
         }
     }
 
-    include ('form.php');
-}
-
+    include ('form.php');}
