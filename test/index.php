@@ -147,8 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit();
 } else {
-    // Если это не AJAX, рендерим форму с обновленными данными
-    include('form.php');
     exit();
 }
  
