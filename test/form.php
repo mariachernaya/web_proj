@@ -99,8 +99,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
-    
-    // Обработка множественного выбора
+  
     const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked')).map(opt => opt.value);
     formData.delete('language[]');
     langs.forEach(lang => formData.append('language[]', lang));
@@ -115,11 +114,9 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         });
         const data = await response.json();
 
-        // Обновление сообщений
         document.querySelector('.mess').innerHTML = data.messages.success || '';
         document.querySelector('.mess_info').innerHTML = data.messages.info || '';
 
-        // Обновление ошибок
         ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'].forEach(field => {
             const errorElement = document.querySelector(`.error[data-field="${field}"]`);
             if (errorElement) {
@@ -131,7 +128,6 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             }
         });
 
-        // Обновление значений
         if (data.success) {
             form.querySelector('[name="fio"]').value = data.values.fio || '';
             form.querySelector('[name="number"]').value = data.values.number || '';
@@ -140,15 +136,19 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             form.querySelector(`[name="radio"][value="${data.values.radio}"]`)?.checked = true;
             form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
             form.querySelector('[name="check"]').checked = data.values.check || false;
-
-            // Обновление языков
+          
             const langSelect = form.querySelector('select[name="language[]"]');
             Array.from(langSelect.options).forEach(option => {
                 option.selected = data.languages.includes(option.value);
             });
+          
+          if (data.log === false) {
+          form.reset(); // Сброс всех полей формы
+          document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+          document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+            }
         }
 
-        // Обновление кнопок
         if (data.log) {
             form.querySelector('.edbut').style.display = 'inline-block';
             form.querySelector('[name="logout_form"]').style.display = 'inline-block';
@@ -158,7 +158,15 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             form.querySelector('[name="logout_form"]').style.display = 'none';
             form.querySelector('.btnlike').style.display = 'inline-block';
         }
+        if (formData.get('logout_form') !== null) {
 
+          form.reset();
+          document.querySelectorAll('.input').forEach(input => {
+              input.value = '';
+              input.classList.remove('red');
+          });
+          document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+        }
     } catch (error) {
         console.error('Ошибка:', error);
     }
