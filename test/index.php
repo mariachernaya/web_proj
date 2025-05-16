@@ -1,18 +1,15 @@
 <?php
 ob_start(); // Буферизация вывода
 error_reporting(0); // Отключаем вывод ошибок
-header_remove(); // Очищаем все заголовки
-
+header('Content-Type: application/json; charset=UTF-8');
+//header('Cache-Control: no-cache, must-revalidate');
 $db;
 include ('database.php');
 session_start();
 
-header('Content-Type: application/json; charset=UTF-8');
-header('Cache-Control: no-cache, must-revalidate');
 
-file_put_contents('debug.log', "=== NEW REQUEST ===\n", FILE_APPEND);
-file_put_contents('debug.log', "Headers: " . print_r(getallheaders(), true) . "\n", FILE_APPEND);
-file_put_contents('debug.log', "POST data: " . print_r($_POST, true) . "\n", FILE_APPEND);
+
+
 
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
@@ -20,6 +17,7 @@ $error = false;
 $log = !empty($_SESSION['login']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	 try {
     $fio = isset($_POST['fio']) ? $_POST['fio'] : '';
     $number = isset($_POST['number']) ? $_POST['number'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -83,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dbLangs->execute();
             $languages = $dbLangs->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            print ('Error : ' . $e->getMessage());
+          
+		file_put_contents('debug.log', 'DB Error: ' . $e->getMessage(), FILE_APPEND);
             exit();
         }
         check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
@@ -127,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($languages as $row)
                     $stmt1->execute([$fid, $row['id']]);
             } catch (PDOException $e) {
-                print ('Error : ' . $e->getMessage());
+		    file_put_contents('debug.log', 'DB Error: ' . $e->getMessage(), FILE_APPEND);
                 exit();
             }
             setcookie('fio_value', $fio, time() + 24 * 60 * 60 * 365);
@@ -141,21 +140,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         setcookie('save', '1');
 	 
-	    file_put_contents('debug.log', "Response data: " . print_r($response, true) . "\n", FILE_APPEND);
-
-	     $response = [
-            'status' => !$error ? 'success' : 'error',
-            'messages' => $messages,
-            'errors' => $errors,
-            'values' => $values,
-            'languages' => $languages,
-            'log' => $log
-        ];
+	   $response = [
+                'status' => 'success',
+                'messages' => $messages,
+                'values' => $values,
+                'languages' => $languages,
+                'log' => $log
+            ];
+        } else {
+            $response = [
+                'status' => 'error',
+                'messages' => $messages,
+                'errors' => $errors
+            ];
+        }
         
-        // Очищаем буфер и выводим JSON
         ob_end_clean();
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
-
+        exit();
+        
+    } catch (Exception $e) {
+        ob_end_clean();
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit();
     }
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
@@ -246,9 +253,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
         } catch (PDOException $e) {
-            print ('Error : ' . $e->getMessage());
+		file_put_contents('debug.log', 'Error: ' . $e->getMessage(), FILE_APPEND);
             exit();
         }
     }
-
-    include ('form.php');}
+if (!$is_ajax) {
+    include('form.php');
+} else {
+    ob_end_clean();
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit();
+}
