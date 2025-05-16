@@ -112,48 +112,28 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     document.querySelector('.mess_info').innerHTML = '';
 
     try {
-        const response = await fetch('index.php', {
-            method: 'POST',
-            body: new FormData(form),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        });
-
-        // Проверяем Content-Type
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const text = await response.text();
-            throw new Error(`Invalid content type: ${contentType}. Response: ${text}`);
+    const response = await fetch('index.php', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
         }
+    });
 
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.message || 'Server error');
-        }
-
-        if (result.status === 'success') {
-            // Успешная отправка
-            document.querySelector('.mess').innerHTML = result.messages.success || 'Данные успешно сохранены';
-            document.querySelector('.mess_info').innerHTML = result.messages.info || '';
-            
-            // Обновляем значения полей
-            updateFormFields(form, result);
-            
-        } else {
-            // Ошибки валидации
-            showFormErrors(form, result);
-        }
-        
-    } catch (error) {
-        console.error('Fetch error:', error);
-        document.querySelector('.mess').innerHTML = `Ошибка: ${error.message}`;
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+    // Проверяем сырой ответ
+    const rawResponse = await response.text();
+    console.log('Raw response:', rawResponse); // Отладка
+    
+    try {
+        const result = JSON.parse(rawResponse);
+        // ... обработка result ...
+    } catch (e) {
+        throw new Error(`Invalid JSON: ${rawResponse}`);
     }
+} catch (error) {
+    console.error('Error:', error);
+    showErrorMessage(error.message);
+}
 });
 
 function updateFormFields(form, data) {
