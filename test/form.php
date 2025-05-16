@@ -98,43 +98,57 @@
 document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
     
-    // Показываем загрузку
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Отправка...';
-    
-    // Очищаем предыдущие сообщения
-    document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-    document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-    document.querySelector('.mess').innerHTML = '';
-    document.querySelector('.mess_info').innerHTML = '';
-
     try {
-    const response = await fetch('index.php', {
-        method: 'POST',
-        body: new FormData(form),
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+        const response = await fetch('index.php', {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        // Проверяем сырой ответ
+        const rawText = await response.text();
+        console.log('Raw response:', rawText);
+        
+        // Пытаемся распарсить JSON
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            throw new Error(`Неверный формат ответа: ${rawText.substring(0, 100)}...`);
         }
-    });
 
-    // Проверяем сырой ответ
-    const rawResponse = await response.text();
-    console.log('Raw response:', rawResponse); // Отладка
-    
-    try {
-        const result = JSON.parse(rawResponse);
-        // ... обработка result ...
-    } catch (e) {
-        throw new Error(`Invalid JSON: ${rawResponse}`);
+        // Обработка ответа
+        if (data.status === 'success') {
+            // Успешная обработка
+            showSuccessMessage(data.messages.success);
+            updateFormFields(form, data);
+        } else {
+            // Ошибки валидации
+            showFormErrors(form, data);
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        showErrorMessage(error.message);
     }
-} catch (error) {
-    console.error('Error:', error);
-    showErrorMessage(error.message);
-}
 });
+
+// Вспомогательные функции
+function showSuccessMessage(msg) {
+    const el = document.querySelector('.mess');
+    el.innerHTML = msg || 'Данные успешно сохранены';
+    el.style.color = 'green';
+}
+
+function showErrorMessage(msg) {
+    const el = document.querySelector('.mess');
+    el.innerHTML = msg || 'Ошибка при отправке формы';
+    el.style.color = 'red';
+}
 
 function updateFormFields(form, data) {
     // Обновляем обычные поля
