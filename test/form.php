@@ -141,14 +141,17 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             Array.from(langSelect.options).forEach(option => {
                 option.selected = data.languages.includes(option.value);
             });
+
+           document.querySelector('.mess').innerHTML = data.messages.success || '';
           
           if (data.log === false) {
-          form.reset(); 
-           } 
-          //  else {
-          //   document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-          //   document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-          // }
+              form.reset();
+              document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+              document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+              }
+          } else {
+              document.querySelector('.mess').innerHTML = data.messages.error || '';
+          }
         }
 
         if (data.log) {
