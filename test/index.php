@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
-        header('Location: ./');
+        //header('Location: ./');
         exit();
     }
     function check_field($cook, $str, $flag)
@@ -134,8 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         setcookie('save', '1');
     }
-   
-    if ($is_ajax) {
+   if ($is_ajax) {
     header('Content-Type: application/json');
     $response = [
         'messages' => $messages,
@@ -148,9 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit();
 } else {
-	    header('Location: index.php');
+    // Если это не AJAX, рендерим форму с обновленными данными
+    include('form.php');
     exit();
 }
+ 
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
     $number = !empty($_COOKIE['number_error']) ? $_COOKIE['number_error'] : '';
