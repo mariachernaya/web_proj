@@ -143,10 +143,12 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             });
           
           if (data.log === false) {
-          form.reset(); // Сброс всех полей формы
-          document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-          document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-            }
+          form.reset(); 
+          
+            } else {
+            document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+            document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+          }
         }
 
         if (data.log) {
