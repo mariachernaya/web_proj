@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="bootstrap.min.css" />
-    <title>Задание_5</title>
+    <title>Задание_8</title>
   </head>
 
   <body>
@@ -158,15 +158,16 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             form.querySelector('[name="logout_form"]').style.display = 'none';
             form.querySelector('.btnlike').style.display = 'inline-block';
         }
-        if (formData.get('logout_form') !== null) {
-
-          form.reset();
-          document.querySelectorAll('.input').forEach(input => {
-              input.value = '';
-              input.classList.remove('red');
-          });
-          document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+      if (formData.get('logout_form') !== null) {
+    document.querySelectorAll('input, select, textarea').forEach(element => {
+        if (element.type !== 'submit' && element.type !== 'button') {
+            element.value = '';
+            element.checked = false;
+            element.selected = false;
         }
+    });
+}
+       
     } catch (error) {
         console.error('Ошибка:', error);
     }
