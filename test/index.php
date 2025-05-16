@@ -137,14 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    
     if ($is_ajax) {
     header('Content-Type: application/json');
-    $response = [
-        'messages' => $messages,
-        'errors' => $errors,
-        'values' => $values,
-        'languages' => $languages,
-        'log' => $log,
-        'success' => !$error
-    ];
+    // $response = [
+    //     'messages' => $messages,
+    //     'errors' => $errors,
+    //     'values' => $values,
+    //     'languages' => $languages,
+    //     'log' => $log,
+    //     'success' => !$error
+    // ];
     echo json_encode($response);
     exit();
 } else {
