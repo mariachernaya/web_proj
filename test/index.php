@@ -251,11 +251,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
     }
-if (!$is_ajax) {
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    // Только для GET-запросов (первая загрузка страницы)
     include('form.php');
-} else {
-    ob_end_clean();
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit();
 }
 }
