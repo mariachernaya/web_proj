@@ -1,9 +1,15 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 $db;
 include ('database.php');
 header("Content-Type: text/html; charset=UTF-8");
 session_start();
+
+file_put_contents('debug.log', "=== NEW REQUEST ===\n", FILE_APPEND);
+file_put_contents('debug.log', "Headers: " . print_r(getallheaders(), true) . "\n", FILE_APPEND);
+file_put_contents('debug.log', "POST data: " . print_r($_POST, true) . "\n", FILE_APPEND);
 
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
@@ -177,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    //      echo json_encode($response);
    //      exit();
    //  }
+	    file_put_contents('debug.log', "Response data: " . print_r($response, true) . "\n", FILE_APPEND);
  echo json_encode([
             'status' => 'success',
             'messages' => [
