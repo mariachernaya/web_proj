@@ -232,7 +232,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($dbL->fetchAll(PDO::FETCH_ASSOC) as $item)
                 $languages[] = $item['name'];
 
-            set_val('fio', $user_inf['fio']);
+          
+			$values = array(
+    'fio' => '',
+    'number' => '',
+    'email' => '',
+    'date' => '',
+    'radio' => '',
+    'language' => array(),
+    'bio' => '',
+    'check' => ''
+);
+		if ($error && !empty($_SESSION['login'])) {
+      set_val('fio', $user_inf['fio']);
             set_val('number', $user_inf['number']);
             set_val('email', $user_inf['email']);
             set_val('date', $user_inf['dat']);
@@ -240,7 +252,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             set_val('language', $language);
             set_val('bio', $user_inf['bio']);
             set_val('check', "1");
-			
+} else {
+ 
+    foreach ($values as $key => $val) {
+        $values[$key] = !empty($_COOKIE[$key.'_value']) ? $_COOKIE[$key.'_value'] : '';
+    }
+}
         } catch (PDOException $e) {
             print ('Error : ' . $e->getMessage());
             exit();
