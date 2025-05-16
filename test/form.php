@@ -12,7 +12,8 @@
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
-
+<div class="mess"></div>
+<div class="mess mess_info"></div>
 <!--       <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div> -->
 <!--       <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?> </div> -->
       <div>
