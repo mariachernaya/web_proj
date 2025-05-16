@@ -86,13 +86,11 @@
           <div class="error" data-field="check"></div>
         </label>
       </div>
-
-       <?php
-          if($log) echo '<button class="button edbut" type="submit">Изменить</button>';
-          else echo '<button class="button" type="submit">Отправить</button>';
-          if($log) echo '<button class="button" type="submit" name="logout_form">Выйти</button>'; 
-          else echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
-        ?>
+<button class="button edbut" type="submit" id="editBtn" style="display: none;">Изменить</button>
+<button class="button" type="submit" id="submitBtn">Отправить</button>
+<button class="button" type="submit" name="logout_form" id="logoutBtn" style="display: none;">Выйти</button>
+<a class="btnlike" href="login.php" name="logout_form" id="loginLink">Войти</a>
+     
     </form>
 <script>
 document.querySelector('form').addEventListener('submit', async function(e) {
