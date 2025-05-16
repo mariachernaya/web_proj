@@ -1,9 +1,7 @@
 <?php
 
 $db;
-// подключение к базе данных
 include ('database.php');
-// отправка браузеру кодировку
 header("Content-Type: text/html; charset=UTF-8");
 session_start();
 
@@ -13,9 +11,6 @@ $error = false;
 $log = !empty($_SESSION['login']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-	
-	
     $fio = isset($_POST['fio']) ? $_POST['fio'] : '';
     $number = isset($_POST['number']) ? $_POST['number'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -38,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header('Location: ./');
         exit();
     }
-	// функция проверки полей
     function check_field($cook, $str, $flag)
     {
         global $error;
@@ -154,7 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit();
 } else {
-    header('Location: index.php');
     exit();
 }
 } else {
@@ -189,8 +182,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie($str . '_error', '', time() - 30 * 24 * 60 * 60);
         return;
     }
-
-    // Выдаем сообщение об успешном сохранении.
 	if (!empty($_COOKIE['save'])) {
         setcookie('save', '', 100000);
         setcookie('login', '', 100000);
@@ -211,7 +202,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     check_field('check', $check);
 
     $languages = explode(',', $values['language']);
-	// вставка значений после авторизации 
     if ($error && !empty($_SESSION['login'])) {
         try {
 			
