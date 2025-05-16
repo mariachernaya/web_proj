@@ -6,11 +6,6 @@ header('Content-Type: application/json; charset=UTF-8');
 $db;
 include ('database.php');
 session_start();
-
-
-
-
-
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 $error = false;
@@ -238,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
           
 		if ($error && !empty($_SESSION['login'])) {
-      set_val('fio', $user_inf['fio']);
+      	    set_val('fio', $user_inf['fio']);
             set_val('number', $user_inf['number']);
             set_val('email', $user_inf['email']);
             set_val('date', $user_inf['dat']);
@@ -249,8 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
  
     foreach ($values as $key => $val) {
-        $values[$key] = !empty($_COOKIE[$key.'_value']) ? $_COOKIE[$key.'_value'] : '';
-    }
+        $values[$key] = !empty($_COOKIE[$key.'_value']) ? $_COOKIE[$key.'_value'] : '';  }
 }
         } catch (PDOException $e) {
 		file_put_contents('debug.log', 'Error: ' . $e->getMessage(), FILE_APPEND);
@@ -263,4 +257,5 @@ if (!$is_ajax) {
     ob_end_clean();
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit();
+}
 }
