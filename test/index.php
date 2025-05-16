@@ -26,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-        setcookie('fio_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('number_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('email_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('date_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('radio_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('language_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('bio_value', '', time() - 30 * 24 * 60 * 60);
-        setcookie('check_value', '', time() - 30 * 24 * 60 * 60);
+        setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
+        setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
         header('Location: ./');
         exit();
@@ -233,16 +233,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $languages[] = $item['name'];
 
           
-			$values = array(
-    'fio' => '',
-    'number' => '',
-    'email' => '',
-    'date' => '',
-    'radio' => '',
-    'language' => array(),
-    'bio' => '',
-    'check' => ''
-);
 		if ($error && !empty($_SESSION['login'])) {
       set_val('fio', $user_inf['fio']);
             set_val('number', $user_inf['number']);
