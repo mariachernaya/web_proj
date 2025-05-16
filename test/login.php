@@ -1,7 +1,11 @@
 <?php
     header('Content-Type: text/html; charset=UTF-8');
     session_start();
-
+    if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+        session_destroy();
+        header('Location: login.php');
+        exit();
+    }
     if (!empty($_SESSION['login']))
     {
         header('Location: ./');
