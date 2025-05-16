@@ -99,10 +99,12 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
-
-    // Очищаем предыдущие ошибки
+    
+    // Очистка ошибок
     document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
     document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+    document.querySelector('.mess').innerHTML = '';
+    document.querySelector('.mess_info').innerHTML = '';
 
     try {
         const response = await fetch('index.php', {
@@ -112,47 +114,51 @@ document.querySelector('form').addEventListener('submit', async function(e) {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         });
+
+        const result = await response.json();
         
-        if (!response.ok) throw new Error('Network error');
-        
-        const data = await response.json();
-
-        // Обновляем сообщения
-        if (data.messages.success) {
-            document.querySelector('.mess').innerHTML = data.messages.success;
-        }
-        if (data.messages.info) {
-            document.querySelector('.mess_info').innerHTML = data.messages.info;
-        }
-
-        // Обновляем ошибки
-        Object.keys(data.errors).forEach(field => {
-            const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-            if (errorElement && data.errors[field]) {
-                errorElement.innerHTML = data.messages[field] || '';
-                const input = form.querySelector(`[name="${field}"]`);
-                if (input) input.classList.add('red');
-            }
-        });
-
-        // Если успешно, обновляем значения
-        if (data.success) {
-            if (data.values) {
-                Object.keys(data.values).forEach(field => {
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input) {
-                        if (input.type === 'checkbox') {
-                            input.checked = data.values[field];
+        if (result.status === 'success') {
+            // Успешная отправка
+            document.querySelector('.mess').innerHTML = result.messages.success;
+            document.querySelector('.mess_info').innerHTML = result.messages.info;
+            
+            // Обновляем значения полей
+            if (result.values) {
+                Object.keys(result.values).forEach(key => {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field) {
+                        if (field.type === 'checkbox') {
+                            field.checked = result.values[key];
+                        } else if (field.type === 'radio') {
+                            field.checked = (field.value === result.values[key]);
                         } else {
-                            input.value = data.values[field] || '';
+                            field.value = result.values[key] || '';
                         }
                     }
                 });
             }
+            
+            // Обновляем мультиселект
+            if (result.languages && form.querySelector('select[name="language[]"]')) {
+                const select = form.querySelector('select[name="language[]"]');
+                Array.from(select.options).forEach(option => {
+                    option.selected = result.languages.includes(option.value);
+                });
+            }
+        } else if (result.status === 'error') {
+            // Ошибки валидации
+            Object.keys(result.errors).forEach(field => {
+                const errorElement = document.querySelector(`.error[data-field="${field}"]`);
+                if (errorElement && result.errors[field]) {
+                    errorElement.innerHTML = result.messages[field] || '';
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) input.classList.add('red');
+                }
+            });
         }
     } catch (error) {
         console.error('Ошибка:', error);
-        document.querySelector('.mess').innerHTML = 'Произошла ошибка при отправке формы';
+        document.querySelector('.mess').innerHTML = 'Ошибка соединения с сервером';
     }
 });
 </script>
