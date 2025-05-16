@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
     }
-
+ header('Content-Type: application/json'); 
     if (!$error) {
         setcookie('fio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('number_error', '', time() - 30 * 24 * 60 * 60);
@@ -133,51 +133,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
-	     $response = [
+	     // $response = [
+      //       'messages' => [
+      //           'success' => $messages['success'] ?? '',
+      //           'info' => $messages['info'] ?? '',
+      //           'fio' => $messages['fio'] ?? '',
+      //           'number' => $messages['number'] ?? '',
+      //           'email' => $messages['email'] ?? '',
+	     // 'date' => $messages['date'] ?? '',
+	     // 'radio' => $messages['radio'] ?? '',
+	     // 'language[]' => $messages['language[]'] ?? '',
+	     // 'bio' => $messages['bio'] ?? '',
+	     // 'check' => $messages['check'] ?? ''
+      //       ],
+      //       'errors' => $errors,
+      //       'values' => $values,
+      //       'languages' => $languages,
+      //       'log' => $log,
+      //       'success' => true
+      //   ];
+        
+      //   header('Content-Type: application/json');
+      //   echo json_encode($response);
+      //   exit();
+ //   } 
+   // else {
+   //      $response = [
+   //          'messages' => [
+   //              'fio' => $messages['fio'] ?? '',
+   //              'number' => $messages['number'] ?? '',
+   //               'email' => $messages['email'] ?? '',
+	  //    'date' => $messages['date'] ?? '',
+	  //    'radio' => $messages['radio'] ?? '',
+	  //    'language[]' => $messages['language[]'] ?? '',
+	  //    'bio' => $messages['bio'] ?? '',
+	  //    'check' => $messages['check'] ?? ''
+   //          ],
+   //          'errors' => $errors,
+   //          'success' => false
+   //      ];
+        
+   //      header('Content-Type: application/json');
+   //      echo json_encode($response);
+   //      exit();
+   //  }
+ echo json_encode([
+            'status' => 'success',
             'messages' => [
                 'success' => $messages['success'] ?? '',
-                'info' => $messages['info'] ?? '',
-                'fio' => $messages['fio'] ?? '',
-                'number' => $messages['number'] ?? '',
-                'email' => $messages['email'] ?? '',
-	     'date' => $messages['date'] ?? '',
-	     'radio' => $messages['radio'] ?? '',
-	     'language[]' => $messages['language[]'] ?? '',
-	     'bio' => $messages['bio'] ?? '',
-	     'check' => $messages['check'] ?? ''
+                'info' => $messages['info'] ?? ''
             ],
-            'errors' => $errors,
             'values' => $values,
             'languages' => $languages,
-            'log' => $log,
-            'success' => true
-        ];
-        
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit();
+            'log' => $log
+        ]);
+    } else {
+        // Ошибки валидации
+        echo json_encode([
+            'status' => 'error',
+            'messages' => $messages,
+            'errors' => $errors
+        ]);
     }
-   else {
-        $response = [
-            'messages' => [
-                'fio' => $messages['fio'] ?? '',
-                'number' => $messages['number'] ?? '',
-                 'email' => $messages['email'] ?? '',
-	     'date' => $messages['date'] ?? '',
-	     'radio' => $messages['radio'] ?? '',
-	     'language[]' => $messages['language[]'] ?? '',
-	     'bio' => $messages['bio'] ?? '',
-	     'check' => $messages['check'] ?? ''
-            ],
-            'errors' => $errors,
-            'success' => false
-        ];
-        
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit();
-    }
- 
+    exit();
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
     $number = !empty($_COOKIE['number_error']) ? $_COOKIE['number_error'] : '';
