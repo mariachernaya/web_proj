@@ -104,6 +104,9 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     formData.delete('language[]');
     langs.forEach(lang => formData.append('language[]', lang));
 
+    document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+    document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+  
     try {
         const response = await fetch('index.php', {
             method: 'POST',
@@ -117,41 +120,50 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         document.querySelector('.mess').innerHTML = data.messages.success || '';
         document.querySelector('.mess_info').innerHTML = data.messages.info || '';
 
-        ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'].forEach(field => {
+        // ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'].forEach(field => {
+        //     const errorElement = document.querySelector(`.error[data-field="${field}"]`);
+        //     if (errorElement) {
+        //         errorElement.innerHTML = data.messages[field] || '';
+        //     }
+        //     const input = form.querySelector(`[name="${field}"]`);
+        //     if (input) {
+        //         input.classList.toggle('red', data.errors[field]);
+        //     }
+        // });
+Object.keys(data.errors).forEach(field => {
             const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-            if (errorElement) {
+            if (errorElement && data.errors[field]) {
                 errorElement.innerHTML = data.messages[field] || '';
-            }
-            const input = form.querySelector(`[name="${field}"]`);
-            if (input) {
-                input.classList.toggle('red', data.errors[field]);
+                const input = form.querySelector(`[name="${field}"]`);
+                if (input) input.classList.add('red');
             }
         });
-
         if (data.success) {
-            form.querySelector('[name="fio"]').value = data.values.fio || '';
-            form.querySelector('[name="number"]').value = data.values.number || '';
-            form.querySelector('[name="email"]').value = data.values.email || '';
-            form.querySelector('[name="date"]').value = data.values.date || '';
-            form.querySelector(`[name="radio"][value="${data.values.radio}"]`)?.checked = true;
-            form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
-            form.querySelector('[name="check"]').checked = data.values.check || false;
+            // form.querySelector('[name="fio"]').value = data.values.fio || '';
+            // form.querySelector('[name="number"]').value = data.values.number || '';
+            // form.querySelector('[name="email"]').value = data.values.email || '';
+            // form.querySelector('[name="date"]').value = data.values.date || '';
+            // form.querySelector(`[name="radio"][value="${data.values.radio}"]`)?.checked = true;
+            // form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
+            // form.querySelector('[name="check"]').checked = data.values.check || false;
           
-            const langSelect = form.querySelector('select[name="language[]"]');
-            Array.from(langSelect.options).forEach(option => {
-                option.selected = data.languages.includes(option.value);
-            });
+            // const langSelect = form.querySelector('select[name="language[]"]');
+            // Array.from(langSelect.options).forEach(option => {
+            //     option.selected = data.languages.includes(option.value);
+            // });
 
-           document.querySelector('.mess').innerHTML = data.messages.success || '';
-          
+           // document.querySelector('.mess').innerHTML = data.messages.success || '';
+           form.reset();
           if (data.log === false) {
-              form.reset();
-              document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-              document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+             // form.reset();
+             document.querySelectorAll('.input').forEach(el => el.value = '');
+              // document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+              // document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
               }
-          } else {
-              document.querySelector('.mess').innerHTML = data.messages.error || '';
-          }
+          } 
+        // else {
+        //       document.querySelector('.mess').innerHTML = data.messages.error || '';
+        //   }
         }
 
         if (data.log) {
