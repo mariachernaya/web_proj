@@ -133,22 +133,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
         }
         setcookie('save', '1');
+	     $response = [
+            'messages' => [
+                'success' => $messages['success'] ?? '',
+                'info' => $messages['info'] ?? '',
+                'fio' => $messages['fio'] ?? '',
+                'number' => $messages['number'] ?? '',
+                'email' => $messages['email'] ?? '',
+	     'date' => $messages['date'] ?? '',
+	     'radio' => $messages['radio'] ?? '',
+	     'language[]' => $messages['language[]'] ?? '',
+	     'bio' => $messages['bio'] ?? '',
+	     'check' => $messages['check'] ?? ''
+            ],
+            'errors' => $errors,
+            'values' => $values,
+            'languages' => $languages,
+            'log' => $log,
+            'success' => true
+        ];
+        
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
     }
-   if ($is_ajax) {
-    header('Content-Type: application/json');
-    $response = [
-        'messages' => $messages,
-        'errors' => $errors,
-        'values' => $values,
-        'languages' => $languages,
-        'log' => $log,
-        'success' => !$error
-    ];
-    echo json_encode($response);
-    exit();
-} else {
-    exit();
-}
+   else {
+        $response = [
+            'messages' => [
+                'fio' => $messages['fio'] ?? '',
+                'number' => $messages['number'] ?? '',
+                 'email' => $messages['email'] ?? '',
+	     'date' => $messages['date'] ?? '',
+	     'radio' => $messages['radio'] ?? '',
+	     'language[]' => $messages['language[]'] ?? '',
+	     'bio' => $messages['bio'] ?? '',
+	     'check' => $messages['check'] ?? ''
+            ],
+            'errors' => $errors,
+            'success' => false
+        ];
+        
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    }
  
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
