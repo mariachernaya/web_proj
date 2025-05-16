@@ -98,9 +98,14 @@
 document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
     
-    // Очистка ошибок
+    // Показываем загрузку
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Отправка...';
+    
+    // Очищаем предыдущие сообщения
     document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
     document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
     document.querySelector('.mess').innerHTML = '';
@@ -109,58 +114,84 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     try {
         const response = await fetch('index.php', {
             method: 'POST',
-            body: formData,
+            body: new FormData(form),
             headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
             }
         });
 
+        // Проверяем Content-Type
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            throw new Error(`Invalid content type: ${contentType}. Response: ${text}`);
+        }
+
         const result = await response.json();
         
+        if (!response.ok) {
+            throw new Error(result.message || 'Server error');
+        }
+
         if (result.status === 'success') {
             // Успешная отправка
-            document.querySelector('.mess').innerHTML = result.messages.success;
-            document.querySelector('.mess_info').innerHTML = result.messages.info;
+            document.querySelector('.mess').innerHTML = result.messages.success || 'Данные успешно сохранены';
+            document.querySelector('.mess_info').innerHTML = result.messages.info || '';
             
             // Обновляем значения полей
-            if (result.values) {
-                Object.keys(result.values).forEach(key => {
-                    const field = form.querySelector(`[name="${key}"]`);
-                    if (field) {
-                        if (field.type === 'checkbox') {
-                            field.checked = result.values[key];
-                        } else if (field.type === 'radio') {
-                            field.checked = (field.value === result.values[key]);
-                        } else {
-                            field.value = result.values[key] || '';
-                        }
-                    }
-                });
-            }
+            updateFormFields(form, result);
             
-            // Обновляем мультиселект
-            if (result.languages && form.querySelector('select[name="language[]"]')) {
-                const select = form.querySelector('select[name="language[]"]');
-                Array.from(select.options).forEach(option => {
-                    option.selected = result.languages.includes(option.value);
-                });
-            }
-        } else if (result.status === 'error') {
+        } else {
             // Ошибки валидации
-            Object.keys(result.errors).forEach(field => {
-                const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-                if (errorElement && result.errors[field]) {
-                    errorElement.innerHTML = result.messages[field] || '';
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input) input.classList.add('red');
-                }
-            });
+            showFormErrors(form, result);
         }
+        
     } catch (error) {
-        console.error('Ошибка:', error);
-        document.querySelector('.mess').innerHTML = 'Ошибка соединения с сервером';
+        console.error('Fetch error:', error);
+        document.querySelector('.mess').innerHTML = `Ошибка: ${error.message}`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
     }
 });
+
+function updateFormFields(form, data) {
+    // Обновляем обычные поля
+    Object.entries(data.values || {}).forEach(([name, value]) => {
+        const field = form.querySelector(`[name="${name}"]`);
+        if (!field) return;
+        
+        if (field.type === 'checkbox') {
+            field.checked = !!value;
+        } else if (field.type === 'radio') {
+            field.checked = (field.value === value);
+        } else {
+            field.value = value || '';
+        }
+    });
+    
+    // Обновляем мультиселект
+    if (data.languages && form.querySelector('select[name="language[]"]')) {
+        const select = form.querySelector('select[name="language[]"]');
+        Array.from(select.options).forEach(option => {
+            option.selected = data.languages.includes(option.value);
+        });
+    }
+}
+
+function showFormErrors(form, data) {
+    Object.entries(data.errors || {}).forEach(([field, hasError]) => {
+        if (!hasError) return;
+        
+        const errorElement = document.querySelector(`.error[data-field="${field}"]`);
+        if (errorElement) {
+            errorElement.innerHTML = data.messages[field] || 'Ошибка';
+            const input = form.querySelector(`[name="${field}"]`);
+            if (input) input.classList.add('red');
+        }
+    });
+}
 </script>
   </body>
 </html>
