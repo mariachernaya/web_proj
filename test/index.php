@@ -1,10 +1,10 @@
 <?php
 error_reporting(0);
 ini_set('display_errors', 0);
+
 $db;
 include ('database.php');
-//header("Content-Type: text/html; charset=UTF-8");
-header('Content-Type: application/json; charset=utf-8');
+header("Content-Type: application/json; charset=UTF-8");
 session_start();
 
 file_put_contents('debug.log', "=== NEW REQUEST ===\n", FILE_APPEND);
@@ -158,7 +158,7 @@ $response = [
 header('Content-Type: application/json');
 echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 exit();
-
+    }
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
     $number = !empty($_COOKIE['number_error']) ? $_COOKIE['number_error'] : '';
@@ -256,4 +256,3 @@ exit();
     include ('form.php');
 }
 
-?>
