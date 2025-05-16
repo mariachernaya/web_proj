@@ -4,7 +4,8 @@ ini_set('display_errors', 1);
 
 $db;
 include ('database.php');
-header("Content-Type: text/html; charset=UTF-8");
+//header("Content-Type: text/html; charset=UTF-8");
+header('Content-Type: application/json; charset=utf-8');
 session_start();
 
 file_put_contents('debug.log', "=== NEW REQUEST ===\n", FILE_APPEND);
@@ -255,4 +256,4 @@ exit();
 
     include ('form.php');
 }
-?>
+
