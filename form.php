@@ -720,7 +720,7 @@
         </div>
 
        <!--Слайдер-->
-        <div class="mt-5 d-flex justify-content-center">
+<!--         <div class="mt-5 d-flex justify-content-center">
           <div class="slider-title mb-4">
             <h2>С нами работают</h2>
 
@@ -786,7 +786,7 @@
               <img src="foto/газпром.png" alt="">
             </div>
           </div>
-        </div>
+        </div> -->
         
         <!-- 12 Пунктов -->
         <div>
