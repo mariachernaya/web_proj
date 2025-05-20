@@ -38,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
+	    
 	       if ($is_ajax) {
-        header('Content-Type: application/json');
         echo json_encode(['logout' => true]);
         exit();
     }
