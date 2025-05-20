@@ -945,7 +945,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     <?php else: ?>
         <button class="button" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
-    <?php endif; ?> -->
+    <?php endif; ?> 
 		   <div class="form-buttons">
         <?php if($log): ?>
             <button class="button edbut" type="submit">Изменить</button>
