@@ -6,7 +6,9 @@ include ('database.php');
 
 session_start();
 
-$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
+    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+    || !empty($_POST['is_ajax']);
 
 // if ($is_ajax) {
 //     header('Content-Type: application/json; charset=UTF-8');
