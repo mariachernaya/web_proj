@@ -848,7 +848,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 
 
 <!-- <form method="post" class="form" id="mainForm">     -->
-<form  method="post" class="form">
+<form  method="post" class="form" id="ajaxForm">
 	<div id="form-anchor"></div>
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
@@ -1110,7 +1110,7 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
 </script> -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('mainForm');
+    const form = document.getElementById('ajaxForm');
     
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1118,6 +1118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitter = e.submitter?.name || '';
 
         try {
+		 formData.append('is_ajax', '1');
             const response = await fetch('index.php', {
                 method: 'POST',
                 body: formData,
