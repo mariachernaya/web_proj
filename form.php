@@ -846,17 +846,10 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
  <footer class="footer">
     <div class="container">
 
-<div id="credentials" style="display: none;">
-    <h3>Ваши данные для входа:</h3>
-    <p>Логин: <span id="generatedLogin"></span></p>
-    <p>Пароль: <span id="generatedPass"></span></p>
-</div>
 
-<div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
-<div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div>
-	<form method="post" class="form" id="mainForm">    
-<!-- <form  method="post" class="form">
-	<div id="form-anchor"></div> -->
+<form method="post" class="form" id="mainForm">    
+<!-- <form  method="post" class="form"> -->
+	<div id="form-anchor"></div>
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
