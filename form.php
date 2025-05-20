@@ -991,7 +991,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             form.querySelector('[name="number"]').value = data.values.number || '';
             form.querySelector('[name="email"]').value = data.values.email || '';
             form.querySelector('[name="date"]').value = data.values.date || '';
-            form.querySelector(`[name="radio"][value="${data.values.radio}"]`)?.checked = true;
+            form.querySelector(`[name="radio"][value="${data.values.radio}"]`).checked = true;
             form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
             form.querySelector('[name="check"]').checked = data.values.check || false;
           
