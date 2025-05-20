@@ -968,6 +968,9 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     </div>
 </footer>
 	<script>
+		if (window.location.hash === '#form-anchor') {
+    document.getElementById('form-anchor').scrollIntoView();
+}
 document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
