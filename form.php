@@ -857,17 +857,13 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 </div>
 <!-- <div class="mess" data-message="success"></div>
 <div class="mess mess_info" data-message="info"></div> -->
-// <div id="credentials" style="display: none;">
-//     <p>Логин: <span id="generatedLogin"></span></p>
-//     <p>Пароль: <span id="generatedPass"></span></p>
-// </div>
 <div id="credentials" style="display: none;">
     <h3>Ваши данные для входа:</h3>
     <p>Логин: <span id="generatedLogin"></span></p>
     <p>Пароль: <span id="generatedPass"></span></p>
 </div>
-      // <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
-      // <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div> 
+   /*    <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div> */
+  /*     <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div> */
       <div>
         <label> <input name="fio" class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>" value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> </label>
         
@@ -942,7 +938,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
           <div class="error" data-field="check"> <?php echo $messages['check']?> </div>
         </label>
       </div>
-<!--  <div class="form-buttons">
+ <div class="form-buttons">
     <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
         <button class="button" type="submit" name="logout_form">Выйти</button> 
@@ -950,16 +946,9 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
         <button class="button" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
     <?php endif; ?>
-</div> -->
-	<div class="form-buttons">
-    <?php if($log): ?>
-        <button class="button edbut" type="submit">Изменить</button>
-        <button class="button" type="submit" name="logout_form">Выйти</button> 
-    <?php else: ?>
-        <button class="button" type="submit">Отправить</button>
-        <a class="btnlike" href="#form-anchor" onclick="location.reload()">Обновить форму</a>
-    <?php endif; ?>
 </div>
+	
+
 <!-- 	
        <?php
           if($log) echo '<button class="button edbut" type="submit">Изменить</button>';
