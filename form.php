@@ -846,10 +846,17 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
  <footer class="footer">
     <div class="container">
 
+<div id="credentials" style="display: none;">
+    <h3>Ваши данные для входа:</h3>
+    <p>Логин: <span id="generatedLogin"></span></p>
+    <p>Пароль: <span id="generatedPass"></span></p>
+</div>
 
-	    
-<form  method="post" class="form">
-	<div id="form-anchor"></div>
+<div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
+<div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div>
+	<form method="post" class="form" id="mainForm">    
+<!-- <form  method="post" class="form">
+	<div id="form-anchor"></div> -->
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
@@ -938,14 +945,23 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
           <div class="error" data-field="check"> <?php echo $messages['check']?> </div>
         </label>
       </div>
- <div class="form-buttons">
+<!--  <div class="form-buttons">
     <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
         <button class="button" type="submit" name="logout_form">Выйти</button> 
     <?php else: ?>
         <button class="button" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
-    <?php endif; ?>
+    <?php endif; ?> -->
+		   <div class="form-buttons">
+        <?php if($log): ?>
+            <button class="button edbut" type="submit">Изменить</button>
+            <button class="button" type="submit" name="logout_form">Выйти</button> 
+        <?php else: ?>
+            <button class="button" type="submit">Отправить</button>
+            <a class="btnlike" href="login.php">Войти</a>
+        <?php endif; ?>
+    </div>
 </div>
 	
 
@@ -1117,12 +1133,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     const form = e.target;
     const formData = new FormData(form);
     
-    // Обработка множественного выбора языков
-    const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked'))
-                     .map(opt => opt.value);
-    formData.delete('language[]');
-    langs.forEach(lang => formData.append('language[]', lang));
-
+    // Собираем данные для AJAX-запроса
     try {
         const response = await fetch('index.php', {
             method: 'POST',
@@ -1131,15 +1142,15 @@ document.querySelector('form').addEventListener('submit', async (e) => {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         });
-        
         const data = await response.json();
 
         // Обработка выхода
         if (data.logout) {
             form.reset();
             document.querySelectorAll('.error').forEach(el => el.textContent = '');
-            document.querySelectorAll('.input').classList.remove('red');
+            document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
             document.getElementById('credentials').style.display = 'none';
+            window.location.reload();
             return;
         }
 
@@ -1153,6 +1164,8 @@ document.querySelector('form').addEventListener('submit', async (e) => {
             const errorElement = document.querySelector(`[data-field="${field}"]`);
             if (errorElement && data.errors[field]) {
                 errorElement.textContent = data.messages[field];
+                const input = form.querySelector(`[name="${field}"]`);
+                if (input) input.classList.add('red');
             }
         });
 
@@ -1165,9 +1178,16 @@ document.querySelector('form').addEventListener('submit', async (e) => {
                 document.getElementById('credentials').style.display = 'block';
             }
             
+            // Перенаправление к форме
+            if (data.log) {
+                window.location.hash = '#form-anchor';
+                window.scrollTo(0, document.documentElement.scrollHeight);
+            }
+
             // Обновить состояние кнопок
             document.querySelector('.edbut').style.display = data.log ? 'block' : 'none';
             document.querySelector('[name="logout_form"]').style.display = data.log ? 'block' : 'none';
+            document.querySelector('.btnlike').style.display = data.log ? 'none' : 'block';
         }
 
     } catch (error) {
