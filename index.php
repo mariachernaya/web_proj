@@ -30,8 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
-        header('Location: ./');
+	       if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode(['logout' => true]);
         exit();
+    }
+        header('Location: ./');
+	     exit();
     }
     function check_field($cook, $str, $flag)
     {
@@ -143,7 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'values' => $values,
         'languages' => $languages,
         'log' => $log,
-        'success' => !$error
+        'success' => !$error,
+	     'logout' => false
     ];
     echo json_encode($response);
     exit();
