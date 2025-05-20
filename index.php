@@ -2,11 +2,14 @@
 
 $db;
 include ('database.php');
-header("Content-Type: text/html; charset=UTF-8");
+// header("Content-Type: text/html; charset=UTF-8");
+
 session_start();
 
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-
+if ($is_ajax) {
+    header('Content-Type: application/json; charset=UTF-8');
+}
 $error = false;
 $log = !empty($_SESSION['login']);
 
@@ -80,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dbLangs->execute();
             $languages = $dbLangs->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            print ('Error : ' . $e->getMessage());
+            // print ('Error : ' . $e->getMessage());
             exit();
         }
         check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
@@ -125,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($languages as $row)
                     $stmt1->execute([$fid, $row['id']]);
             } catch (PDOException $e) {
-                print ('Error : ' . $e->getMessage());
+                // print ('Error : ' . $e->getMessage());
                 exit();
             }
             setcookie('fio_value', $fio, time() + 24 * 60 * 60 * 365);
@@ -141,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
    
     if ($is_ajax) {
-    header('Content-Type: application/json');
     $response = [
         'messages' => $messages,
         'errors' => $errors,
@@ -149,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'languages' => $languages,
         'log' => $log,
         'success' => !$error,
-	     'logout' => false
+	     // 'logout' => false
     ];
     echo json_encode($response);
     exit();
@@ -246,11 +248,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
         } catch (PDOException $e) {
-            print ('Error : ' . $e->getMessage());
+            // print ('Error : ' . $e->getMessage());
             exit();
         }
     }
-
-    include ('form.php');
+ if (!$is_ajax) {
+        include('form.php');
+    } else {
+   
+        echo json_encode([
+            'values' => $values,
+            'errors' => $errors,
+            'messages' => $messages,
+            'languages' => $languages,
+            'log' => $log
+        ]);
+        exit();
+    }
+    // include ('form.php');
 }
 ?>
