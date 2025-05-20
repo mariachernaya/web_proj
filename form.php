@@ -888,8 +888,11 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
             <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Мужской </span>
           </label>
           <label>
+ <div class="container-fluid row"> 
+		
             <input name="radio" class="ml-4" type="radio" value="W" <?php if($values['radio'] == 'W') echo 'checked'; ?>/>
             <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Женский </span>
+ </div>
           </label>
         </div>
         <div class="error" data-field="radio"> <?php echo $messages['radio']?> </div>
