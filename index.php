@@ -35,9 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
 
-   header('Location: ./');
-	     exit();
-    }
+ 
 	    
 	  if ($is_ajax) {
         header('Content-Type: application/json');
@@ -47,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
         exit();
     }
-     
+       header('Location: ./');
+	     exit();
+    }
     function check_field($cook, $str, $flag)
     {
         global $error;
