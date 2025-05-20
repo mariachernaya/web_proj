@@ -987,22 +987,21 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
             }
         });
         const data = await response.json();
-
-	     if (data.success) {
-            // Отображаем логин/пароль
-            if (data.generated) {
-                const infoDiv = document.querySelector('.mess_info');
-                infoDiv.innerHTML = `
-                    <p>Данные для входа:</p>
-                    <p>Логин: <strong>${data.generated.login}</strong></p>
-                    <p>Пароль: <strong>${data.generated.pass}</strong></p>
-                `;
-                infoDiv.style.display = 'block';
-            }
-
-            // Сброс формы для новых пользователей
-            if (!data.log) form.reset();
+  
+        if (data.success && data.generated) {
+            // Показываем блок с данными
+            document.getElementById('credentials').style.display = 'block';
+            
+            // Заполняем данные
+            document.getElementById('generatedLogin').textContent = data.generated.login;
+            document.getElementById('generatedPass').textContent = data.generated.pass;
+            
+            // Очищаем форму (если нужно)
+            if (!data.log) e.target.reset();
         }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
    // Обработка выхода
         if (data.logout) {
             form.reset();
