@@ -8,8 +8,13 @@ session_start();
 
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 if ($is_ajax) {
-    header('Content-Type: application/json; charset=UTF-8');
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit(); 
 }
+// if ($is_ajax) {
+//     header('Content-Type: application/json; charset=UTF-8');
+// }
 $error = false;
 $log = !empty($_SESSION['login']);
 
