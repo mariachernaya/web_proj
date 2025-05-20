@@ -852,9 +852,10 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
-
-      <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
-      <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div>
+<div class="mess" data-message="success"></div>
+<div class="mess mess_info" data-message="info"></div>
+<!--       <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
+      <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div> -->
       <div>
         <label> <input name="fio" class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>" value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> </label>
         
@@ -929,14 +930,22 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
           <div class="error" data-field="check"> <?php echo $messages['check']?> </div>
         </label>
       </div>
- 
-	
+ <div class="form-buttons">
+    <?php if($log): ?>
+        <button class="button edbut" type="submit">Изменить</button>
+        <button class="button" type="submit" name="logout_form">Выйти</button> 
+    <?php else: ?>
+        <button class="button" type="submit">Отправить</button>
+        <a class="btnlike" href="login.php">Войти</a>
+    <?php endif; ?>
+</div>
+<!-- 	
        <?php
           if($log) echo '<button class="button edbut" type="submit">Изменить</button>';
           else echo '<button class="button" type="submit">Отправить</button>';
           if($log) echo '<button class="button" type="submit" name="logout_form">Выйти</button>'; 
           else echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
-        ?>
+        ?> -->
     </form>
 
             
@@ -962,6 +971,11 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     formData.delete('language[]');
     langs.forEach(lang => formData.append('language[]', lang));
 
+const isLogout = e.submitter && e.submitter.name === 'logout_form';
+    if (isLogout) {
+        formData.append('logout_form', '1');
+    }
+	
     try {
         const response = await fetch('index.php', {
             method: 'POST',
@@ -971,11 +985,20 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             }
         });
         const data = await response.json();
-
+   // Обработка выхода
+        if (data.logout) {
+            form.reset();
+            document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+            document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+            document.querySelector('.edbut').style.display = 'none';
+            document.querySelector('[name="logout_form"]').style.display = 'none';
+            document.querySelector('.btnlike').style.display = 'inline-block';
+            return;
+        }
+	    
         document.querySelector('.mess').innerHTML = data.messages.success || '';
         document.querySelector('.mess_info').innerHTML = data.messages.info || '';
-
-        ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'].forEach(field => {
+  Object.keys(data.errors).forEach(field => {
             const errorElement = document.querySelector(`.error[data-field="${field}"]`);
             if (errorElement) {
                 errorElement.innerHTML = data.messages[field] || '';
@@ -985,16 +1008,46 @@ document.querySelector('form').addEventListener('submit', async function(e) {
                 input.classList.toggle('red', data.errors[field]);
             }
         });
+	    
+        // ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'].forEach(field => {
+        //     const errorElement = document.querySelector(`.error[data-field="${field}"]`);
+        //     if (errorElement) {
+        //         errorElement.innerHTML = data.messages[field] || '';
+        //     }
+        //     const input = form.querySelector(`[name="${field}"]`);
+        //     if (input) {
+        //         input.classList.toggle('red', data.errors[field]);
+        //     }
+        // });
 
-        if (data.success) {
-            form.querySelector('[name="fio"]').value = data.values.fio || '';
-            form.querySelector('[name="number"]').value = data.values.number || '';
-            form.querySelector('[name="email"]').value = data.values.email || '';
-            form.querySelector('[name="date"]').value = data.values.date || '';
-            form.querySelector(`[name="radio"][value="${data.values.radio}"]`).checked = true;
-            form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
-            form.querySelector('[name="check"]').checked = data.values.check || false;
-          
+        // if (data.success) {
+        //     form.querySelector('[name="fio"]').value = data.values.fio || '';
+        //     form.querySelector('[name="number"]').value = data.values.number || '';
+        //     form.querySelector('[name="email"]').value = data.values.email || '';
+        //     form.querySelector('[name="date"]').value = data.values.date || '';
+        //     form.querySelector(`[name="radio"][value="${data.values.radio}"]`).checked = true;
+        //     form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
+        //     form.querySelector('[name="check"]').checked = data.values.check || false;
+
+	      if (data.success) {
+            Object.keys(data.values).forEach(key => {
+                const elements = form.elements[key];
+                if (!elements) return;
+                
+                if (elements instanceof RadioNodeList) {
+                    elements.forEach(element => {
+                        element.checked = (element.value === data.values[key]);
+                    });
+                } else if (key === 'language') {
+                    // Обработка множественного выбора
+                    Array.from(elements.options).forEach(option => {
+                        option.selected = data.languages.includes(option.value);
+                    });
+                } else {
+                    elements.value = data.values[key] || '';
+                }
+            });
+        }
             const langSelect = form.querySelector('select[name="language[]"]');
             Array.from(langSelect.options).forEach(option => {
                 option.selected = data.languages.includes(option.value);
@@ -1025,7 +1078,8 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         }
     });
 }
-       
+
+	
     } catch (error) {
         
     }
