@@ -1058,7 +1058,7 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
           document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
           document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
             }
-        }
+        
 
         if (data.log) {
             form.querySelector('.edbut').style.display = 'inline-block';
