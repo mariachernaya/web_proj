@@ -1384,5 +1384,10 @@ footer {
         .active-form {
             display: block;
         }
-    
+    .edbut, [name="logout_form"] {
+    display: none;
+}
+.logged-in .edbut, .logged-in [name="logout_form"] {
+    display: inline-block;
+}
 
