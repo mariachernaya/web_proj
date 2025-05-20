@@ -1122,70 +1122,81 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
 });
 </script> -->
 <script>
-document.querySelector('form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('mainForm');
     
-    // Собираем данные для AJAX-запроса
-    try {
-        const response = await fetch('index.php', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const submitter = e.submitter?.name || '';
+
+        try {
+            const response = await fetch('index.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) throw new Error('Network error');
+            
+            const data = await response.json();
+
+            // Обработка выхода
+            if (data.logout) {
+                window.location.reload();
+                return;
             }
-        });
-        const data = await response.json();
 
-        // Обработка выхода
-        if (data.logout) {
-            form.reset();
-            document.querySelectorAll('.error').forEach(el => el.textContent = '');
-            document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-            document.getElementById('credentials').style.display = 'none';
-            window.location.reload();
-            return;
+            // Обновление интерфейса
+            updateFormUI(data);
+
+        } catch (error) {
+            console.error('Ошибка:', error);
         }
+    });
 
-        // Обновление сообщений
+    function updateFormUI(data) {
+        // Очистка ошибок
+        document.querySelectorAll('.error').forEach(el => el.textContent = '');
+        document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+
+        // Отображение сообщений
         document.querySelector('.mess').textContent = data.messages.success || '';
         document.querySelector('.mess_info').innerHTML = data.messages.info || '';
 
-        // Обновление ошибок
-        document.querySelectorAll('.error').forEach(el => el.textContent = '');
-        Object.keys(data.errors).forEach(field => {
-            const errorElement = document.querySelector(`[data-field="${field}"]`);
-            if (errorElement && data.errors[field]) {
-                errorElement.textContent = data.messages[field];
-                const input = form.querySelector(`[name="${field}"]`);
-                if (input) input.classList.add('red');
-            }
-        });
-
-        // Обновление значений полей
-        if (data.success) {
-            // Показать логин/пароль
-            if (data.generated) {
-                document.getElementById('generatedLogin').textContent = data.generated.login;
-                document.getElementById('generatedPass').textContent = data.generated.pass;
-                document.getElementById('credentials').style.display = 'block';
-            }
-            
-            // Перенаправление к форме
-            if (data.log) {
-                window.location.hash = '#form-anchor';
-                window.scrollTo(0, document.documentElement.scrollHeight);
-            }
-
-            // Обновить состояние кнопок
-            document.querySelector('.edbut').style.display = data.log ? 'block' : 'none';
-            document.querySelector('[name="logout_form"]').style.display = data.log ? 'block' : 'none';
-            document.querySelector('.btnlike').style.display = data.log ? 'none' : 'block';
+        // Обновление полей
+        if (data.values) {
+            Object.keys(data.values).forEach(key => {
+                const element = form.elements[key];
+                if (!element) return;
+                
+                if (element.type === 'radio') {
+                    element.checked = (element.value === data.values[key]);
+                } else if (element.type === 'checkbox') {
+                    element.checked = Boolean(data.values[key]);
+                } else if (element.tagName === 'SELECT') {
+                    Array.from(element.options).forEach(option => {
+                        option.selected = data.languages.includes(option.value);
+                    });
+                } else {
+                    element.value = data.values[key] || '';
+                }
+            });
         }
 
-    } catch (error) {
-        console.error('Ошибка:', error);
+        // Отображение логина/пароля
+        if (data.generated) {
+            document.getElementById('generatedLogin').textContent = data.generated.login;
+            document.getElementById('generatedPass').textContent = data.generated.pass;
+            document.getElementById('credentials').style.display = 'block';
+        }
+
+        // Обновление состояния кнопок
+        document.querySelector('.edbut').style.display = data.log ? 'block' : 'none';
+        document.querySelector('[name="logout_form"]').style.display = data.log ? 'block' : 'none';
+        document.querySelector('.btnlike').style.display = data.log ? 'none' : 'block';
     }
 });
 </script>
