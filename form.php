@@ -856,8 +856,12 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 </div>
 <!-- <div class="mess" data-message="success"></div>
 <div class="mess mess_info" data-message="info"></div> -->
-      <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
-      <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div> 
+<div id="credentials" style="display: none;">
+    <p>Логин: <span id="generatedLogin"></span></p>
+    <p>Пароль: <span id="generatedPass"></span></p>
+</div>
+      // <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
+      // <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div> 
       <div>
         <label> <input name="fio" class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>" value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> </label>
         
@@ -964,7 +968,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     </div>
 </footer>
 	<script>
-document.querySelector('form').addEventListener('submit', async function(e) {
+document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
@@ -988,14 +992,12 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
         });
         const data = await response.json();
   
-        if (data.success && data.generated) {
-            // Показываем блок с данными
-            document.getElementById('credentials').style.display = 'block';
-            
+        if (data.success) {
+            if (data.generated){
             // Заполняем данные
             document.getElementById('generatedLogin').textContent = data.generated.login;
             document.getElementById('generatedPass').textContent = data.generated.pass;
-            
+               document.getElementById('credentials').style.display = 'block';
             // Очищаем форму (если нужно)
             if (!data.log) e.target.reset();
         }
