@@ -849,7 +849,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 
 
 	    
-<form action="" method="post" class="form" id="feedback-form">
+<form action="" method="post" class="form">
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
@@ -1029,64 +1029,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     }
 });
 </script>
-<script>
-document.getElementById('feedback-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const form = e.target;
-    const formData = new FormData(form);
-    
-    // Добавляем заголовок для идентификации AJAX запроса
-    formData.append('is_ajax', '1');
-    
-    fetch('index.php', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Обработка ответа от сервера
-        if (data.success) {
-            // Успешная отправка
-            document.querySelector('.mess').innerHTML = data.messages.success || '';
-            document.querySelector('.mess_info').innerHTML = data.messages.info || '';
-            
-            // Очистка ошибок
-            document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-            document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-            
-            // Если это выход из системы
-            if (data.logout) {
-                form.reset();
-            }
-        } else {
-            // Вывод ошибок
-            for (const field in data.errors) {
-                const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-                const inputElement = form.querySelector(`[name="${field}"]`);
-                
-                if (errorElement) {
-                    errorElement.innerHTML = data.messages[field] || '';
-                }
-                
-                if (inputElement) {
-                    if (data.errors[field]) {
-                        inputElement.classList.add('red');
-                    } else {
-                        inputElement.classList.remove('red');
-                    }
-                }
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-    });
-});
-</script>
+
 </body>
 </html> 
 
