@@ -971,7 +971,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 
     </div>
 </footer>
-	<script>
+<!-- 	<script>
 		if (window.location.hash === '#form-anchor') {
     document.getElementById('form-anchor').scrollIntoView();
 }
@@ -1110,8 +1110,71 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
         
     }
 });
-</script>
+</script> -->
+<script>
+document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    // Обработка множественного выбора языков
+    const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked'))
+                     .map(opt => opt.value);
+    formData.delete('language[]');
+    langs.forEach(lang => formData.append('language[]', lang));
 
+    try {
+        const response = await fetch('index.php', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+
+        // Обработка выхода
+        if (data.logout) {
+            form.reset();
+            document.querySelectorAll('.error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.input').classList.remove('red');
+            document.getElementById('credentials').style.display = 'none';
+            return;
+        }
+
+        // Обновление сообщений
+        document.querySelector('.mess').textContent = data.messages.success || '';
+        document.querySelector('.mess_info').innerHTML = data.messages.info || '';
+
+        // Обновление ошибок
+        document.querySelectorAll('.error').forEach(el => el.textContent = '');
+        Object.keys(data.errors).forEach(field => {
+            const errorElement = document.querySelector(`[data-field="${field}"]`);
+            if (errorElement && data.errors[field]) {
+                errorElement.textContent = data.messages[field];
+            }
+        });
+
+        // Обновление значений полей
+        if (data.success) {
+            // Показать логин/пароль
+            if (data.generated) {
+                document.getElementById('generatedLogin').textContent = data.generated.login;
+                document.getElementById('generatedPass').textContent = data.generated.pass;
+                document.getElementById('credentials').style.display = 'block';
+            }
+            
+            // Обновить состояние кнопок
+            document.querySelector('.edbut').style.display = data.log ? 'block' : 'none';
+            document.querySelector('[name="logout_form"]').style.display = data.log ? 'block' : 'none';
+        }
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+});
+</script>
 </body>
 </html> 
 
