@@ -849,6 +849,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 
 	    
 <form  method="post" class="form">
+	<div id="form-anchor"></div>
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
@@ -856,7 +857,12 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 </div>
 <!-- <div class="mess" data-message="success"></div>
 <div class="mess mess_info" data-message="info"></div> -->
+// <div id="credentials" style="display: none;">
+//     <p>Логин: <span id="generatedLogin"></span></p>
+//     <p>Пароль: <span id="generatedPass"></span></p>
+// </div>
 <div id="credentials" style="display: none;">
+    <h3>Ваши данные для входа:</h3>
     <p>Логин: <span id="generatedLogin"></span></p>
     <p>Пароль: <span id="generatedPass"></span></p>
 </div>
@@ -936,13 +942,22 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
           <div class="error" data-field="check"> <?php echo $messages['check']?> </div>
         </label>
       </div>
- <div class="form-buttons">
+<!--  <div class="form-buttons">
     <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
         <button class="button" type="submit" name="logout_form">Выйти</button> 
     <?php else: ?>
         <button class="button" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
+    <?php endif; ?>
+</div> -->
+	<div class="form-buttons">
+    <?php if($log): ?>
+        <button class="button edbut" type="submit">Изменить</button>
+        <button class="button" type="submit" name="logout_form">Выйти</button> 
+    <?php else: ?>
+        <button class="button" type="submit">Отправить</button>
+        <a class="btnlike" href="#form-anchor" onclick="location.reload()">Обновить форму</a>
     <?php endif; ?>
 </div>
 <!-- 	
