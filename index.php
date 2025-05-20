@@ -35,8 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
 	    
-	       if ($is_ajax) {
-        echo json_encode(['logout' => true]);
+	  if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'logout' => true,
+            'clear_fields' => true
+        ]);
         exit();
     }
         header('Location: ./');
@@ -101,6 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
         if ($log) {
+        $response['generated'] = [
+            'login' => $login,
+            'pass' => $pass
+        ];
+   
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
 
