@@ -22,7 +22,6 @@
 	<script src="slick/slick.min.js" defer></script>
 	<script src="project.js" defer></script>
 	<?php
-// В начале файла добавляем проверку AJAX запроса
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 ?>
 </head>
@@ -1002,7 +1001,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
             });
           
           if (data.log === false) {
-          form.reset(); // Сброс всех полей формы
+          form.reset();
           document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
           document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
             }
