@@ -1027,7 +1027,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
 }
        
     } catch (error) {
-        console.error('Ошибка:', error);
+        
     }
 });
 </script>
