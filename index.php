@@ -139,6 +139,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
             setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
+		   $response['generated'] = [
+            'login' => $login,
+            'pass' => $pass
+        ];
         }
         setcookie('save', '1');
     }
