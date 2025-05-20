@@ -938,8 +938,8 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
           <div class="error" data-field="check"> <?php echo $messages['check']?> </div>
         </label>
       </div>
-<!--  <div class="form-buttons">
-    <?php if($log): ?>
+<div class="form-buttons">
+<!--     <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
         <button class="button" type="submit" name="logout_form">Выйти</button> 
     <?php else: ?>
@@ -954,17 +954,18 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
             <button class="button" type="submit">Отправить</button>
             <a class="btnlike" href="login.php">Войти</a>
         <?php endif; ?>
-    </div>
-</div>
-	
-
-<!-- 	
-       <?php
+    </div> -->  
+<?php
           if($log) echo '<button class="button edbut" type="submit">Изменить</button>';
           else echo '<button class="button" type="submit">Отправить</button>';
           if($log) echo '<button class="button" type="submit" name="logout_form">Выйти</button>'; 
           else echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
-        ?> -->
+        ?>
+</div>
+	
+
+	
+     
     </form>
 
             
