@@ -847,16 +847,16 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     <div class="container">
 
 
-<form method="post" class="form" id="mainForm">    
-<!-- <form  method="post" class="form"> -->
+<!-- <form method="post" class="form" id="mainForm">     -->
+<form  method="post" class="form">
 	<div id="form-anchor"></div>
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
       </div>
 	<div class="mess_info" style="display: none;">
 </div>
-<!-- <div class="mess" data-message="success"></div>
-<div class="mess mess_info" data-message="info"></div> -->
+<div class="mess" data-message="success"></div>
+<div class="mess mess_info" data-message="info"></div>
 <div id="credentials" style="display: none;">
     <h3>Ваши данные для входа:</h3>
     <p>Логин: <span id="generatedLogin"></span></p>
@@ -939,29 +939,16 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
         </label>
       </div>
 <div class="form-buttons">
-<!--     <?php if($log): ?>
+    <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
         <button class="button" type="submit" name="logout_form">Выйти</button> 
     <?php else: ?>
         <button class="button" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
     <?php endif; ?> 
-		   <div class="form-buttons">
-        <?php if($log): ?>
-            <button class="button edbut" type="submit">Изменить</button>
-            <button class="button" type="submit" name="logout_form">Выйти</button> 
-        <?php else: ?>
-            <button class="button" type="submit">Отправить</button>
-            <a class="btnlike" href="login.php">Войти</a>
-        <?php endif; ?>
-    </div> -->  
-<?php
-          if($log) echo '<button class="button edbut" type="submit">Изменить</button>';
-          else echo '<button class="button" type="submit">Отправить</button>';
-          if($log) echo '<button class="button" type="submit" name="logout_form">Выйти</button>'; 
-          else echo '<a class="btnlike" href="login.php" name="logout_form">Войти</a>';
-        ?>
-</div>
+		
+    </div>  
+
 	
 
 	
