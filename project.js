@@ -143,46 +143,54 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
         formData.append('logout_form', '1');
     }
 	
-    try {
-        const response = await fetch('index.php', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-        const data = await response.json();
-  
-        if (data.success) {
-    // Показываем сообщения
-    document.querySelector('.mess').innerHTML = data.messages.success || '';
-    document.querySelector('.mess_info').innerHTML = data.messages.info || '';
-    
-    // Обновляем блок с учетными данными
+   try {
+    const response = await fetch('index.php', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    });
+    const data = await response.json();
+
+    // Очистка предыдущих сообщений
+    document.querySelector('.mess').innerHTML = '';
+    document.querySelector('.mess_info').innerHTML = '';
+
+    // Обработка выхода
+    if (data.logout) {
+        form.reset();
+        document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+        document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
+        document.querySelector('.edbut').style.display = 'none';
+        document.querySelector('[name="logout_form"]').style.display = 'none';
+        document.querySelector('.btnlike').style.display = 'inline-block';
+        document.getElementById('credentials').style.display = 'none';
+        return;
+    }
+
+    // Показ сообщений
+    if (data.messages) {
+        if (data.messages.success) {
+            document.querySelector('.mess').innerHTML = data.messages.success;
+            document.querySelector('.mess').style.display = 'block';
+        }
+        if (data.messages.info) {
+            document.querySelector('.mess_info').innerHTML = data.messages.info;
+            document.querySelector('.mess_info').style.display = 'block';
+        }
+    }
+
+    // Показ сгенерированных данных
     if (data.generated) {
         document.getElementById('generatedLogin').textContent = data.generated.login;
         document.getElementById('generatedPass').textContent = data.generated.pass;
         document.getElementById('credentials').style.display = 'block';
     }
-    
-    // Очистка формы только для новых пользователей
-    if (!data.log) form.reset();
-}
-  
-   // Обработка выхода
-        if (data.logout) {
-            form.reset();
-            document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-            document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-            document.querySelector('.edbut').style.display = 'none';
-            document.querySelector('[name="logout_form"]').style.display = 'none';
-            document.querySelector('.btnlike').style.display = 'inline-block';
-            return;
-        }
-	    
-        document.querySelector('.mess').innerHTML = data.messages.success || '';
-        document.querySelector('.mess_info').innerHTML = data.messages.info || '';
-  Object.keys(data.errors).forEach(field => {
+
+    // Обработка ошибок
+    if (data.errors) {
+        Object.keys(data.errors).forEach(field => {
             const errorElement = document.querySelector(`.error[data-field="${field}"]`);
             if (errorElement) {
                 errorElement.innerHTML = data.messages[field] || '';
@@ -192,63 +200,42 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
                 input.classList.toggle('red', data.errors[field]);
             }
         });
-	    
-    
-
-	      if (data.success) {
-            Object.keys(data.values).forEach(key => {
-                const elements = form.elements[key];
-                if (!elements) return;
-                
-                if (elements instanceof RadioNodeList) {
-                    elements.forEach(element => {
-                        element.checked = (element.value === data.values[key]);
-                    });
-                } else if (key === 'language') {
-                    // Обработка множественного выбора
-                    Array.from(elements.options).forEach(option => {
-                        option.selected = data.languages.includes(option.value);
-                    });
-                } else {
-                    elements.value = data.values[key] || '';
-                }
-            });
-        }
-            const langSelect = form.querySelector('select[name="language[]"]');
-            Array.from(langSelect.options).forEach(option => {
-                option.selected = data.languages.includes(option.value);
-            });
-          
-          if (data.log === false) {
-          form.reset();
-          document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
-          document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-            }
-        
-
-        if (data.log) {
-            form.querySelector('.edbut').style.display = 'inline-block';
-            form.querySelector('[name="logout_form"]').style.display = 'inline-block';
-            form.querySelector('.btnlike').style.display = 'none';
-        } else {
-            form.querySelector('.edbut').style.display = 'none';
-            form.querySelector('[name="logout_form"]').style.display = 'none';
-            form.querySelector('.btnlike').style.display = 'inline-block';
-        }
-      if (formData.get('logout_form') !== null) {
-    document.querySelectorAll('input, select, textarea').forEach(element => {
-        if (element.type !== 'submit' && element.type !== 'button') {
-            element.value = '';
-            element.checked = false;
-            element.selected = false;
-        }
-    });
-}
-
-	
-    } catch (error) {
-        
     }
+
+    // Обновление значений формы
+    if (data.values) {
+        Object.keys(data.values).forEach(key => {
+            const elements = form.elements[key];
+            if (!elements) return;
+            
+            if (elements instanceof RadioNodeList) {
+                elements.forEach(element => {
+                    element.checked = (element.value === data.values[key]);
+                });
+            } else if (key === 'language[]') {
+                Array.from(elements.options).forEach(option => {
+                    option.selected = data.languages.includes(option.value);
+                });
+            } else {
+                elements.value = data.values[key] || '';
+            }
+        });
+    }
+
+    // Обновление состояния кнопок
+    if (data.log) {
+        form.querySelector('.edbut').style.display = 'inline-block';
+        form.querySelector('[name="logout_form"]').style.display = 'inline-block';
+        form.querySelector('.btnlike').style.display = 'none';
+    } else {
+        form.querySelector('.edbut').style.display = 'none';
+        form.querySelector('[name="logout_form"]').style.display = 'none';
+        form.querySelector('.btnlike').style.display = 'inline-block';
+    }
+
+} catch (error) {
+   
+}
 });
 // После обработки данных
 document.querySelectorAll('.mess').forEach(el => {
