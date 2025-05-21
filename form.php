@@ -968,7 +968,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 
     </div>
 </footer>
-<!-- 	<script>
+	<script>
 		if (window.location.hash === '#form-anchor') {
     document.getElementById('form-anchor').scrollIntoView();
 }
@@ -1107,8 +1107,8 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
         
     }
 });
-</script> -->
-<script>
+</script>
+<!-- <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('ajaxForm');
     
@@ -1187,7 +1187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.btnlike').style.display = data.log ? 'none' : 'block';
     }
 });
-</script>
+</script> -->
 </body>
 </html> 
 
