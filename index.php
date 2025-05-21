@@ -108,11 +108,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
         if ($log) {
-        $response['generated'] = [
-            'login' => $login,
-            'pass' => $pass
-        ];
-   
+        // $response['generated'] = [
+        //     'login' => $login,
+        //     'pass' => $pass
+        // ];
+   	$response['generated'] = [
+    'login' => $_SESSION['login'],
+    'pass' => $_SESSION['pass']
+	];
+		setcookie('login', $_SESSION['login'], time() + 30 * 24 * 60 * 60);
+setcookie('pass', $_SESSION['pass'], time() + 30 * 24 * 60 * 60);
+		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
 
@@ -152,10 +158,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
             setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
-		   $response['generated'] = [
-            'login' => $login,
-            'pass' => $pass
-        ];
+		   // $response['generated'] = [
+     //        'login' => $login,
+     //        'pass' => $pass
+     //    ];
+		   	$response['generated'] = [
+    'login' => $_SESSION['login'],
+    'pass' => $_SESSION['pass']
+	];
+		echo json_encode($response);
         }
         setcookie('save', '1');
     }
