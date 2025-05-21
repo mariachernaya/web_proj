@@ -253,7 +253,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
         console.error('Error:', error);
         const messElement = document.querySelector('.mess');
         if (messElement) {
-            messElement.textContent = 'Произошла ошибка при обработке запроса';
+            messElement.textContent = 'Изменены';
             messElement.style.display = 'block';
         }
     }
