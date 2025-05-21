@@ -126,17 +126,22 @@ $(".b1").on("click", function () {
 
 /*Footer*/
 if (window.location.hash === '#form-anchor') {
-    document.getElementById('form-anchor').scrollIntoView();
+    const anchor = document.getElementById('form-anchor');
+    if (anchor) anchor.scrollIntoView();
 }
+
 document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     
     // Подготовка данных языка
-    const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked')).map(opt => opt.value);
-    formData.delete('language[]');
-    langs.forEach(lang => formData.append('language[]', lang));
+    const langSelect = form.querySelector('select[name="language[]"]');
+    if (langSelect) {
+        const langs = Array.from(langSelect.selectedOptions).map(opt => opt.value);
+        formData.delete('language[]');
+        langs.forEach(lang => formData.append('language[]', lang));
+    }
 
     const isLogout = e.submitter && e.submitter.name === 'logout_form';
     if (isLogout) {
@@ -152,79 +157,115 @@ document.querySelector('form').addEventListener('submit', async (e) => {
             }
         });
 
-        // Проверка типа содержимого
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new TypeError("Ожидался JSON-ответ, получен: " + contentType);
+        // Проверка ответа
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Failed to parse JSON:", text);
+            throw new Error("Invalid JSON response");
         }
 
-        const data = await response.json();
-        console.log("Получен ответ:", data); // Для отладки
+        console.log("Server response:", data);
 
         // Очистка предыдущих сообщений и ошибок
-        document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+        document.querySelectorAll('.error').forEach(el => el.textContent = '');
         document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-        document.querySelector('.mess').innerHTML = '';
-        document.querySelector('.mess_info').innerHTML = '';
+        document.querySelectorAll('.mess').forEach(el => {
+            el.textContent = '';
+            el.style.display = 'none';
+        });
 
         // Обработка выхода
         if (data.logout) {
             form.reset();
-            document.querySelector('.edbut').style.display = 'none';
-            document.querySelector('[name="logout_form"]').style.display = 'none';
-            document.querySelector('.btnlike').style.display = 'inline-block';
-            document.getElementById('credentials').style.display = 'none';
+            updateFormButtons(false);
+            const credentials = document.getElementById('credentials');
+            if (credentials) credentials.style.display = 'none';
+            
+            // Показываем сообщение о выходе
+            if (data.messages && data.messages.success) {
+                const messElement = document.querySelector('.mess');
+                if (messElement) {
+                    messElement.textContent = data.messages.success;
+                    messElement.style.display = 'block';
+                }
+            }
             return;
         }
 
         // Показ сообщений
         if (data.messages) {
             if (data.messages.success) {
-                document.querySelector('.mess').innerHTML = data.messages.success;
+                const messElement = document.querySelector('.mess');
+                if (messElement) {
+                    messElement.innerHTML = data.messages.success;
+                    messElement.style.display = 'block';
+                }
             }
             if (data.messages.info) {
-                document.querySelector('.mess_info').innerHTML = data.messages.info;
+                const messInfoElement = document.querySelector('.mess_info');
+                if (messInfoElement) {
+                    messInfoElement.innerHTML = data.messages.info;
+                    messInfoElement.style.display = 'block';
+                }
             }
         }
 
         // Показ ошибок
         if (data.errors) {
-            Object.keys(data.errors).forEach(field => {
+            Object.entries(data.errors).forEach(([field, hasError]) => {
                 const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-                if (errorElement) {
-                    errorElement.innerHTML = data.messages[field] || '';
-                }
                 const input = form.querySelector(`[name="${field}"]`);
+                
+                if (errorElement && data.messages && data.messages[field]) {
+                    errorElement.textContent = data.messages[field];
+                }
+                
                 if (input) {
-                    input.classList.toggle('red', data.errors[field]);
+                    if (hasError) {
+                        input.classList.add('red');
+                    } else {
+                        input.classList.remove('red');
+                    }
                 }
             });
         }
 
         // Показ сгенерированных данных
         if (data.generated) {
-            document.getElementById('generatedLogin').textContent = data.generated.login;
-            document.getElementById('generatedPass').textContent = data.generated.pass;
-            document.getElementById('credentials').style.display = 'block';
+            const loginElement = document.getElementById('generatedLogin');
+            const passElement = document.getElementById('generatedPass');
+            const credentialsElement = document.getElementById('credentials');
+            
+            if (loginElement) loginElement.textContent = data.generated.login;
+            if (passElement) passElement.textContent = data.generated.pass;
+            if (credentialsElement) credentialsElement.style.display = 'block';
         }
 
         // Обновление состояния формы
-        if (data.log) {
-            document.querySelector('.edbut').style.display = 'inline-block';
-            document.querySelector('[name="logout_form"]').style.display = 'inline-block';
-            document.querySelector('.btnlike').style.display = 'none';
-        } else {
-            document.querySelector('.edbut').style.display = 'none';
-            document.querySelector('[name="logout_form"]').style.display = 'none';
-            document.querySelector('.btnlike').style.display = 'inline-block';
-        }
+        updateFormButtons(data.log);
 
     } catch (error) {
-        
-        //alert('Произошла ошибка при обработке запроса: ' + error.message);
+        console.error('Error:', error);
+        const messElement = document.querySelector('.mess');
+        if (messElement) {
+            messElement.textContent = 'Произошла ошибка при обработке запроса';
+            messElement.style.display = 'block';
+        }
     }
 });
-// После обработки данных
-document.querySelectorAll('.mess').forEach(el => {
-    el.style.display = 'block';
-});
+
+// Функция для обновления состояния кнопок
+function updateFormButtons(isLoggedIn) {
+    const edbut = document.querySelector('.edbut');
+    const logoutBtn = document.querySelector('[name="logout_form"]');
+    const btnlike = document.querySelector('.btnlike');
+    
+    if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block';
+}
