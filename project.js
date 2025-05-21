@@ -133,118 +133,97 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
-  
+    
+    // Подготовка данных языка
     const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked')).map(opt => opt.value);
     formData.delete('language[]');
     langs.forEach(lang => formData.append('language[]', lang));
 
-const isLogout = e.submitter && e.submitter.name === 'logout_form';
+    const isLogout = e.submitter && e.submitter.name === 'logout_form';
     if (isLogout) {
         formData.append('logout_form', '1');
     }
-	
-   try {
-    const response = await fetch('index.php', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+
+    try {
+        const response = await fetch('index.php', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        // Проверка типа содержимого
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new TypeError("Ожидался JSON-ответ, получен: " + contentType);
         }
-    });
-    const data = await response.json();
 
-// Проверяем, что данные существуют
-if (!data) {
-    throw new Error("Пустой ответ от сервера");
-}
+        const data = await response.json();
+        console.log("Получен ответ:", data); // Для отладки
 
-// Проверяем обязательные поля
-if (data.messages === undefined || data.errors === undefined) {
-    console.warn("Ответ сервера не содержит ожидаемых данных", data);
-}
-    // Очистка предыдущих сообщений
-    document.querySelector('.mess').innerHTML = '';
-    document.querySelector('.mess_info').innerHTML = '';
-
-    // Обработка выхода
-    if (data.logout) {
-        form.reset();
+        // Очистка предыдущих сообщений и ошибок
         document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
         document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-        document.querySelector('.edbut').style.display = 'none';
-        document.querySelector('[name="logout_form"]').style.display = 'none';
-        document.querySelector('.btnlike').style.display = 'inline-block';
-        document.getElementById('credentials').style.display = 'none';
-        return;
-    }
+        document.querySelector('.mess').innerHTML = '';
+        document.querySelector('.mess_info').innerHTML = '';
 
-    // Показ сообщений
-    if (data.messages) {
-        if (data.messages.success) {
-            document.querySelector('.mess').innerHTML = data.messages.success;
-            document.querySelector('.mess').style.display = 'block';
+        // Обработка выхода
+        if (data.logout) {
+            form.reset();
+            document.querySelector('.edbut').style.display = 'none';
+            document.querySelector('[name="logout_form"]').style.display = 'none';
+            document.querySelector('.btnlike').style.display = 'inline-block';
+            document.getElementById('credentials').style.display = 'none';
+            return;
         }
-        if (data.messages.info) {
-            document.querySelector('.mess_info').innerHTML = data.messages.info;
-            document.querySelector('.mess_info').style.display = 'block';
+
+        // Показ сообщений
+        if (data.messages) {
+            if (data.messages.success) {
+                document.querySelector('.mess').innerHTML = data.messages.success;
+            }
+            if (data.messages.info) {
+                document.querySelector('.mess_info').innerHTML = data.messages.info;
+            }
         }
-    }
 
-    // Показ сгенерированных данных
-    if (data.generated) {
-        document.getElementById('generatedLogin').textContent = data.generated.login;
-        document.getElementById('generatedPass').textContent = data.generated.pass;
-        document.getElementById('credentials').style.display = 'block';
-    }
+        // Показ ошибок
+        if (data.errors) {
+            Object.keys(data.errors).forEach(field => {
+                const errorElement = document.querySelector(`.error[data-field="${field}"]`);
+                if (errorElement) {
+                    errorElement.innerHTML = data.messages[field] || '';
+                }
+                const input = form.querySelector(`[name="${field}"]`);
+                if (input) {
+                    input.classList.toggle('red', data.errors[field]);
+                }
+            });
+        }
 
-    // Обработка ошибок
-    if (data.errors) {
-        Object.keys(data.errors).forEach(field => {
-            const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-            if (errorElement) {
-                errorElement.innerHTML = data.messages[field] || '';
-            }
-            const input = form.querySelector(`[name="${field}"]`);
-            if (input) {
-                input.classList.toggle('red', data.errors[field]);
-            }
-        });
-    }
+        // Показ сгенерированных данных
+        if (data.generated) {
+            document.getElementById('generatedLogin').textContent = data.generated.login;
+            document.getElementById('generatedPass').textContent = data.generated.pass;
+            document.getElementById('credentials').style.display = 'block';
+        }
 
-    // Обновление значений формы
-    if (data.values) {
-        Object.keys(data.values).forEach(key => {
-            const elements = form.elements[key];
-            if (!elements) return;
-            
-            if (elements instanceof RadioNodeList) {
-                elements.forEach(element => {
-                    element.checked = (element.value === data.values[key]);
-                });
-            } else if (key === 'language[]') {
-                Array.from(elements.options).forEach(option => {
-                    option.selected = data.languages.includes(option.value);
-                });
-            } else {
-                elements.value = data.values[key] || '';
-            }
-        });
-    }
+        // Обновление состояния формы
+        if (data.log) {
+            document.querySelector('.edbut').style.display = 'inline-block';
+            document.querySelector('[name="logout_form"]').style.display = 'inline-block';
+            document.querySelector('.btnlike').style.display = 'none';
+        } else {
+            document.querySelector('.edbut').style.display = 'none';
+            document.querySelector('[name="logout_form"]').style.display = 'none';
+            document.querySelector('.btnlike').style.display = 'inline-block';
+        }
 
-    // Обновление состояния кнопок
-    if (data.log) {
-        form.querySelector('.edbut').style.display = 'inline-block';
-        form.querySelector('[name="logout_form"]').style.display = 'inline-block';
-        form.querySelector('.btnlike').style.display = 'none';
-    } else {
-        form.querySelector('.edbut').style.display = 'none';
-        form.querySelector('[name="logout_form"]').style.display = 'none';
-        form.querySelector('.btnlike').style.display = 'inline-block';
+    } catch (error) {
+        
+        alert('Произошла ошибка при обработке запроса: ' + error.message);
     }
-
-} catch (error) {
-   
-}
 });
 // После обработки данных
 document.querySelectorAll('.mess').forEach(el => {
