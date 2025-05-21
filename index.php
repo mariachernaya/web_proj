@@ -1,8 +1,15 @@
 <?php
-
+ob_start();
 $db;
 include ('database.php');
 session_start();
+
+$messages = ['success' => '', 'info' => ''];
+$errors = [];
+$values = [];
+$languages = [];
+$log = !empty($_SESSION['login']);
+$error = false;
 
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
@@ -91,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dbLangs->execute();
             $languages = $dbLangs->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            // print ('Error : ' . $e->getMessage());
             exit();
         }
         check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
@@ -108,13 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
         if ($log) {
-
-	
     $response = [
         'messages' => [
             'success' => 'Спасибо, результаты изменены.',
         ],
-       
         'errors' => $errors,
         'values' => $values,
         'languages' => $languages,
@@ -133,11 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             foreach ($languages as $row)
                 $stmt1->execute([$_SESSION['form_id'], $row['id']]);
         } else {
-            $login = uniqid();//генерация рандом значения
+            $login = uniqid();
             $pass = uniqid();
             setcookie('login', $login);
             setcookie('pass', $pass);
-            $mpass = md5($pass);//хеш
+            $mpass = md5($pass);
             try {
                 $stmt = $db->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
                 $stmt->execute([$login, $mpass]);
@@ -151,7 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($languages as $row)
                     $stmt1->execute([$fid, $row['id']]);
             } catch (PDOException $e) {
-                // print ('Error : ' . $e->getMessage());
                 exit();
             }
             setcookie('fio_value', $fio, time() + 24 * 60 * 60 * 365);
@@ -183,7 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ];
     echo json_encode($response);
     exit();
-
         }
         setcookie('save', '1');
     }
@@ -196,7 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'languages' => $languages,
         'log' => $log,
         'success' => !$error,
-	     // 'logout' => false
     ];
     echo json_encode($response);
     exit();
@@ -297,19 +297,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
     }
- if (!$is_ajax) {
-        include('form.php');
-    } else {
-   
-        echo json_encode([
-            'values' => $values,
-            'errors' => $errors,
-            'messages' => $messages,
-            'languages' => $languages,
-            'log' => $log
-        ]);
-        exit();
+
+	if ($is_ajax) {
+    ob_end_clean();
+    header('Content-Type: application/json');
+    
+    $response = [
+        'messages' => $messages,
+        'errors' => $errors,
+        'values' => $values,
+        'languages' => $languages,
+        'log' => $log,
+        'success' => !$error
+    ];
+    
+    if (!$error && isset($generated)) {
+        $response['generated'] = $generated;
     }
-    // include ('form.php');
-}
-?>
+    echo json_encode($response);
+    exit();
+} else  include('form.php');
+}?>
