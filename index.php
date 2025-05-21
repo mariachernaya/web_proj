@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit();
 } else {
-    footer('Location: index.php');
+    header('Location: #form-anchor');
     exit();
 }
 } else {
