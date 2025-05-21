@@ -179,7 +179,7 @@ document.querySelector('form')?.addEventListener('submit', async (e) => {
         if (data.logout) {
             form.reset();
             toggleFormButtons(false);
-            document.getElementById('credentials')?.style.display = 'none';
+            //document.getElementById('credentials')?.style.display = 'none';
             return;
         }
 
