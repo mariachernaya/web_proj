@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
         exit();
     }
-       header('Location: ./');
+       footer('Location: ./');
 	     exit();
     }
     function check_field($cook, $str, $flag)
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit();
 } else {
-    header('Location: index.php');
+    footer('Location: index.php');
     exit();
 }
 } else {
