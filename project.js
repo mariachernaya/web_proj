@@ -154,15 +154,20 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
         const data = await response.json();
   
         if (data.success) {
-            if (data.generated){
-            // Заполняем данные
-            document.getElementById('generatedLogin').textContent = data.generated.login;
-            document.getElementById('generatedPass').textContent = data.generated.pass;
-               document.getElementById('credentials').style.display = 'block';
-            // Очищаем форму 
-            if (!data.log) e.target.reset();
-        }
-    } 
+    // Показываем сообщения
+    document.querySelector('.mess').innerHTML = data.messages.success || '';
+    document.querySelector('.mess_info').innerHTML = data.messages.info || '';
+    
+    // Обновляем блок с учетными данными
+    if (data.generated) {
+        document.getElementById('generatedLogin').textContent = data.generated.login;
+        document.getElementById('generatedPass').textContent = data.generated.pass;
+        document.getElementById('credentials').style.display = 'block';
+    }
+    
+    // Очистка формы только для новых пользователей
+    if (!data.log) form.reset();
+}
   
    // Обработка выхода
         if (data.logout) {
@@ -245,5 +250,8 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
         
     }
 });
-
+// После обработки данных
+document.querySelectorAll('.mess').forEach(el => {
+    el.style.display = 'block';
+});
 
