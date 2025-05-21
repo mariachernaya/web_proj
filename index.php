@@ -108,16 +108,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
         if ($log) {
-        // $response['generated'] = [
-        //     'login' => $login,
-        //     'pass' => $pass
-        // ];
-   	$response['generated'] = [
-    'login' => $_SESSION['login'],
-    'pass' => $_SESSION['pass']
-	];
-		setcookie('login', $_SESSION['login'], time() + 30 * 24 * 60 * 60);
-setcookie('pass', $_SESSION['pass'], time() + 30 * 24 * 60 * 60);
+
+	
+    $response = [
+        'messages' => [
+            'success' => 'Спасибо, результаты изменены.',
+        ],
+       
+        'errors' => $errors,
+        'values' => $values,
+        'languages' => $languages,
+        'log' => $log,
+        'success' => true
+    ];
+    echo json_encode($response);
 		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
@@ -158,15 +162,28 @@ setcookie('pass', $_SESSION['pass'], time() + 30 * 24 * 60 * 60);
             setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
             setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
-		   // $response['generated'] = [
-     //        'login' => $login,
-     //        'pass' => $pass
-     //    ];
-		   	$response['generated'] = [
-    'login' => $_SESSION['login'],
-    'pass' => $_SESSION['pass']
-	];
-		echo json_encode($response);
+
+
+		
+    $response = [
+        'messages' => [
+            'success' => 'Спасибо, результаты сохранены.',
+            'info' => !$log ? sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong> 
+	    и паролем <strong>%s</strong> для изменения данных.', $login, $pass) : ''
+        ],
+        'generated' => [
+            'login' => $log ? $_SESSION['login'] : $login,
+            'pass' => $log ? $_SESSION['pass'] : $pass
+        ],
+        'errors' => $errors,
+        'values' => $values,
+        'languages' => $languages,
+        'log' => $log,
+        'success' => true
+    ];
+    echo json_encode($response);
+    exit();
+
         }
         setcookie('save', '1');
     }
