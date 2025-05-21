@@ -126,7 +126,7 @@ $(".b1").on("click", function () {
 
 /*Footer*/
 
-		if (window.location.hash === '#form-anchor') {
+if (window.location.hash === '#form-anchor') {
     document.getElementById('form-anchor').scrollIntoView();
 }
 document.querySelector('form').addEventListener('submit', async (e) => {
@@ -159,11 +159,11 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
             document.getElementById('generatedLogin').textContent = data.generated.login;
             document.getElementById('generatedPass').textContent = data.generated.pass;
                document.getElementById('credentials').style.display = 'block';
-            // Очищаем форму (если нужно)
+            // Очищаем форму 
             if (!data.log) e.target.reset();
         }
     } catch (error) {
-        console.error('Ошибка:', error);
+        
     }
    // Обработка выхода
         if (data.logout) {
@@ -189,25 +189,7 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
             }
         });
 	    
-        // ['fio', 'number', 'email', 'date', 'radio', 'language', 'bio', 'check'].forEach(field => {
-        //     const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-        //     if (errorElement) {
-        //         errorElement.innerHTML = data.messages[field] || '';
-        //     }
-        //     const input = form.querySelector(`[name="${field}"]`);
-        //     if (input) {
-        //         input.classList.toggle('red', data.errors[field]);
-        //     }
-        // });
-
-        // if (data.success) {
-        //     form.querySelector('[name="fio"]').value = data.values.fio || '';
-        //     form.querySelector('[name="number"]').value = data.values.number || '';
-        //     form.querySelector('[name="email"]').value = data.values.email || '';
-        //     form.querySelector('[name="date"]').value = data.values.date || '';
-        //     form.querySelector(`[name="radio"][value="${data.values.radio}"]`).checked = true;
-        //     form.querySelector('textarea[name="bio"]').value = data.values.bio || '';
-        //     form.querySelector('[name="check"]').checked = data.values.check || false;
+    
 
 	      if (data.success) {
             Object.keys(data.values).forEach(key => {
