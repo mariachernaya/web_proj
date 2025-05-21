@@ -2,17 +2,16 @@
 
 $db;
 include ('database.php');
-// header("Content-Type: text/html; charset=UTF-8");
-
 session_start();
 
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
     || !empty($_POST['is_ajax']);
 
-// if ($is_ajax) {
-//     header('Content-Type: application/json; charset=UTF-8');
-// }
+if ($is_ajax) {
+    header('Content-Type: application/json; charset=UTF-8');
+} else header("Content-Type: text/html; charset=UTF-8");
+
 $error = false;
 $log = !empty($_SESSION['login']);
 
