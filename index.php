@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
         exit();
     }
-       header('Location:  #form-anchor');
+       header('Location:  ./');
 	     exit();
     }
     function check_field($cook, $str, $flag)
