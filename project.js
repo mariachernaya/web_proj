@@ -162,7 +162,8 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
             // Очищаем форму 
             if (!data.log) e.target.reset();
         }
-    } catch (error) {
+    } 
+    }catch (error) {
         
     }
    // Обработка выхода
