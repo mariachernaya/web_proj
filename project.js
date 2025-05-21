@@ -153,6 +153,15 @@ const isLogout = e.submitter && e.submitter.name === 'logout_form';
     });
     const data = await response.json();
 
+// Проверяем, что данные существуют
+if (!data) {
+    throw new Error("Пустой ответ от сервера");
+}
+
+// Проверяем обязательные поля
+if (data.messages === undefined || data.errors === undefined) {
+    console.warn("Ответ сервера не содержит ожидаемых данных", data);
+}
     // Очистка предыдущих сообщений
     document.querySelector('.mess').innerHTML = '';
     document.querySelector('.mess_info').innerHTML = '';
