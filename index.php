@@ -244,9 +244,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('login', '', 100000);
         setcookie('pass', '', 100000);
         $messages['success'] = 'Спасибо, результаты сохранены.';
-        if (!empty($_COOKIE['pass']))
-            $messages['info'] = sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong><br>
-            и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
+        // if (!empty($_COOKIE['pass']))
+        //     $messages['info'] = sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong><br>
+        //     и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
     }
 
     check_field('fio', $fio);
