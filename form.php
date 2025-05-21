@@ -848,7 +848,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 
 
 <!-- <form method="post" class="form" id="mainForm">     -->
-<form   class="form" id="ajaxForm">
+<form  method="post" class="form" id="ajaxForm">
 	<div id="form-anchor"></div>
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
