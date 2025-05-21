@@ -42,19 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
         session_destroy();
-
  
 	    
 	  if ($is_ajax) {
         header('Content-Type: application/json');
         echo json_encode([
             'logout' => true,
-            'clear_fields' => true
+            'clear_fields' => true,
+            'messages' => ['success' => 'Вы успешно вышли из системы'],
+            'errors' => [],
+            'values' => [],
+            'languages' => []
         ]);
         exit();
     }
-       header('Location:  ./');
-	     exit();
+    header('Location: ./');
+    exit();
     }
     function check_field($cook, $str, $flag)
     {
