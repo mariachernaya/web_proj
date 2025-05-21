@@ -129,22 +129,26 @@ $(".b1").on("click", function () {
 if (window.location.hash === '#form-anchor') {
     document.getElementById('form-anchor').scrollIntoView();
 }
-document.querySelector('form').addEventListener('submit', async (e) => {
+document.querySelector('form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
     
-    // Подготовка данных языка
-    const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked')).map(opt => opt.value);
-    formData.delete('language[]');
-    langs.forEach(lang => formData.append('language[]', lang));
-
-    const isLogout = e.submitter && e.submitter.name === 'logout_form';
-    if (isLogout) {
-        formData.append('logout_form', '1');
-    }
-
     try {
+        const formData = new FormData(form);
+        
+        // Подготовка данных языка
+        const langSelect = form.querySelector('select[name="language[]"]');
+        if (langSelect) {
+            const langs = Array.from(langSelect.selectedOptions).map(opt => opt.value);
+            formData.delete('language[]');
+            langs.forEach(lang => formData.append('language[]', lang));
+        }
+
+        const isLogout = e.submitter?.name === 'logout_form';
+        if (isLogout) {
+            formData.append('logout_form', '1');
+        }
+
         const response = await fetch('index.php', {
             method: 'POST',
             body: formData,
@@ -153,78 +157,83 @@ document.querySelector('form').addEventListener('submit', async (e) => {
             }
         });
 
-        // Проверка типа содержимого
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new TypeError("Ожидался JSON-ответ, получен: " + contentType);
+        // Проверка ответа
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Failed to parse JSON:", text);
+            throw new Error("Invalid JSON response");
         }
 
-        const data = await response.json();
-        console.log("Получен ответ:", data); // Для отладки
+        console.log("Server response:", data); // Отладочная информация
 
-        // Очистка предыдущих сообщений и ошибок
-        document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+        // Очистка предыдущих сообщений
+        document.querySelectorAll('.error').forEach(el => el.textContent = '');
         document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-        document.querySelector('.mess').innerHTML = '';
-        document.querySelector('.mess_info').innerHTML = '';
 
         // Обработка выхода
         if (data.logout) {
             form.reset();
-            document.querySelector('.edbut').style.display = 'none';
-            document.querySelector('[name="logout_form"]').style.display = 'none';
-            document.querySelector('.btnlike').style.display = 'inline-block';
-            document.getElementById('credentials').style.display = 'none';
+            toggleFormButtons(false);
+            document.getElementById('credentials')?.style.display = 'none';
             return;
         }
 
         // Показ сообщений
-        if (data.messages) {
-            if (data.messages.success) {
-                document.querySelector('.mess').innerHTML = data.messages.success;
-            }
-            if (data.messages.info) {
-                document.querySelector('.mess_info').innerHTML = data.messages.info;
-            }
-        }
+        updateElement('.mess', data.messages?.success);
+        updateElement('.mess_info', data.messages?.info);
 
         // Показ ошибок
         if (data.errors) {
-            Object.keys(data.errors).forEach(field => {
+            Object.entries(data.errors).forEach(([field, hasError]) => {
                 const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-                if (errorElement) {
-                    errorElement.innerHTML = data.messages[field] || '';
-                }
                 const input = form.querySelector(`[name="${field}"]`);
+                
+                if (errorElement && data.messages?.[field]) {
+                    errorElement.textContent = data.messages[field];
+                }
+                
                 if (input) {
-                    input.classList.toggle('red', data.errors[field]);
+                    input.classList.toggle('red', hasError);
                 }
             });
         }
 
         // Показ сгенерированных данных
         if (data.generated) {
-            document.getElementById('generatedLogin').textContent = data.generated.login;
-            document.getElementById('generatedPass').textContent = data.generated.pass;
-            document.getElementById('credentials').style.display = 'block';
+            updateElement('#generatedLogin', data.generated.login);
+            updateElement('#generatedPass', data.generated.pass);
+            document.getElementById('credentials')?.style.display = 'block';
         }
 
-        // Обновление состояния формы
-        if (data.log) {
-            document.querySelector('.edbut').style.display = 'inline-block';
-            document.querySelector('[name="logout_form"]').style.display = 'inline-block';
-            document.querySelector('.btnlike').style.display = 'none';
-        } else {
-            document.querySelector('.edbut').style.display = 'none';
-            document.querySelector('[name="logout_form"]').style.display = 'none';
-            document.querySelector('.btnlike').style.display = 'inline-block';
-        }
+        // Обновление состояния кнопок
+        toggleFormButtons(data.log);
 
     } catch (error) {
-        
-        alert('Произошла ошибка при обработке запроса: ' + error.message);
+        //console.error('Error:', error);
+        //alert('Произошла ошибка: ' + error.message);
     }
 });
+
+// Вспомогательные функции
+function toggleFormButtons(isLoggedIn) {
+    const display = isLoggedIn ? 'inline-block' : 'none';
+    document.querySelector('.edbut')?.style.display = display;
+    document.querySelector('[name="logout_form"]')?.style.display = display;
+    document.querySelector('.btnlike')?.style.display = isLoggedIn ? 'none' : 'inline-block';
+}
+
+function updateElement(selector, content) {
+    const element = document.querySelector(selector);
+    if (element && content !== undefined) {
+        element.innerHTML = content;
+        element.style.display = content ? 'block' : 'none';
+    }
+}
 // После обработки данных
 document.querySelectorAll('.mess').forEach(el => {
     el.style.display = 'block';
