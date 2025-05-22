@@ -855,8 +855,8 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
       </div>
 	<div class="mess_info" style="display: none;">
 </div>
-<div class="mess" data-message="success"></div>
-<div class="mess mess_info" data-message="info"></div>
+<!-- <div class="mess" data-message="success"></div>
+<div class="mess mess_info" data-message="info"></div> -->
 
 
 <div id="credentials" style="display: none;">
