@@ -135,8 +135,8 @@ function updateFormButtons(isLoggedIn) {
     
     // Устанавливаем правильное состояние 
     if (editBtn) editBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
-    if (submitBtn) submitBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (submitBtn) submitBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
     if (loginBtn) loginBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
 }
 
