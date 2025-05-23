@@ -936,29 +936,17 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
       </div>
 
 <div class="form-buttons">
-    <!-- Основная кнопка отправки (всегда в DOM) -->
-    <button class="button submit-btn" type="submit" 
-            style="display: <?= $log ? 'none' : 'inline-block' ?>">
-        Отправить
-    </button>
+    <!-- Основная кнопка отправки -->
+    <button class="button submit-btn" type="submit">Отправить</button>
     
-    <!-- Кнопка изменения (только для авторизованных) -->
-    <button class="button edit-btn" type="submit" 
-            style="display: <?= $log ? 'inline-block' : 'none' ?>">
-        Изменить
-    </button>
+    <!-- Кнопка изменения (скрыта по умолчанию) -->
+    <button class="button edit-btn" type="submit" style="display: none;">Изменить</button>
     
-    <!-- Кнопка выхода (только для авторизованных) -->
-    <button class="button logout-btn" type="submit" name="logout_form" 
-            style="display: <?= $log ? 'inline-block' : 'none' ?>">
-        Выйти
-    </button>
+    <!-- Кнопка выхода (скрыта по умолчанию) -->
+    <button class="button logout-btn" type="submit" name="logout_form" style="display: none;">Выйти</button>
     
-    <!-- Кнопка входа (только для неавторизованных) -->
-    <a class="button login-btn" href="login.php" 
-       style="display: <?= $log ? 'none' : 'inline-block' ?>">
-        Войти
-    </a>
+    <!-- Кнопка входа -->
+    <a class="button login-btn" href="login.php">Войти</a>
 </div>
 	      
 <!-- <div class="form-buttons">
