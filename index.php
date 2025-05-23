@@ -193,7 +193,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
         }
         setcookie('save', '1');
-    }
+    } else {
+    // Ошибки валидации
+    $response = [
+        'success' => false,
+        'errors' => $errors,
+        'messages' => $messages,
+        'values' => $values,
+        'languages' => $languages
+    ];
+	    
+echo json_encode($response);
+exit();
+}
    
     if ($is_ajax) {
     $response = [
