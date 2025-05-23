@@ -929,19 +929,6 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
       </div>
 
 
-<div class="form-buttons">
-    <!-- Основная кнопка отправки -->
-    <button class="button submit-btn" type="submit">Отправить</button>
-    
-    <!-- Кнопка изменения (скрыта по умолчанию) -->
-    <button class="button edit-btn" type="submit" style="display: none">Изменить</button>
-    
-    <!-- Кнопка выхода (скрыта по умолчанию) -->
-    <button class="button logout-btn" type="submit" name="logout_form" style="display: none">Выйти</button>
-    
-    <!-- Кнопка входа -->
-    <a class="button login-btn" href="login.php">Войти</a>
-</div>
 
 <!-- <div class="form-buttons">
     <button class="button submit-btn" type="submit" 
@@ -965,7 +952,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     </a>
 </div> -->
 	      
-<!-- <div class="form-buttons">
+ <div class="form-buttons">
     <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
         <button class="button" type="submit" name="logout_form">Выйти</button> 
@@ -974,7 +961,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
         <a class="btnlike" href="login.php">Войти</a>
     <?php endif; ?> 
 		
-    </div>   -->
+    </div>   
     </form>
             <section id="block-copyright" class="block clear">
                 <h6>&nbsp;</h6>
