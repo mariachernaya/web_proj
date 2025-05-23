@@ -5,42 +5,31 @@ body {
   flex-direction: column;
   align-items: center;
 }
-/* .red {
+.red {
     border: 1px solid red !important;
-} */
-/* .form-buttons .button {
-    display: inline-block; 
+}
+.form-buttons .button {
+    display: inline-block; /* Базовый стиль для всех кнопок */
     margin: 5px;
+}
+
+/* Начальные состояния (дублируем PHP логику в CSS) */
+/* .form-buttons .submit-btn {
+    display: <?= $log ? 'none' : 'inline-block' ?>;
+}
+.form-buttons .edit-btn {
+    display: <?= $log ? 'inline-block' : 'none' ?>;
+}
+.form-buttons .logout-btn {
+    display: <?= $log ? 'inline-block' : 'none' ?>;
+}
+.form-buttons .login-btn {
+    display: <?= $log ? 'none' : 'inline-block' ?>;
 } */
-.input.red {
-    border: 2px solid #ff0000;
-}
-
-.error {
-    color: #ff0000;
-    font-size: 0.8em;
-    margin-top: 5px;
-    display: none;
-}
-
-.mess {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-}
-.mess.success {
-    background-color: #dff0d8;
-    color: #3c763d;
-}
-.mess.error {
-    background-color: #f2dede;
-    color: #a94442;
-}
-/* 
 .error {
     color: red;
     font-size: 0.9em;
-} */
+}
 
 [data-field] {
     margin-top: 4px;

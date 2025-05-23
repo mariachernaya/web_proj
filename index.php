@@ -116,9 +116,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('language_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
-	    
-	
+
         if ($log) {
+		$response = [
+        'messages' => [
+            'success' => 'Данные успешно изменены!', // Новое сообщение
+            'info' => ''
+        ],
+        'errors' => $errors,
+        'values' => $values,
+        'languages' => $languages,
+        'log' => $log,
+        'success' => true
+    ];
+    echo json_encode($response);
+		
 		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
@@ -129,21 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
             foreach ($languages as $row)
                 $stmt1->execute([$_SESSION['form_id'], $row['id']]);
-		
-		$response = [
-        'success' => true,
-        'messages' => [
-            'success' => $log ? 'Данные успешно изменены!' : 'Спасибо, результаты сохранены.'
-        ],
-        'errors' => [],
-        'values' => $values,
-        'languages' => $languages,
-        'log' => $log
-    ];
-    header('Content-Type: application/json');
-echo json_encode($response);
-exit();
-		
         } else {
             $login = uniqid();
             $pass = uniqid();
@@ -173,6 +170,8 @@ exit();
             setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
             setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
             setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
+
+
 		
     $response = [
         'messages' => [
@@ -194,7 +193,19 @@ exit();
     exit();
         }
         setcookie('save', '1');
-    } 
+    } else {
+    // Ошибки валидации
+    $response = [
+        'success' => false,
+        'errors' => $errors,
+        'messages' => $messages,
+        'values' => $values,
+        'languages' => $languages
+    ];
+	    
+echo json_encode($response);
+exit();
+}
    
     if ($is_ajax) {
     $response = [
@@ -241,7 +252,6 @@ exit();
         $messages[$str] = "<div class=\"error\">$pole</div>";
         $values[$str] = empty($_COOKIE[$str . '_value']) ? '' : strip_tags($_COOKIE[$str . '_value']);
         setcookie($str . '_error', '', time() - 30 * 24 * 60 * 60);
-
         return;
     }
 	if (!empty($_COOKIE['save'])) {
@@ -249,7 +259,9 @@ exit();
         setcookie('login', '', 100000);
         setcookie('pass', '', 100000);
         $messages['success'] = 'Спасибо, результаты сохранены.';
-    
+        // if (!empty($_COOKIE['pass']))
+        //     $messages['info'] = sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong><br>
+        //     и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
     }
 
     check_field('fio', $fio);
@@ -299,6 +311,7 @@ exit();
     }
 }
         } catch (PDOException $e) {
+            // print ('Error : ' . $e->getMessage());
             exit();
         }
     }
