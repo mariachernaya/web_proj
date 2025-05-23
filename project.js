@@ -181,21 +181,34 @@ document.querySelector('form').addEventListener('submit', async (e) => {
 
         // Обработка выхода
         if (data.logout) {
-            form.reset();
-            updateFormButtons(false);
-            const credentials = document.getElementById('credentials');
-            if (credentials) credentials.style.display = 'none';
+    updateFormButtons(false); 
+    document.getElementById('credentials')?.style.display = 'none';
+    
+    // Показ сообщения
+    const messElement = document.querySelector('.mess');
+    if (messElement) {
+        messElement.textContent = data.messages?.success || '';
+        messElement.style.display = 'block';
+    }
+    return;
+}
+      
+        // if (data.logout) {
+        //     form.reset();
+        //     updateFormButtons(false);
+        //     const credentials = document.getElementById('credentials');
+        //     if (credentials) credentials.style.display = 'none';
             
-            // Показываем сообщение о выходе
-            if (data.messages && data.messages.success) {
-                const messElement = document.querySelector('.mess');
-                if (messElement) {
-                    messElement.textContent = data.messages.success;
-                    messElement.style.display = 'block';
-                }
-            }
-            return;
-        }
+        //     // Показываем сообщение о выходе
+        //     if (data.messages && data.messages.success) {
+        //         const messElement = document.querySelector('.mess');
+        //         if (messElement) {
+        //             messElement.textContent = data.messages.success;
+        //             messElement.style.display = 'block';
+        //         }
+        //     }
+        //     return;
+        // }
 
         // Показ сообщений
 if (data.messages) {
@@ -277,11 +290,23 @@ if (data.messages) {
 
 // Функция для обновления состояния кнопок
 function updateFormButtons(isLoggedIn) {
-    const edbut = document.querySelector('.edbut');
-    const logoutBtn = document.querySelector('[name="logout_form"]');
-    const btnlike = document.querySelector('.btnlike');
-    
+    const edbut = document.querySelector('.edbut'); // "Изменить"
+    const logoutBtn = document.querySelector('[name="logout_form"]'); // "Выйти"
+    const btnlike = document.querySelector('.btnlike'); // "Войти"
+
+    // Для авторизованных
     if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
     if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block';
+    
+    // Для неавторизованных
+    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
 }
+// function updateFormButtons(isLoggedIn) {
+//     const edbut = document.querySelector('.edbut');
+//     const logoutBtn = document.querySelector('[name="logout_form"]');
+//     const btnlike = document.querySelector('.btnlike');
+    
+//     if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
+//     if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+//     if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block';
+// }
