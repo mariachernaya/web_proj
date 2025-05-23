@@ -129,7 +129,19 @@ if (window.location.hash === '#form-anchor') {
     const anchor = document.getElementById('form-anchor');
     if (anchor) anchor.scrollIntoView();
 }
+// Функция для обновления состояния кнопок
+function updateFormButtons(isLoggedIn) {
+    const edbut = document.querySelector('.edbut'); // "Изменить"
+    const logoutBtn = document.querySelector('[name="logout_form"]'); // "Выйти"
+    const btnlike = document.querySelector('.btnlike'); // "Войти"
 
+    // Для авторизованных
+    if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    
+    // Для неавторизованных
+    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
+}
 document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -288,19 +300,7 @@ if (data.messages) {
     }
 });
 
-// Функция для обновления состояния кнопок
-function updateFormButtons(isLoggedIn) {
-    const edbut = document.querySelector('.edbut'); // "Изменить"
-    const logoutBtn = document.querySelector('[name="logout_form"]'); // "Выйти"
-    const btnlike = document.querySelector('.btnlike'); // "Войти"
 
-    // Для авторизованных
-    if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    
-    // Для неавторизованных
-    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
-}
 // function updateFormButtons(isLoggedIn) {
 //     const edbut = document.querySelector('.edbut');
 //     const logoutBtn = document.querySelector('[name="logout_form"]');
