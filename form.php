@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru"> 
 <head> 
-    	<title>project</title>
+    	<title>project_8</title>
 	<meta charset="UTF-8">
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- link -->
