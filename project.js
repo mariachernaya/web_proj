@@ -133,10 +133,10 @@ function updateFormButtons(isLoggedIn) {
     const logoutBtn = document.querySelector('.logout-btn');
     const loginBtn = document.querySelector('.login-btn');
     
-    // Устанавливаем правильное состояние
-    if (submitBtn) submitBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
+    // Устанавливаем правильное состояние 
     if (editBtn) editBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
+    if (submitBtn) submitBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
     if (loginBtn) loginBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
 }
 
