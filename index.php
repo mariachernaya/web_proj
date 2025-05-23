@@ -48,9 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header('Content-Type: application/json');
         echo json_encode([
             'logout' => true,
-            'clear_fields' => true,
-	    'log' => false, 
-            'messages' => ['success' => 'Вы успешно вышли из системы'],
+            'log' => false, // Критически важно!
+            'messages' => ['success' => 'Вы успешно вышли'],
             'errors' => [],
             'values' => [],
             'languages' => []
@@ -59,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     header('Location: ./');
     exit();
+	    
     }
     function check_field($cook, $str, $flag)
     {
