@@ -847,7 +847,6 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     <div class="container">
 
 
-
 <form  method="post" class="form" id="ajaxForm">
 	<div id="form-anchor"></div>
       <div class="head">
@@ -895,8 +894,6 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
             <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Мужской </span>
           </label>
           <label>
-
-		
             <input name="radio" class="ml-2" type="radio" value="W" <?php if($values['radio'] == 'W') echo 'checked'; ?>/>
             <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Женский </span>
 
@@ -939,18 +936,29 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
       </div>
 
 <div class="form-buttons">
-    <!-- Основная кнопка отправки (всегда видна) -->
-    <button class="button submit-btn" type="submit">
-        <?php echo $log ? 'Изменить' : 'Отправить'; ?>
+    <!-- Основная кнопка отправки (всегда в DOM) -->
+    <button class="button submit-btn" type="submit" 
+            style="display: <?= $log ? 'none' : 'inline-block' ?>">
+        Отправить
+    </button>
+    
+    <!-- Кнопка изменения (только для авторизованных) -->
+    <button class="button edit-btn" type="submit" 
+            style="display: <?= $log ? 'inline-block' : 'none' ?>">
+        Изменить
     </button>
     
     <!-- Кнопка выхода (только для авторизованных) -->
-    <?php if($log): ?>
-        <button class="button logout-btn" type="submit" name="logout_form">Выйти</button>
-    <?php endif; ?>
+    <button class="button logout-btn" type="submit" name="logout_form" 
+            style="display: <?= $log ? 'inline-block' : 'none' ?>">
+        Выйти
+    </button>
     
     <!-- Кнопка входа (только для неавторизованных) -->
-    <a class="button btnlike" href="login.php" style="display: <?php echo $log ? 'none' : 'inline-block'; ?>">Войти</a>
+    <a class="button login-btn" href="login.php" 
+       style="display: <?= $log ? 'none' : 'inline-block' ?>">
+        Войти
+    </a>
 </div>
 	      
 <!-- <div class="form-buttons">
