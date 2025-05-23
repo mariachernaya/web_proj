@@ -127,10 +127,17 @@ $(".b1").on("click", function () {
 /*Footer*/
 
 function updateFormButtons(isLoggedIn) {
-    document.querySelector('.submit-btn').style.display = isLoggedIn ? 'none' : 'inline-block';
-    document.querySelector('.edit-btn').style.display = isLoggedIn ? 'inline-block' : 'none';
-    document.querySelector('.logout-btn').style.display = isLoggedIn ? 'inline-block' : 'none';
-    document.querySelector('.login-btn').style.display = isLoggedIn ? 'none' : 'inline-block';
+    // Получаем все кнопки
+    const submitBtn = document.querySelector('.submit-btn');
+    const editBtn = document.querySelector('.edit-btn');
+    const logoutBtn = document.querySelector('.logout-btn');
+    const loginBtn = document.querySelector('.login-btn');
+    
+    // Устанавливаем правильное состояние
+    if (submitBtn) submitBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
+    if (editBtn) editBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (loginBtn) loginBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
 }
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
@@ -156,18 +163,14 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     }
 
     try {
-       const response = await fetch('index.php', {
+      
+        const response = await fetch('index.php', {
             method: 'POST',
-            body: new FormData(e.target),
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         });
-        // const response = await fetch('index.php', {
-        //     method: 'POST',
-        //     body: formData,
-        //     headers: {
-        //         'X-Requested-With': 'XMLHttpRequest'
-        //     }
-        // });
 
         // Проверка ответа
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -193,30 +196,20 @@ document.querySelector('form').addEventListener('submit', async (e) => {
       
    const data = await response.json();
         
-      // Принудительно показываем нужные кнопки после выхода
-        if (data.logout) {
-            document.querySelector('.submit-btn').style.display = 'inline-block';
-            document.querySelector('.login-btn').style.display = 'inline-block';
-            document.querySelector('.edit-btn').style.display = 'none';
-            document.querySelector('.logout-btn').style.display = 'none';
-            return;
-        }
+    
         
         // Обновляем кнопки для других случаев
         updateFormButtons(data.log);
       
      
-        // // Всегда обновляем кнопки на основе статуса log
-        // updateFormButtons(data.log);
-        
-        // // Обработка выхода
-        // if (data.logout) {
-        //     form.reset();
-        //     updateFormButtons(false); // Явно устанавливаем статус "не авторизован"
-        //     const credentials = document.getElementById('credentials');
-        //     if (credentials) credentials.style.display = 'none';
-        //     return;
-        // }
+        // Обработка выхода
+        if (data.logout) {
+            form.reset();
+            updateFormButtons(false); // Явно устанавливаем статус "не авторизован"
+            const credentials = document.getElementById('credentials');
+            if (credentials) credentials.style.display = 'none';
+            return;
+        }
 
 
         // Показ сообщений
