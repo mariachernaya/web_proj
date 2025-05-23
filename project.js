@@ -125,23 +125,26 @@ $(".b1").on("click", function () {
 
 
 /*Footer*/
-if (window.location.hash === '#form-anchor') {
-    const anchor = document.getElementById('form-anchor');
-    if (anchor) anchor.scrollIntoView();
-}
-// Функция для обновления состояния кнопок
+// if (window.location.hash === '#form-anchor') {
+//     const anchor = document.getElementById('form-anchor');
+//     if (anchor) anchor.scrollIntoView();
+// }
 function updateFormButtons(isLoggedIn) {
-    const edbut = document.querySelector('.edbut'); // "Изменить"
-    const logoutBtn = document.querySelector('[name="logout_form"]'); // "Выйти"
-    const btnlike = document.querySelector('.btnlike'); // "Войти"
-
-    // Для авторизованных
+    // Всегда показываем кнопку "Отправить" (для неавторизованных)
+    const submitBtn = document.querySelector('button[type="submit"]:not([name])');
+    if (submitBtn) submitBtn.style.display = 'inline-block';
+    
+    // Управляем кнопками для авторизованных
+    const edbut = document.querySelector('.edbut');
+    const logoutBtn = document.querySelector('[name="logout_form"]');
     if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
     if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
     
-    // Для неавторизованных
-    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
+    // Управляем кнопкой "Войти"
+    const btnlike = document.querySelector('.btnlike');
+    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block';
 }
+
 document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -191,36 +194,34 @@ document.querySelector('form').addEventListener('submit', async (e) => {
             el.style.display = 'none';
         });
 
+        const data = await response.json();
+        
+        // Всегда обновляем кнопки на основе статуса log
+        updateFormButtons(data.log);
+        
         // Обработка выхода
         if (data.logout) {
-    updateFormButtons(false); 
-    document.getElementById('credentials')?.style.display = 'none';
+            form.reset();
+            updateFormButtons(false); // Явно устанавливаем статус "не авторизован"
+            const credentials = document.getElementById('credentials');
+            if (credentials) credentials.style.display = 'none';
+            return;
+        }
+//         // Обработка выхода
+//         if (data.logout) {
+//     updateFormButtons(false); 
+//     document.getElementById('credentials')?.style.display = 'none';
     
-    // Показ сообщения
-    const messElement = document.querySelector('.mess');
-    if (messElement) {
-        messElement.textContent = data.messages?.success || '';
-        messElement.style.display = 'block';
-    }
-    return;
-}
+//     // Показ сообщения
+//     const messElement = document.querySelector('.mess');
+//     if (messElement) {
+//         messElement.textContent = data.messages?.success || '';
+//         messElement.style.display = 'block';
+//     }
+//     return;
+// }
       
-        // if (data.logout) {
-        //     form.reset();
-        //     updateFormButtons(false);
-        //     const credentials = document.getElementById('credentials');
-        //     if (credentials) credentials.style.display = 'none';
-            
-        //     // Показываем сообщение о выходе
-        //     if (data.messages && data.messages.success) {
-        //         const messElement = document.querySelector('.mess');
-        //         if (messElement) {
-        //             messElement.textContent = data.messages.success;
-        //             messElement.style.display = 'block';
-        //         }
-        //     }
-        //     return;
-        // }
+        
 
         // Показ сообщений
 if (data.messages) {
@@ -300,7 +301,10 @@ if (data.messages) {
     }
 });
 
-
+// Инициализация кнопок при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    updateFormButtons(<?php echo $log ? 'true' : 'false'; ?>);
+});
 // function updateFormButtons(isLoggedIn) {
 //     const edbut = document.querySelector('.edbut');
 //     const logoutBtn = document.querySelector('[name="logout_form"]');
