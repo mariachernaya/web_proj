@@ -195,7 +195,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
         });
       
    const data = await response.json();
-        
+      
         // Принудительное обновление кнопок после выхода
         if (data.logout) {
             document.querySelector('.submit-btn').style.display = 'inline-block';
@@ -228,24 +228,22 @@ if (data.messages) {
 }
         
 
-        // Показ ошибок
-        if (data.errors) {
-            Object.entries(data.errors).forEach(([field, hasError]) => {
+      if (data.errors) {
+            Object.entries(data.errors).forEach(([field, isError]) => {
                 const errorElement = document.querySelector(`.error[data-field="${field}"]`);
                 const input = form.querySelector(`[name="${field}"]`);
                 
-                if (errorElement && data.messages && data.messages[field]) {
+                if (errorElement && data.messages?.[field]) {
                     errorElement.textContent = data.messages[field];
                 }
                 
-                if (input) {
-                    if (hasError) {
-                        input.classList.add('red');
-                    } else {
-                        input.classList.remove('red');
-                    }
+                if (input && isError) {
+                    input.classList.add('red');
                 }
             });
+            
+            // Не продолжаем обработку при ошибках
+            return;
         }
 
         // Показ сгенерированных данных
