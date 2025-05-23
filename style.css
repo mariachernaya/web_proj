@@ -14,7 +14,7 @@ body {
 }
 
 /* Начальные состояния (дублируем PHP логику в CSS) */
-.form-buttons .submit-btn {
+/* .form-buttons .submit-btn {
     display: <?= $log ? 'none' : 'inline-block' ?>;
 }
 .form-buttons .edit-btn {
@@ -25,7 +25,7 @@ body {
 }
 .form-buttons .login-btn {
     display: <?= $log ? 'none' : 'inline-block' ?>;
-}
+} */
 .error {
     color: red;
     font-size: 0.9em;
