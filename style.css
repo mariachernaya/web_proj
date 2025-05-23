@@ -13,9 +13,18 @@ body {
     margin: 5px;
 }
 
-/* Скрываем элементы через CSS, а не JS */
+/* Начальные состояния (дублируем PHP логику в CSS) */
+.form-buttons .submit-btn {
+    display: <?= $log ? 'none' : 'inline-block' ?>;
+}
+.form-buttons .edit-btn {
+    display: <?= $log ? 'inline-block' : 'none' ?>;
+}
 .form-buttons .logout-btn {
-    display: <?php echo $log ? 'inline-block' : 'none'; ?>;
+    display: <?= $log ? 'inline-block' : 'none' ?>;
+}
+.form-buttons .login-btn {
+    display: <?= $log ? 'none' : 'inline-block' ?>;
 }
 .error {
     color: red;
