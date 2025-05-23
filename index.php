@@ -241,16 +241,7 @@ exit();
         $messages[$str] = "<div class=\"error\">$pole</div>";
         $values[$str] = empty($_COOKIE[$str . '_value']) ? '' : strip_tags($_COOKIE[$str . '_value']);
         setcookie($str . '_error', '', time() - 30 * 24 * 60 * 60);
-	
-    // Ошибки валидации
-   $response = [
-        'success' => false,
-        'messages' => $messages,
-        'errors' => $errors,
-        'values' => $values
-    ];
-	header('Content-Type: application/json');
-echo json_encode($response);
+
         return;
     }
 	if (!empty($_COOKIE['save'])) {
