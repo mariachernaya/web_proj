@@ -117,9 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
         if ($log) {
-    $response = [
+		$response = [
         'messages' => [
-            'success' => 'Спасибо, результаты изменены.',
+            'success' => 'Данные успешно изменены!', // Новое сообщение
+            'info' => ''
         ],
         'errors' => $errors,
         'values' => $values,
@@ -128,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'success' => true
     ];
     echo json_encode($response);
+		
 		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
