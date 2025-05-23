@@ -125,30 +125,10 @@ $(".b1").on("click", function () {
 
 
 /*Footer*/
-// Добавьте обработчики изменения для основных полей
-document.querySelectorAll('input, select, textarea').forEach(input => {
-    input.addEventListener('blur', async function() {
-        // Можно добавить проверку при потере фокуса
-    });
-});
-
-function updateFormButtons(isLoggedIn) {
-    const submitBtn = document.querySelector('.submit-btn');
-    const editBtn = document.querySelector('.edit-btn');
-    const logoutBtn = document.querySelector('.logout-btn');
-    const loginBtn = document.querySelector('.login-btn');
-    
-    // Всегда показываем "Отправить" и "Войти" при выходе
-    if (submitBtn) submitBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
-    if (editBtn) editBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (loginBtn) loginBtn.style.display = isLoggedIn ? 'none' : 'inline-block';
+if (window.location.hash === '#form-anchor') {
+    const anchor = document.getElementById('form-anchor');
+    if (anchor) anchor.scrollIntoView();
 }
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    updateFormButtons(<?= isset($_SESSION['login']) ? 'true' : 'false' ?>);
-});
 
 document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -169,7 +149,6 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     }
 
     try {
-      
         const response = await fetch('index.php', {
             method: 'POST',
             body: formData,
@@ -199,21 +178,37 @@ document.querySelector('form').addEventListener('submit', async (e) => {
             el.textContent = '';
             el.style.display = 'none';
         });
-      
-   const data = await response.json();
-      
-        // Принудительное обновление кнопок после выхода
-        if (data.logout) {
-            document.querySelector('.submit-btn').style.display = 'inline-block';
-            document.querySelector('.login-btn').style.display = 'inline-block';
-            document.querySelector('.edit-btn').style.display = 'none';
-            document.querySelector('.logout-btn').style.display = 'none';
-            return;
-        }
-        
-        // Обновляем кнопки для других случаев
-        updateFormButtons(data.log);
 
+        // Обработка выхода
+        if (data.logout) {
+    updateFormButtons(false); 
+    document.getElementById('credentials')?.style.display = 'none';
+    
+    // Показ сообщения
+    const messElement = document.querySelector('.mess');
+    if (messElement) {
+        messElement.textContent = data.messages?.success || '';
+        messElement.style.display = 'block';
+    }
+    return;
+}
+      
+        // if (data.logout) {
+        //     form.reset();
+        //     updateFormButtons(false);
+        //     const credentials = document.getElementById('credentials');
+        //     if (credentials) credentials.style.display = 'none';
+            
+        //     // Показываем сообщение о выходе
+        //     if (data.messages && data.messages.success) {
+        //         const messElement = document.querySelector('.mess');
+        //         if (messElement) {
+        //             messElement.textContent = data.messages.success;
+        //             messElement.style.display = 'block';
+        //         }
+        //     }
+        //     return;
+        // }
 
         // Показ сообщений
 if (data.messages) {
@@ -232,24 +227,41 @@ if (data.messages) {
         messInfoElement.style.display = 'block';
     }
 }
-        
+        // if (data.messages) {
+        //     if (data.messages.success) {
+        //         const messElement = document.querySelector('.mess');
+        //         if (messElement) {
+        //             messElement.innerHTML = data.messages.success;
+        //             messElement.style.display = 'block';
+        //         }
+        //     }
+        //     if (data.messages.info) {
+        //         const messInfoElement = document.querySelector('.mess_info');
+        //         if (messInfoElement) {
+        //             messInfoElement.innerHTML = data.messages.info;
+        //             messInfoElement.style.display = 'block';
+        //         }
+        //     }
+        // }
 
-      if (data.errors) {
-            Object.entries(data.errors).forEach(([field, isError]) => {
+        // Показ ошибок
+        if (data.errors) {
+            Object.entries(data.errors).forEach(([field, hasError]) => {
                 const errorElement = document.querySelector(`.error[data-field="${field}"]`);
                 const input = form.querySelector(`[name="${field}"]`);
                 
-                if (errorElement && data.messages?.[field]) {
+                if (errorElement && data.messages && data.messages[field]) {
                     errorElement.textContent = data.messages[field];
                 }
                 
-                if (input && isError) {
-                    input.classList.add('red');
+                if (input) {
+                    if (hasError) {
+                        input.classList.add('red');
+                    } else {
+                        input.classList.remove('red');
+                    }
                 }
             });
-            
-            // Не продолжаем обработку при ошибках
-            return;
         }
 
         // Показ сгенерированных данных
@@ -273,8 +285,28 @@ if (data.messages) {
             messElement.textContent = 'Изменены';
             messElement.style.display = 'block';
         }
-      document.querySelector('.submit-btn').style.display = 'inline-block';
-        document.querySelector('.login-btn').style.display = 'inline-block';
     }
 });
 
+// Функция для обновления состояния кнопок
+function updateFormButtons(isLoggedIn) {
+    const edbut = document.querySelector('.edbut'); // "Изменить"
+    const logoutBtn = document.querySelector('[name="logout_form"]'); // "Выйти"
+    const btnlike = document.querySelector('.btnlike'); // "Войти"
+
+    // Для авторизованных
+    if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+    
+    // Для неавторизованных
+    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
+}
+// function updateFormButtons(isLoggedIn) {
+//     const edbut = document.querySelector('.edbut');
+//     const logoutBtn = document.querySelector('[name="logout_form"]');
+//     const btnlike = document.querySelector('.btnlike');
+    
+//     if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
+//     if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+//     if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block';
+// }

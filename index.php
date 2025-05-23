@@ -48,8 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header('Content-Type: application/json');
         echo json_encode([
             'logout' => true,
-            'log' => false, // Критически важно!
-            'messages' => ['success' => 'Вы успешно вышли'],
+            'clear_fields' => true,
+	    'log' => false, 
+            'messages' => ['success' => 'Вы успешно вышли из системы'],
             'errors' => [],
             'values' => [],
             'languages' => []
@@ -58,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     header('Location: ./');
     exit();
-	    
     }
     function check_field($cook, $str, $flag)
     {
@@ -193,19 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
         }
         setcookie('save', '1');
-    } else {
-    // Ошибки валидации
-    $response = [
-        'success' => false,
-        'errors' => $errors,
-        'messages' => $messages,
-        'values' => $values,
-        'languages' => $languages
-    ];
-	    
-echo json_encode($response);
-exit();
-}
+    }
    
     if ($is_ajax) {
     $response = [
