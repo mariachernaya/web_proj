@@ -116,21 +116,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('language_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
-
-        if ($log) {
-		$response = [
+	    
+	$response = [
+        'success' => true,
         'messages' => [
-            'success' => 'Данные успешно изменены!', // Новое сообщение
-            'info' => ''
+            'success' => $log ? 'Данные успешно изменены!' : 'Спасибо, результаты сохранены.'
         ],
-        'errors' => $errors,
+        'errors' => [],
         'values' => $values,
         'languages' => $languages,
-        'log' => $log,
-        'success' => true
+        'log' => $log
     ];
-    echo json_encode($response);
-		
+    header('Content-Type: application/json');
+echo json_encode($response);
+exit();
+        if ($log) {
 		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
@@ -195,14 +195,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('save', '1');
     } else {
     // Ошибки валидации
-    $response = [
+   $response = [
         'success' => false,
-        'errors' => $errors,
         'messages' => $messages,
+        'errors' => $errors,
         'values' => $values,
-        'languages' => $languages
+        'languages' => $languages,
+        'log' => $log
     ];
-	    
+	header('Content-Type: application/json');
 echo json_encode($response);
 exit();
 }
