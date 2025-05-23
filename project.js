@@ -198,22 +198,38 @@ document.querySelector('form').addEventListener('submit', async (e) => {
         }
 
         // Показ сообщений
-        if (data.messages) {
-            if (data.messages.success) {
-                const messElement = document.querySelector('.mess');
-                if (messElement) {
-                    messElement.innerHTML = data.messages.success;
-                    messElement.style.display = 'block';
-                }
-            }
-            if (data.messages.info) {
-                const messInfoElement = document.querySelector('.mess_info');
-                if (messInfoElement) {
-                    messInfoElement.innerHTML = data.messages.info;
-                    messInfoElement.style.display = 'block';
-                }
-            }
-        }
+if (data.messages) {
+    const messElement = document.querySelector('.mess');
+    const messInfoElement = document.querySelector('.mess_info');
+    
+    // Основное сообщение
+    if (data.messages.success && messElement) {
+        messElement.textContent = data.messages.success;
+        messElement.style.display = 'block';
+    }
+    
+    // Дополнительная информация
+    if (data.messages.info && messInfoElement) {
+        messInfoElement.innerHTML = data.messages.info; 
+        messInfoElement.style.display = 'block';
+    }
+}
+        // if (data.messages) {
+        //     if (data.messages.success) {
+        //         const messElement = document.querySelector('.mess');
+        //         if (messElement) {
+        //             messElement.innerHTML = data.messages.success;
+        //             messElement.style.display = 'block';
+        //         }
+        //     }
+        //     if (data.messages.info) {
+        //         const messInfoElement = document.querySelector('.mess_info');
+        //         if (messInfoElement) {
+        //             messInfoElement.innerHTML = data.messages.info;
+        //             messInfoElement.style.display = 'block';
+        //         }
+        //     }
+        // }
 
         // Показ ошибок
         if (data.errors) {
