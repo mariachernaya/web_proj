@@ -216,12 +216,12 @@ document.querySelector('form').addEventListener('submit', async (e) => {
         }
 
     } catch (error) {
-        console.error('Ошибка:', error);
-        const errorElement = document.querySelector('.mess');
-        if (errorElement) {
-            errorElement.textContent = 'Произошла ошибка при отправке формы';
-            errorElement.style.display = 'block';
-        }
+        //console.error('Ошибка:', error);
+       // const errorElement = document.querySelector('.mess');
+        // if (errorElement) {
+        //     errorElement.textContent = 'Произошла ошибка при отправке формы';
+        //     errorElement.style.display = 'block';
+        // }
     }
 });
 
