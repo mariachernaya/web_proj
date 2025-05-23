@@ -944,25 +944,21 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 </div>
 
 <!-- <div class="form-buttons">
-    <!-- Основная кнопка отправки -->
     <button class="button submit-btn" type="submit" 
             style="display: <?= $log ? 'none' : 'inline-block' ?>">
         Отправить
     </button>
     
-    <!-- Кнопка изменения -->
     <button class="button edit-btn" type="submit" 
             style="display: <?= $log ? 'inline-block' : 'none' ?>">
         Изменить
     </button>
     
-    <!-- Кнопка выхода -->
     <button class="button logout-btn" type="submit" name="logout_form" 
             style="display: <?= $log ? 'inline-block' : 'none' ?>">
         Выйти
     </button>
     
-    <!-- Кнопка входа  -->
     <a class="button login-btn" href="login.php" 
        style="display: <?= $log ? 'none' : 'inline-block' ?>">
         Войти
