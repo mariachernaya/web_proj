@@ -125,6 +125,12 @@ $(".b1").on("click", function () {
 
 
 /*Footer*/
+// Добавьте обработчики изменения для основных полей
+document.querySelectorAll('input, select, textarea').forEach(input => {
+    input.addEventListener('blur', async function() {
+        // Можно добавить проверку при потере фокуса
+    });
+});
 
 function updateFormButtons(isLoggedIn) {
     const submitBtn = document.querySelector('.submit-btn');
