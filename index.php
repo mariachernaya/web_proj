@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode([
             'logout' => true,
             'clear_fields' => true,
+	    'log' => false, 
             'messages' => ['success' => 'Вы успешно вышли из системы'],
             'errors' => [],
             'values' => [],
