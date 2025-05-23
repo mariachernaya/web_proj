@@ -125,12 +125,6 @@ $(".b1").on("click", function () {
 
 
 /*Footer*/
-// Добавьте обработчики изменения для основных полей
-document.querySelectorAll('input, select, textarea').forEach(input => {
-    input.addEventListener('blur', async function() {
-        // Можно добавить проверку при потере фокуса
-    });
-});
 
 function updateFormButtons(isLoggedIn) {
     const submitBtn = document.querySelector('.submit-btn');
@@ -153,23 +147,19 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
     
-    // Подготовка данных языка
-    const langSelect = form.querySelector('select[name="language[]"]');
-    if (langSelect) {
-        const langs = Array.from(langSelect.selectedOptions).map(opt => opt.value);
-        formData.delete('language[]');
-        langs.forEach(lang => formData.append('language[]', lang));
-    }
-
-    const isLogout = e.submitter && e.submitter.name === 'logout_form';
-    if (isLogout) {
-        formData.append('logout_form', '1');
-    }
+    // Очищаем предыдущие ошибки
+    document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
 
     try {
-      
+        const formData = new FormData(form);
+        
+        // Добавляем языки программирования
+        const langs = Array.from(form.querySelectorAll('select[name="language[]"] option:checked')).map(opt => opt.value);
+        formData.delete('language[]');
+        langs.forEach(lang => formData.append('language[]', lang));
+
         const response = await fetch('index.php', {
             method: 'POST',
             body: formData,
@@ -178,103 +168,60 @@ document.querySelector('form').addEventListener('submit', async (e) => {
             }
         });
 
-        // Проверка ответа
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const text = await response.text();
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Failed to parse JSON:", text);
-            throw new Error("Invalid JSON response");
-        }
+        const data = await response.json();
+        console.log("Ответ сервера:", data);
 
-        console.log("Server response:", data);
-
-        // Очистка предыдущих сообщений и ошибок
-        document.querySelectorAll('.error').forEach(el => el.textContent = '');
-        document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
-        document.querySelectorAll('.mess').forEach(el => {
-            el.textContent = '';
-            el.style.display = 'none';
-        });
-      
-   const data = await response.json();
-      
-        // Принудительное обновление кнопок после выхода
-        if (data.logout) {
-            document.querySelector('.submit-btn').style.display = 'inline-block';
-            document.querySelector('.login-btn').style.display = 'inline-block';
-            document.querySelector('.edit-btn').style.display = 'none';
-            document.querySelector('.logout-btn').style.display = 'none';
-            return;
-        }
-        
-        // Обновляем кнопки для других случаев
-        updateFormButtons(data.log);
-
-
-        // Показ сообщений
-if (data.messages) {
-    const messElement = document.querySelector('.mess');
-    const messInfoElement = document.querySelector('.mess_info');
-    
-    // Основное сообщение
-    if (data.messages.success && messElement) {
-        messElement.textContent = data.messages.success;
-        messElement.style.display = 'block';
-    }
-    
-    // Дополнительная информация
-    if (data.messages.info && messInfoElement) {
-        messInfoElement.innerHTML = data.messages.info; 
-        messInfoElement.style.display = 'block';
-    }
-}
-        
-
-      if (data.errors) {
-            Object.entries(data.errors).forEach(([field, isError]) => {
+        // Обработка ошибок валидации
+        if (data.errors) {
+            Object.entries(data.errors).forEach(([field, hasError]) => {
                 const errorElement = document.querySelector(`.error[data-field="${field}"]`);
                 const input = form.querySelector(`[name="${field}"]`);
                 
                 if (errorElement && data.messages?.[field]) {
                     errorElement.textContent = data.messages[field];
+                    errorElement.style.display = 'block';
                 }
                 
-                if (input && isError) {
+                if (input && hasError) {
                     input.classList.add('red');
                 }
             });
-            
-            // Не продолжаем обработку при ошибках
-            return;
+            return; // Прекращаем выполнение при ошибках
         }
 
-        // Показ сгенерированных данных
-        if (data.generated) {
-            const loginElement = document.getElementById('generatedLogin');
-            const passElement = document.getElementById('generatedPass');
-            const credentialsElement = document.getElementById('credentials');
+        // Обработка успешной отправки
+        if (data.success) {
+            // Показываем сообщение об успехе
+            if (data.messages?.success) {
+                const successElement = document.querySelector('.mess');
+                if (successElement) {
+                    successElement.textContent = data.messages.success;
+                    successElement.style.display = 'block';
+                }
+            }
             
-            if (loginElement) loginElement.textContent = data.generated.login;
-            if (passElement) passElement.textContent = data.generated.pass;
-            if (credentialsElement) credentialsElement.style.display = 'block';
+            // Обновляем кнопки
+            updateFormButtons(data.log);
+            
+            // Показываем сгенерированные данные, если есть
+            if (data.generated) {
+                const loginElement = document.getElementById('generatedLogin');
+                const passElement = document.getElementById('generatedPass');
+                const credentialsElement = document.getElementById('credentials');
+                
+                if (loginElement) loginElement.textContent = data.generated.login;
+                if (passElement) passElement.textContent = data.generated.pass;
+                if (credentialsElement) credentialsElement.style.display = 'block';
+            }
         }
-
-        // Обновление состояния формы
-        updateFormButtons(data.log);
 
     } catch (error) {
-        console.error('Error:', error);
-        const messElement = document.querySelector('.mess');
-        if (messElement) {
-            messElement.textContent = 'Изменены';
-            messElement.style.display = 'block';
+        console.error('Ошибка:', error);
+        const errorElement = document.querySelector('.mess');
+        if (errorElement) {
+            errorElement.textContent = 'Произошла ошибка при отправке формы';
+            errorElement.style.display = 'block';
         }
-      document.querySelector('.submit-btn').style.display = 'inline-block';
-        document.querySelector('.login-btn').style.display = 'inline-block';
     }
 });
 
