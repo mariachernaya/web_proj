@@ -8,7 +8,15 @@ body {
 .red {
     border: 1px solid red !important;
 }
+.form-buttons .button {
+    display: inline-block; /* Базовый стиль для всех кнопок */
+    margin: 5px;
+}
 
+/* Скрываем элементы через CSS, а не JS */
+.form-buttons .logout-btn {
+    display: <?php echo $log ? 'inline-block' : 'none'; ?>;
+}
 .error {
     color: red;
     font-size: 0.9em;
