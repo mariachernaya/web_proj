@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	    
 	  if ($is_ajax) {
         header('Content-Type: application/json');
-        echo json_encode([
+		  $response = [
             'logout' => true,
             'clear_fields' => true,
 	    'log' => false, 
@@ -54,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'errors' => [],
             'values' => [],
             'languages' => []
-        ]);
+        ];
+		  echo json_encode($response, JSON_UNESCAPED_UNICODE);
         exit();
     }
     header('Location: ./');
@@ -129,7 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'log' => $log,
         'success' => true
     ];
-    echo json_encode($response);
+   echo json_encode($response, JSON_UNESCAPED_UNICODE);
+		exit();
 		
 		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
@@ -189,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'log' => $log,
         'success' => true
     ];
-    echo json_encode($response);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit();
         }
         setcookie('save', '1');
@@ -204,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'log' => $log,
         'success' => !$error,
     ];
-    echo json_encode($response);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit();
 } else {
     header('Location: index.php');
@@ -247,9 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('login', '', 100000);
         setcookie('pass', '', 100000);
         $messages['success'] = 'Спасибо, результаты сохранены.';
-        // if (!empty($_COOKIE['pass']))
-        //     $messages['info'] = sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong><br>
-        //     и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass']));
     }
 
     check_field('fio', $fio);
@@ -299,7 +298,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
         } catch (PDOException $e) {
-            // print ('Error : ' . $e->getMessage());
             exit();
         }
     }
@@ -320,7 +318,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!$error && isset($generated)) {
         $response['generated'] = $generated;
     }
-    echo json_encode($response);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit();
 } else  include('form.php');
 }?>
