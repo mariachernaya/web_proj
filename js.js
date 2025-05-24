@@ -59,7 +59,15 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
                 messInfoElement.style.display = 'block';
             }
         }
-
+        // В блоке обработки ответа сервера:
+        if (data.logout) {
+                updateFormButtons(false); // Скрыть кнопки для авторизованных
+                document.querySelectorAll('.mess').forEach(el => {
+                    el.textContent = data.messages?.success || '';
+                    el.style.display = 'block';
+            });
+            return; // Прекратить дальнейшую обработку
+        }
         // Обработка ошибок валидации
         if (data.errors) {
             Object.entries(data.errors).forEach(([field, hasError]) => {
