@@ -115,11 +115,8 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     <?php endif; ?> 
 		
     </div>  
-    </form>
-           
-
         </div>
-
+ </form>
 
 </body>
 </html> 
