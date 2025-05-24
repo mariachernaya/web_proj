@@ -17,13 +17,12 @@ if (window.location.hash === '#form-anchor') {
     if (anchor) anchor.scrollIntoView();
 }
 
-
 document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     
-    // Очистка предыдущих сообщений
+    // Очистка предыдущих сообщений и ошибок
     document.querySelectorAll('.error').forEach(el => el.textContent = '');
     document.querySelectorAll('.input').forEach(el => el.classList.remove('red'));
     document.querySelectorAll('.mess').forEach(el => {
@@ -47,27 +46,28 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
 
         // Обработка сообщений
         if (data.messages) {
-            if (data.messages.success) {
-                const messElement = document.querySelector('.mess');
-                if (messElement) {
-                    messElement.textContent = data.messages.success;
-                    messElement.style.display = 'block';
-                }
+            const messElement = document.querySelector('.mess');
+            const messInfoElement = document.querySelector('.mess_info');
+            
+            if (data.messages.success && messElement) {
+                messElement.textContent = data.messages.success;
+                messElement.style.display = 'block';
             }
-            if (data.messages.info) {
-                const messInfoElement = document.querySelector('.mess_info');
-                if (messInfoElement) {
-                    messInfoElement.innerHTML = data.messages.info;
-                    messInfoElement.style.display = 'block';
-                }
+            
+            if (data.messages.info && messInfoElement) {
+                messInfoElement.innerHTML = data.messages.info;
+                messInfoElement.style.display = 'block';
             }
         }
 
-        // Обработка ошибок
+        // Обработка ошибок валидации
         if (data.errors) {
             Object.entries(data.errors).forEach(([field, hasError]) => {
-                const errorElement = document.querySelector(`.error[data-field="${field}"]`);
-                const input = form.querySelector(`[name="${field}"]`);
+                // Для полей с множественным выбором (language[])
+                const fieldName = field === 'language[]' ? 'language' : field;
+                const errorElement = document.querySelector(`.error[data-field="${fieldName}"]`);
+                const input = form.querySelector(`[name="${field}"]`) || 
+                             form.querySelector(`[name="${fieldName}"]`);
                 
                 if (errorElement && data.messages && data.messages[field]) {
                     errorElement.textContent = data.messages[field];
