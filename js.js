@@ -45,20 +45,27 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
         console.log("Server response:", data);
 
         // Обработка сообщений
-        if (data.messages) {
-            const messElement = document.querySelector('.mess');
-            const messInfoElement = document.querySelector('.mess_info');
-            
-            if (data.messages.success && messElement) {
-                messElement.textContent = data.messages.success;
-                messElement.style.display = 'block';
-            }
-            
-            if (data.messages.info && messInfoElement) {
-                messInfoElement.innerHTML = data.messages.info;
-                messInfoElement.style.display = 'block';
-            }
+        // В обработчике ответа сервера:
+if (data.messages) {
+    const messElement = document.querySelector('.mess');
+    const messInfoElement = document.querySelector('.mess_info');
+    
+    // Основное сообщение
+    if (data.messages.success) {
+        if (messElement) {
+            messElement.textContent = data.messages.success;
+            messElement.style.display = 'block';
         }
+    }
+    
+    // Информационное сообщение
+    if (data.messages.info) {
+        if (messInfoElement) {
+            messInfoElement.innerHTML = data.messages.info;
+            messInfoElement.style.display = 'block';
+        }
+    }
+}
         // В блоке обработки ответа сервера:
        if (data.logout) {
     updateFormButtons(false);
