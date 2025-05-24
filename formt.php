@@ -15,7 +15,7 @@
 	<link href="stylemain.css" rel="stylesheet" type="text/css">
 
 	<!-- script -->
-	<script src="project.js" defer></script>
+	<script src="prt.js" defer></script>
 	<?php
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 ?>
