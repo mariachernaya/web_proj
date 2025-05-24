@@ -159,15 +159,9 @@ document.querySelector('form').addEventListener('submit', async (e) => {
 
         // Проверка ответа
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const text = await response.text();
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Failed to parse JSON:", text);
-            throw new Error("Invalid JSON response");
-        }
+
+      const data = await response.json(); // Автоматический парсинг JSON
+       
 
         console.log("Server response:", data);
 
