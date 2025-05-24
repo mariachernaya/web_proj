@@ -33,30 +33,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-	  //   $_SESSION = [];
-        setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('date_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('radio_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('language_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('bio_value', '', time() - 30 * 24 * 60 * 60, '/');
-        setcookie('check_value', '', time() - 30 * 24 * 60 * 60, '/');
-        session_destroy();
- 
-	    
-	  if ($is_ajax) {
+    // Уничтожаем сессию ПЕРЕД установкой куков
+    $_SESSION = [];
+    session_destroy();
+
+    // Очистка куков
+    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value','radio_value', 'language_value', 'bio_value', 'check_value'];
+    foreach ($cookies as $name) {
+        setcookie($name, '', time() - 3600, '/');
+    }
+
+    if ($is_ajax) {
         echo json_encode([
             'logout' => true,
             'log' => false,
             'messages' => ['success' => 'Вы успешно вышли из системы']
         ]);
         exit();
-    } 
-        header('Location: ./');
-        exit();
-    
     }
+    header('Location: ./');
+    exit();
+}
 	// Новая функция для сбора ошибок
 function validate_field($fieldName, $errorMessage, $condition) {
     global $errors, $messages, $error;
@@ -162,19 +159,23 @@ if ($is_ajax) {
             foreach ($languages as $row)
                 $stmt1->execute([$_SESSION['form_id'], $row['id']]);
 
-$response = [
+		$response = [
         'messages' => [
-            'success' => 'Данные успешно изменены!', // Новое сообщение
+            'success' => 'Данные успешно обновлены!',
             'info' => ''
         ],
-        'errors' => $errors,
-        'values' => $values,
-        'languages' => $languages,
         'log' => $log,
         'success' => true
     ];
-   echo json_encode($response, JSON_UNESCAPED_UNICODE);
-		exit();
+    
+    if ($is_ajax) {
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit();
+    }
+    // Для обычных запросов:
+    $_SESSION['form_success'] = $response['messages']['success'];
+    header('Location: ./');
+    exit();
 		
         } else {
             $login = uniqid();
