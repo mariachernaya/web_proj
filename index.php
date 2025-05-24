@@ -11,9 +11,8 @@ $languages = [];
 $log = !empty($_SESSION['login']);
 $error = false;
 
-$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
-    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-    || !empty($_POST['is_ajax']);
+$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) 
+    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 if ($is_ajax) {
     header('Content-Type: application/json; charset=UTF-8');
@@ -46,20 +45,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	    
 	  if ($is_ajax) {
         header('Content-Type: application/json');
-		  $response = [
+        $response = [
             'logout' => true,
-            'clear_fields' => true,
-	    'log' => false, 
+            'log' => false,
             'messages' => ['success' => 'Вы успешно вышли из системы'],
             'errors' => [],
             'values' => [],
             'languages' => []
         ];
-		  echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit();
+    } else {
+        header('Location: ./');
         exit();
     }
-    header('Location: ./');
-    exit();
     }
 	// Новая функция для сбора ошибок
 function validate_field($fieldName, $errorMessage, $condition) {
