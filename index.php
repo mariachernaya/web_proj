@@ -61,6 +61,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Location: ./');
     exit();
     }
+	// Новая функция для сбора ошибок
+function validate_field($fieldName, $errorMessage, $condition) {
+    global $errors, $messages, $error;
+    
+    if ($condition) {
+        $errors[$fieldName] = true;
+        $messages[$fieldName] = $errorMessage;
+        $error = true;
+        return true;
+    }
+    return false;
+}
+
+	// Пример использования для поля "fio"
+if (validate_field('fio', 'Это поле пустое', empty($fio))) {
+    // Если ошибка, переходим к следующему полю
+} else {
+    validate_field('fio', 'Неправильный формат', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
+}
+	// Пример использования для поля "fio"
+if (validate_field('number', 'Это поле пустое', empty($number))) {
+    // Если ошибка, переходим к следующему полю
+} else {
+    validate_field('number', 'Поле должно содержать только цифры, начиная с 8',  strlen($number) != 11);
+}
+if ($is_ajax) {
+    $response = [
+        'messages' => $messages, // Сообщения для каждого поля
+        'errors' => $errors,     // Флаги ошибок
+        'values' => $values,     // Сохраненные значения
+        'languages' => $languages,
+        'log' => $log,
+        'success' => !$error
+    ];
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit();
+}
     function check_field($cook, $str, $flag)
     {
         global $error;
@@ -79,12 +116,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return $res;
     }
 
-    if (!check_field('fio', 'Это поле пустое', empty($fio)))
-        check_field('fio', 'Неправильный формат: Имя Фамилия, только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
-    if (!check_field('number', 'Это поле пустое', empty($number))) {
-        check_field('number', 'Неправильный формат телефона', strlen($number) != 11);
-        check_field('number', 'Поле должно содержать только цифры, начиная с 8', $number != preg_replace('/\D/', '', $number));
-    }
+    // if (!check_field('fio', 'Это поле пустое', empty($fio)))
+    //     check_field('fio', 'Неправильный формат: Имя Фамилия, только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
+    // if (!check_field('number', 'Это поле пустое', empty($number))) {
+    //     check_field('number', 'Неправильный формат телефона', strlen($number) != 11);
+    //     check_field('number', 'Поле должно содержать только цифры, начиная с 8', $number != preg_replace('/\D/', '', $number));
+    // }
     if (!check_field('email', 'Это поле пустое', empty($email)))
         check_field('email', 'Неправильный формат: example@mail.ru', !preg_match('/^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/', $email));
     if (!check_field('date', 'Это поле пустое', empty($date)))
