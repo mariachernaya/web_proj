@@ -118,12 +118,12 @@ if (data.messages) {
         updateFormButtons(data.log);
 
     } catch (error) {
-        console.error('Error:', error);
+        
         const messElement = document.querySelector('.mess');
-        if (messElement) {
-            messElement.textContent = 'Изменены';
-            messElement.style.display = 'block';
-        }
+    if (messElement) {
+        messElement.textContent = 'Ошибка соединения';
+        messElement.style.display = 'block';
+    }
     }
 });
 
