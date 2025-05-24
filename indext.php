@@ -11,10 +11,11 @@ $languages = [];
 $log = !empty($_SESSION['login']);
 $error = false;
 
-$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
-    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-    || !empty($_POST['is_ajax']);
-
+// $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
+//     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+//     || !empty($_POST['is_ajax']);
+$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) 
+    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if ($is_ajax) {
     header('Content-Type: application/json; charset=UTF-8');
 } else header("Content-Type: text/html; charset=UTF-8");
@@ -130,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'success' => true
     ];
     echo json_encode($response);
-		
+	exit();
 		
             $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
             $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
