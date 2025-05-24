@@ -11,9 +11,6 @@ $languages = [];
 $log = !empty($_SESSION['login']);
 $error = false;
 
-// $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
-//     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-//     || !empty($_POST['is_ajax']);
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) 
     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if ($is_ajax) {
@@ -206,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit();
 } else {
-    header('Location: index.php');
+    header('Location: indext.php');
     exit();
 }
 } else {
