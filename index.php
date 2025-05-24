@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
+	     $_SESSION = [];
         setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
@@ -44,16 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
 	    
 	  if ($is_ajax) {
-        header('Content-Type: application/json');
-        $response = [
+        echo json_encode([
             'logout' => true,
             'log' => false,
-            'messages' => ['success' => 'Вы успешно вышли из системы'],
-            'errors' => [],
-            'values' => [],
-            'languages' => []
-        ];
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            'messages' => ['success' => 'Вы успешно вышли из системы']
+        ]);
         exit();
     } else {
         header('Location: ./');
@@ -155,7 +151,17 @@ if ($is_ajax) {
         setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
 
         if ($log) {
-		$response = [
+            $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
+            $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
+
+            $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
+            $stmt->execute([$_SESSION['form_id']]);
+
+            $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
+            foreach ($languages as $row)
+                $stmt1->execute([$_SESSION['form_id'], $row['id']]);
+
+$response = [
         'messages' => [
             'success' => 'Данные успешно изменены!', // Новое сообщение
             'info' => ''
@@ -169,16 +175,6 @@ if ($is_ajax) {
    echo json_encode($response, JSON_UNESCAPED_UNICODE);
 		exit();
 		
-		
-            $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
-            $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
-
-            $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
-            $stmt->execute([$_SESSION['form_id']]);
-
-            $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
-            foreach ($languages as $row)
-                $stmt1->execute([$_SESSION['form_id'], $row['id']]);
         } else {
             $login = uniqid();
             $pass = uniqid();
