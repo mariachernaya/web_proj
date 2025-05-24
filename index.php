@@ -22,6 +22,7 @@ $error = false;
 $log = !empty($_SESSION['login']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	
     $fio = isset($_POST['fio']) ? $_POST['fio'] : '';
     $number = isset($_POST['number']) ? $_POST['number'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-	     $_SESSION = [];
+	  //   $_SESSION = [];
         setcookie('fio_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('number_value', '', time() - 30 * 24 * 60 * 60, '/');
         setcookie('email_value', '', time() - 30 * 24 * 60 * 60, '/');
@@ -51,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'messages' => ['success' => 'Вы успешно вышли из системы']
         ]);
         exit();
-    } else {
+    } 
         header('Location: ./');
         exit();
-    }
+    
     }
 	// Новая функция для сбора ошибок
 function validate_field($fieldName, $errorMessage, $condition) {
