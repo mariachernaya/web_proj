@@ -20,7 +20,7 @@
 
 	<script src="jquery-3.4.1.min.js" defer></script>
 	<script src="slick/slick.min.js" defer></script>
-	<script src="project.js" defer></script>
+	<script src="js.js" defer></script>
 	<?php
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 ?>
