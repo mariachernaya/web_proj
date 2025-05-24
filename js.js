@@ -60,14 +60,22 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
             }
         }
         // В блоке обработки ответа сервера:
-        if (data.logout) {
-                updateFormButtons(false); // Скрыть кнопки для авторизованных
-                document.querySelectorAll('.mess').forEach(el => {
-                    el.textContent = data.messages?.success || '';
-                    el.style.display = 'block';
-            });
-            return; // Прекратить дальнейшую обработку
-        }
+       if (data.logout) {
+    updateFormButtons(false);
+    const messElement = document.querySelector('.mess');
+    if (messElement) {
+        messElement.textContent = data.messages?.success || 'Вы вышли из системы';
+        messElement.style.display = 'block';
+    }
+    return;
+}
+        if (data.success && data.messages?.success) {
+    const messElement = document.querySelector('.mess');
+    if (messElement) {
+        messElement.textContent = data.messages.success;
+        messElement.style.display = 'block';
+    }
+}
         // Обработка ошибок валидации
         if (data.errors) {
             Object.entries(data.errors).forEach(([field, hasError]) => {
