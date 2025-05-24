@@ -184,31 +184,6 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     updateFormButtons(false); 
     document.getElementById('credentials')?.style.display = 'none';
     
-    // Показ сообщения
-    const messElement = document.querySelector('.mess');
-    if (messElement) {
-        messElement.textContent = data.messages?.success || '';
-        messElement.style.display = 'block';
-    }
-    return;
-}
-      
-        // if (data.logout) {
-        //     form.reset();
-        //     updateFormButtons(false);
-        //     const credentials = document.getElementById('credentials');
-        //     if (credentials) credentials.style.display = 'none';
-            
-        //     // Показываем сообщение о выходе
-        //     if (data.messages && data.messages.success) {
-        //         const messElement = document.querySelector('.mess');
-        //         if (messElement) {
-        //             messElement.textContent = data.messages.success;
-        //             messElement.style.display = 'block';
-        //         }
-        //     }
-        //     return;
-        // }
 
         // Показ сообщений
 if (data.messages) {
@@ -226,23 +201,8 @@ if (data.messages) {
         messInfoElement.innerHTML = data.messages.info; 
         messInfoElement.style.display = 'block';
     }
+  return;
 }
-        // if (data.messages) {
-        //     if (data.messages.success) {
-        //         const messElement = document.querySelector('.mess');
-        //         if (messElement) {
-        //             messElement.innerHTML = data.messages.success;
-        //             messElement.style.display = 'block';
-        //         }
-        //     }
-        //     if (data.messages.info) {
-        //         const messInfoElement = document.querySelector('.mess_info');
-        //         if (messInfoElement) {
-        //             messInfoElement.innerHTML = data.messages.info;
-        //             messInfoElement.style.display = 'block';
-        //         }
-        //     }
-        // }
 
         // Показ ошибок
         if (data.errors) {
@@ -301,12 +261,3 @@ function updateFormButtons(isLoggedIn) {
     // Для неавторизованных
     if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
 }
-// function updateFormButtons(isLoggedIn) {
-//     const edbut = document.querySelector('.edbut');
-//     const logoutBtn = document.querySelector('[name="logout_form"]');
-//     const btnlike = document.querySelector('.btnlike');
-    
-//     if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
-//     if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-//     if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block';
-// }
