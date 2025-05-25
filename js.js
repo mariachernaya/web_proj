@@ -1,22 +1,31 @@
 // Функция для обновления состояния кнопок
 function updateFormButtons(isLoggedIn) {
-    const edbut = document.querySelector('.edbut'); // "Изменить"
-    const logoutBtn = document.querySelector('[name="logout_form"]'); // "Выйти"
-    const btnlike = document.querySelector('.btnlike'); // "Войти"
+    const submitBtn = document.querySelector('.button[type="submit"]:not([name])');
+    const edbut = document.querySelector('.edbut');
+    const logoutBtn = document.querySelector('[name="logout_form"]');
+    const btnlike = document.querySelector('.btnlike');
 
-    // Для авторизованных
-    if (edbut) edbut.style.display = isLoggedIn ? 'inline-block' : 'none';
-    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-    
-    // Для неавторизованных
-    if (btnlike) btnlike.style.display = isLoggedIn ? 'none' : 'inline-block'; 
+    if (isLoggedIn) {
+        // Показываем кнопки для авторизованных
+        if (edbut) edbut.style.display = 'inline-block';
+        if (logoutBtn) logoutBtn.style.display = 'inline-block';
+        // Скрываем кнопки для неавторизованных
+        if (submitBtn) submitBtn.style.display = 'none';
+        if (btnlike) btnlike.style.display = 'none';
+    } else {
+        // Показываем кнопки для неавторизованных
+        if (submitBtn) submitBtn.style.display = 'inline-block';
+        if (btnlike) btnlike.style.display = 'inline-block';
+        // Скрываем кнопки для авторизованных
+        if (edbut) edbut.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+    }
 }
 
 if (window.location.hash === '#form-anchor') {
     const anchor = document.getElementById('form-anchor');
     if (anchor) anchor.scrollIntoView();
 }
-
 document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -60,11 +69,25 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
 
         // Обработка выхода из системы
         if (data.logout) {
+            // Очищаем форму
+            form.reset();
+            
+            // Обновляем кнопки
             updateFormButtons(false);
             
-            // Очищаем форму и перезагружаем страницу для полного сброса
-            form.reset();
-            window.location.reload();
+            // Очищаем выбранные языки
+            const langSelect = form.querySelector('select[name="language[]"]');
+            if (langSelect) {
+                Array.from(langSelect.options).forEach(option => {
+                    option.selected = false;
+                });
+            }
+            
+            // Показываем сообщение
+            if (messElement) {
+                messElement.textContent = data.messages?.success || 'Вы вышли из системы';
+                messElement.style.display = 'block';
+            }
             return;
         }
 
