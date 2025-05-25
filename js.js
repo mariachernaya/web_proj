@@ -1,8 +1,8 @@
 // Функция для обновления состояния кнопок
 function updateFormButtons(isLoggedIn) {
-    const submitBtn = document.querySelector('.button[type="submit"]:not([name])');
+    const submitBtn = document.querySelector('.submit-btn');
     const edbut = document.querySelector('.edbut');
-    const logoutBtn = document.querySelector('[name="logout_form"]');
+    const logoutBtn = document.querySelector('.logout-btn');
     const btnlike = document.querySelector('.btnlike');
 
     if (isLoggedIn) {
@@ -21,11 +21,10 @@ function updateFormButtons(isLoggedIn) {
         if (logoutBtn) logoutBtn.style.display = 'none';
     }
 }
-
-if (window.location.hash === '#form-anchor') {
-    const anchor = document.getElementById('form-anchor');
-    if (anchor) anchor.scrollIntoView();
-}
+// if (window.location.hash === '#form-anchor') {
+//     const anchor = document.getElementById('form-anchor');
+//     if (anchor) anchor.scrollIntoView();
+// }
 document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -83,9 +82,9 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
                 });
             }
             
-            // Показываем сообщение
+            // Показываем сообщение о выходе
             if (messElement) {
-                messElement.textContent = data.messages?.success || 'Вы вышли из системы';
+                messElement.textContent = 'Вы успешно вышли из системы';
                 messElement.style.display = 'block';
             }
             return;
