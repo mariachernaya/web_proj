@@ -854,11 +854,11 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
         <h2><b>Форма обратной связи</b></h2>
 
 
-<!-- <div id="credentials" style="display: none;">
+<div id="credentials" style="display: none;">
     <h3>Ваши данные для входа:</h3>
     <p>Логин: <span id="generatedLogin"></span></p>
     <p>Пароль: <span id="generatedPass"></span></p>
-</div> -->
+</div>
 
 
       <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
