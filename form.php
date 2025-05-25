@@ -853,16 +853,21 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
       <div class="head">
         <h2><b>Форма обратной связи</b></h2>
 
+<div class="mess"><?php 
+    if(isset($_SESSION['success_message'])) {
+        echo $_SESSION['success_message'];
+        unset($_SESSION['success_message']);
+    } 
+?></div>
+<div class="mess mess_info"><?php 
+    if(isset($_SESSION['info_message'])) {
+        echo $_SESSION['info_message'];
+        unset($_SESSION['info_message']);
+    } 
+?></div>
 
-<div id="credentials" style="display: none;">
-    <h3>Ваши данные для входа:</h3>
-    <p>Логин: <span id="generatedLogin"></span></p>
-    <p>Пароль: <span id="generatedPass"></span></p>
-</div>
-
-
-      <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
-      <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div> 
+<!--       <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
+      <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div>  -->
       <div>
         <label> <input name="fio" class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>" value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> </label>
         
