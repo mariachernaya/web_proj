@@ -21,7 +21,38 @@ function updateFormButtons(isLoggedIn) {
         if (logoutBtn) logoutBtn.style.display = 'none';
     }
 }
+// Обработчик кнопки выхода
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+    try {
+        const response = await fetch('index.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: 'logout=1'
+        });
 
+        if (!response.ok) throw new Error('Ошибка выхода');
+        
+        const data = await response.json();
+        
+        if (data.logout) {
+            // Очищаем форму
+            document.getElementById('ajaxForm').reset();
+            // Обновляем кнопки
+            updateFormButtons(false);
+            // Показываем сообщение
+            const messElement = document.querySelector('.mess');
+            if (messElement) {
+                messElement.textContent = 'Вы успешно вышли из системы';
+                messElement.style.display = 'block';
+            }
+        }
+    } catch (error) {
+        console.error('Ошибка при выходе:', error);
+    }
+});
 document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
