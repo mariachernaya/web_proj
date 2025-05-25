@@ -32,36 +32,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
 	    if (isset($_POST['logout_form'])) {
-	    // Очищаем сессию
-	    $_SESSION = [];
-	    
-	    // Уничтожаем сессию
-	    if (ini_get("session.use_cookies")) {
-	        $params = session_get_cookie_params();
-	        setcookie(session_name(), '', time() - 42000,
-	            $params["path"], $params["domain"],
-	            $params["secure"], $params["httponly"]
-	        );
-	    }
-	    session_destroy();
-	
-	    // Очищаем куки формы
-	    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 'language_value', 'bio_value', 'check_value'];
-	    foreach ($cookies as $name) {
-	        setcookie($name, '', time() - 3600, '/');
-	    }
-	
-	    if ($is_ajax) {
-	        echo json_encode([
-	            'logout' => true,
-	            'log' => false,
-	            'messages' => ['success' => 'Вы успешно вышли из системы']
-	        ]);
-	        exit();
-	    }
-	    header('Location: ./');
-	    exit();
-	    }
+		    // Очищаем все куки формы
+		    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 
+		               'language_value', 'bio_value', 'check_value', 'login', 'pass'];
+		    foreach ($cookies as $name) {
+		        setcookie($name, '', time() - 3600, '/');
+		    }
+		    
+		    // Очищаем сессию
+		    $_SESSION = [];
+		    
+		    // Уничтожаем сессию
+		    if (ini_get("session.use_cookies")) {
+		        $params = session_get_cookie_params();
+		        setcookie(session_name(), '', time() - 42000,
+		            $params["path"], $params["domain"],
+		            $params["secure"], $params["httponly"]
+		        );
+		    }
+		    session_destroy();
+		
+		    if ($is_ajax) {
+		        echo json_encode([
+		            'logout' => true,
+		            'log' => false,
+		            'messages' => ['success' => 'Вы успешно вышли из системы']
+		        ]);
+		        exit();
+		    } else {
+		        header('Location: index.php');
+		        exit();
+		    }
+		}
 
     // Валидация полей
     $error = false;
