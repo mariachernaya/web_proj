@@ -83,7 +83,14 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
             document.querySelector('.mess_info').innerHTML = data.messages.info;
             document.querySelector('.mess_info').style.display = 'block';
         }
-
+        if (data.errors) {
+            for (const field in data.errors) {
+                const errorElement = document.querySelector(`.error[data-field="${field}"]`);
+                if (errorElement && data.messages[field]) {
+                    errorElement.textContent = data.messages[field];
+                }
+            }
+        }
         // Обновление состояния формы
         updateFormButtons(data.log);
 
