@@ -31,7 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bio = isset($_POST['bio']) ? $_POST['bio'] : '';
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
-		if (isset($_POST['logout']) && $_POST['logout'] == '1') {
+	$action = $_POST['action'] ?? '';
+
+	 if ($action === 'logout') {
+        if (isset($_POST['logout']) && $_POST['logout'] == '1') {
 		    // Очищаем все куки формы
 		    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 
 		               'language_value', 'bio_value', 'check_value', 'login', 'pass'];
@@ -63,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		    header('Location: index.php');
 		    exit();
 		}
+  	  }
+		
 
     // Валидация полей
     $error = false;
@@ -123,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!$error) {
         if ($log) {
+		 if ($action === 'update') {
             // Обновление данных для авторизованного пользователя
             try {
                 $db->beginTransaction();
@@ -158,13 +164,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'bio' => $bio
                 ];
 
-                $response = [
-                    'messages' => [
-                        'success' => 'Данные успешно обновлены!'
-                    ],
-                    'log' => $log,
-                    'success' => true
-                ];
+               $response = [
+                'messages' => [
+                    'success' => 'Данные успешно обновлены!'
+                ],
+                'log' => $log,
+                'success' => true
+            ];
+            
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            exit();
 
             } catch (PDOException $e) {
                 $db->rollBack();
@@ -174,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     ],
                     'success' => false
                 ];
-            }
+            } }
 	} else {
             // Создание нового пользователя
             $login = uniqid();
