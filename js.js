@@ -56,30 +56,20 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
                 messInfoElement.innerHTML = data.messages.info;
                 messInfoElement.style.display = 'block';
             }
-            
-            if (data.messages.error && messElement) {
-                messElement.textContent = data.messages.error;
-                messElement.style.display = 'block';
-            }
         }
 
         // Обработка выхода из системы
         if (data.logout) {
             updateFormButtons(false);
-            if (messElement) {
-                messElement.textContent = data.messages?.success || 'Вы вышли из системы';
-                messElement.style.display = 'block';
-            }
             
-            // Очищаем форму
+            // Очищаем форму и перезагружаем страницу для полного сброса
             form.reset();
+            window.location.reload();
             return;
         }
 
         // Обновление данных в форме после успешного изменения
         if (data.success && data.log) {
-            // Для AJAX-запросов данные уже должны быть актуальными
-            // Можно обновить интерфейс, если нужно
             updateFormButtons(true);
         }
 
