@@ -22,7 +22,6 @@ $error = false;
 $log = !empty($_SESSION['login']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
     $fio = isset($_POST['fio']) ? $_POST['fio'] : '';
     $number = isset($_POST['number']) ? $_POST['number'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -33,219 +32,201 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
     if (isset($_POST['logout_form'])) {
-    // Уничтожаем сессию ПЕРЕД установкой куков
-    $_SESSION = [];
-    session_destroy();
+        $_SESSION = [];
+        session_destroy();
 
-    // Очистка куков
-    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value','radio_value', 'language_value', 'bio_value', 'check_value'];
-    foreach ($cookies as $name) {
-        setcookie($name, '', time() - 3600, '/');
-    }
-
-    if ($is_ajax) {
-        echo json_encode([
-            'logout' => true,
-            'log' => false,
-            'messages' => ['success' => 'Вы успешно вышли из системы']
-        ]);
-        exit();
-    }
-    header('Location: ./');
-    exit();
-}
-	// Новая функция для сбора ошибок
-function validate_field($fieldName, $errorMessage, $condition) {
-    global $errors, $messages, $error;
-    
-    if ($condition) {
-        $errors[$fieldName] = true;
-        $messages[$fieldName] = $errorMessage;
-        $error = true;
-        return true;
-    }
-    return false;
-}
-
-	// Пример использования для поля "fio"
-if (validate_field('fio', 'Это поле пустое', empty($fio))) {
-    // Если ошибка, переходим к следующему полю
-} else {
-    validate_field('fio', 'Неправильный формат', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
-}
-	// Пример использования для поля "fio"
-if (validate_field('number', 'Это поле пустое', empty($number))) {
-    // Если ошибка, переходим к следующему полю
-} else {
-    validate_field('number', 'Поле должно содержать только цифры, начиная с 8',  strlen($number) != 11);
-}
-if ($is_ajax) {
-    $response = [
-        'messages' => $messages, // Сообщения для каждого поля
-        'errors' => $errors,     // Флаги ошибок
-        'values' => $values,     // Сохраненные значения
-        'languages' => $languages,
-        'log' => $log,
-        'success' => !$error
-    ];
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);
-    exit();
-}
-    function check_field($cook, $str, $flag)
-    {
-        global $error;
-        $res = false;
-        $setval = isset($_POST[$cook]) ? $_POST[$cook] : '';
-        if ($flag) {
-            setcookie($cook . '_error', $str, time() + 24 * 60 * 60);
-            $error = true;
-            $res = true;
+        $cookies = ['fio_value', 'number_value', 'email_value', 'date_value','radio_value', 'language_value', 'bio_value', 'check_value'];
+        foreach ($cookies as $name) {
+            setcookie($name, '', time() - 3600, '/');
         }
-        if ($cook == 'language') {
-            global $language;
-            $setval = ($language != '') ? implode(",", $language) : '';
-        }
-        setcookie($cook . '_value', $setval, time() + 30 * 24 * 60 * 60);
-        return $res;
-    }
 
-    // if (!check_field('fio', 'Это поле пустое', empty($fio)))
-    //     check_field('fio', 'Неправильный формат: Имя Фамилия, только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
-    // if (!check_field('number', 'Это поле пустое', empty($number))) {
-    //     check_field('number', 'Неправильный формат телефона', strlen($number) != 11);
-    //     check_field('number', 'Поле должно содержать только цифры, начиная с 8', $number != preg_replace('/\D/', '', $number));
-    // }
-    if (!check_field('email', 'Это поле пустое', empty($email)))
-        check_field('email', 'Неправильный формат: example@mail.ru', !preg_match('/^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/', $email));
-    if (!check_field('date', 'Это поле пустое', empty($date)))
-        check_field('date', 'Неверная дата', strtotime('now') < strtotime($date));
-    check_field('radio', "Не выбран пол", empty($radio) || !preg_match('/^(M|W)$/', $radio));
-    if (!check_field('bio', 'Это поле пустое', empty($bio)))
-        check_field('bio', 'Слишком длинное поле', strlen($bio) > 65535);
-    check_field('check', 'Не ознакомлены с контрактом', empty($check));
-
-    if (!check_field('language', 'Не выбран язык', empty($language))) {
-        try {
-            $inQuery = implode(',', array_fill(0, count($language), '?'));
-            $dbLangs = $db->prepare("SELECT id, name FROM languages WHERE name IN ($inQuery)");
-            foreach ($language as $key => $value)
-                $dbLangs->bindValue(($key + 1), $value);
-            $dbLangs->execute();
-            $languages = $dbLangs->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
+        if ($is_ajax) {
+            echo json_encode([
+                'logout' => true,
+                'log' => false,
+                'messages' => ['success' => 'Вы успешно вышли из системы']
+            ]);
             exit();
         }
-        check_field('language', 'Неверно выбраны языки', $dbLangs->rowCount() != count($language));
-    }
-
-    if (!$error) {
-        setcookie('fio_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('number_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('email_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('date_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('radio_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('language_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('bio_error', '', time() - 30 * 24 * 60 * 60);
-        setcookie('check_error', '', time() - 30 * 24 * 60 * 60);
-
-        if ($log) {
-            $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
-            $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
-
-            $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
-            $stmt->execute([$_SESSION['form_id']]);
-
-            $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
-            foreach ($languages as $row)
-                $stmt1->execute([$_SESSION['form_id'], $row['id']]);
-
-		$response = [
-        'messages' => [
-            'success' => 'Данные успешно обновлены!',
-            'info' => ''
-        ],
-        'log' => $log,
-        'success' => true
-    ];
-    
-    if ($is_ajax) {
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        header('Location: ./');
         exit();
     }
-    // Для обычных запросов:
-    $_SESSION['form_success'] = $response['messages']['success'];
-    header('Location: ./');
-    exit();
-		
+
+    // Валидация полей
+    $error = false;
+    $messages = [];
+    $errors = [];
+
+    // Функция для валидации полей
+    function validate_field($fieldName, $errorMessage, $condition) {
+        global $errors, $messages, $error;
+        
+        if ($condition) {
+            $errors[$fieldName] = true;
+            $messages[$fieldName] = $errorMessage;
+            $error = true;
+            return true;
+        }
+        return false;
+    }
+
+    // Валидация ФИО
+    if (validate_field('fio', 'Это поле пустое', empty($fio))) {
+    } else {
+        validate_field('fio', 'Неправильный формат: Имя Фамилия, только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
+    }
+
+    // Валидация телефона
+    if (validate_field('number', 'Это поле пустое', empty($number))) {
+    } else {
+        validate_field('number', 'Поле должно содержать 11 цифр, начиная с 8', strlen($number) != 11 || substr($number, 0, 1) != '8');
+    }
+
+    // Валидация email
+    if (validate_field('email', 'Это поле пустое', empty($email))) {
+    } else {
+        validate_field('email', 'Неправильный формат email', !filter_var($email, FILTER_VALIDATE_EMAIL));
+    }
+
+    // Валидация даты
+    if (validate_field('date', 'Это поле пустое', empty($date))) {
+    } else {
+        validate_field('date', 'Неверная дата', strtotime($date) > time());
+    }
+
+    // Валидация пола
+    validate_field('radio', "Не выбран пол", empty($radio) || !preg_match('/^(M|W)$/', $radio));
+
+    // Валидация языков
+    validate_field('language', 'Не выбран язык', empty($language));
+
+    // Валидация биографии
+    if (validate_field('bio', 'Это поле пустое', empty($bio))) {
+    } else {
+        validate_field('bio', 'Слишком длинная биография', strlen($bio) > 65535);
+    }
+
+    // Валидация чекбокса
+    validate_field('check', 'Не ознакомлены с контрактом', empty($check));
+
+    if (!$error) {
+        if ($log) {
+            // Обновление данных для авторизованного пользователя
+            try {
+                $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
+                $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
+
+                $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
+                $stmt->execute([$_SESSION['form_id']]);
+
+                $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
+                foreach ($languages as $lang) {
+                    $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
+                    $stmtLang->execute([$lang]);
+                    $langId = $stmtLang->fetchColumn();
+                    if ($langId) {
+                        $stmt1->execute([$_SESSION['form_id'], $langId]);
+                    }
+                }
+
+                $response = [
+                    'messages' => [
+                        'success' => 'Данные успешно обновлены!'
+                    ],
+                    'log' => $log,
+                    'success' => true
+                ];
+
+            } catch (PDOException $e) {
+                $response = [
+                    'messages' => [
+                        'error' => 'Ошибка при обновлении данных'
+                    ],
+                    'success' => false
+                ];
+            }
         } else {
+            // Создание нового пользователя
             $login = uniqid();
             $pass = uniqid();
-            setcookie('login', $login);
-            setcookie('pass', $pass);
             $mpass = md5($pass);
+
             try {
+                $db->beginTransaction();
+
+                // Создаем пользователя
                 $stmt = $db->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
                 $stmt->execute([$login, $mpass]);
                 $user_id = $db->lastInsertId();
 
-                $stmt = $db->prepare("INSERT INTO form_data (user_id, fio, number, email, dat, radio, bio) VALUES (?, ?, ?, ?, ?, ?, ? )");
+                // Сохраняем данные формы
+                $stmt = $db->prepare("INSERT INTO form_data (user_id, fio, number, email, dat, radio, bio) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$user_id, $fio, $number, $email, $date, $radio, $bio]);
                 $fid = $db->lastInsertId();
 
+                // Сохраняем выбранные языки
                 $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
-                foreach ($languages as $row)
-                    $stmt1->execute([$fid, $row['id']]);
+                foreach ($languages as $lang) {
+                    $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
+                    $stmtLang->execute([$lang]);
+                    $langId = $stmtLang->fetchColumn();
+                    if ($langId) {
+                        $stmt1->execute([$fid, $langId]);
+                    }
+                }
+
+                $db->commit();
+
+                // Устанавливаем куки
+                setcookie('login', $login, time() + 3600 * 24 * 30, '/');
+                setcookie('pass', $pass, time() + 3600 * 24 * 30, '/');
+
+                $response = [
+                    'messages' => [
+                        'success' => 'Спасибо, результаты сохранены.',
+                        'info' => sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong> и паролем <strong>%s</strong> для изменения данных.', $login, $pass)
+                    ],
+                    'generated' => [
+                        'login' => $login,
+                        'pass' => $pass
+                    ],
+                    'log' => false,
+                    'success' => true
+                ];
+
             } catch (PDOException $e) {
-                exit();
+                $db->rollBack();
+                $response = [
+                    'messages' => [
+                        'error' => 'Ошибка при сохранении данных'
+                    ],
+                    'success' => false
+                ];
             }
-            setcookie('fio_value', $fio, time() + 24 * 60 * 60 * 365);
-            setcookie('number_value', $number, time() + 24 * 60 * 60 * 365);
-            setcookie('email_value', $email, time() + 24 * 60 * 60 * 365);
-            setcookie('date_value', $date, time() + 24 * 60 * 60 * 365);
-            setcookie('radio_value', $radio, time() + 24 * 60 * 60 * 365);
-            setcookie('language_value', implode(",", $language), time() + 24 * 60 * 60 * 365);
-            setcookie('bio_value', $bio, time() + 24 * 60 * 60 * 365);
-            setcookie('check_value', $check, time() + 24 * 60 * 60 * 365);
-
-
-		
-    $response = [
-        'messages' => [
-            'success' => 'Спасибо, результаты сохранены.',
-            'info' => !$log ? sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong> 
-	    и паролем <strong>%s</strong> для изменения данных.', $login, $pass) : ''
-        ],
-        'generated' => [
-            'login' => $log ? $_SESSION['login'] : $login,
-            'pass' => $log ? $_SESSION['pass'] : $pass
-        ],
-        'errors' => $errors,
-        'values' => $values,
-        'languages' => $languages,
-        'log' => $log,
-        'success' => true
-    ];
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);
-    exit();
         }
-        setcookie('save', '1');
+    } else {
+        $response = [
+            'messages' => $messages,
+            'errors' => $errors,
+            'success' => false
+        ];
     }
-   
+
     if ($is_ajax) {
-    $response = [
-        'messages' => $messages,
-        'errors' => $errors,
-        'values' => $values,
-        'languages' => $languages,
-        'log' => $log,
-        'success' => !$error,
-    ];
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);
-    exit();
-} else {
-    header('Location: index.php');
-    exit();
-}
+        header('Content-Type: application/json');
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit();
+    } else {
+        // Для не-AJAX запросов
+        if (isset($response['messages']['success'])) {
+            $_SESSION['success_message'] = $response['messages']['success'];
+        }
+        if (isset($response['messages']['info'])) {
+            $_SESSION['info_message'] = $response['messages']['info'];
+        }
+        header('Location: index.php');
+        exit();
+    }
 } else {
     $fio = !empty($_COOKIE['fio_error']) ? $_COOKIE['fio_error'] : '';
     $number = !empty($_COOKIE['number_error']) ? $_COOKIE['number_error'] : '';
