@@ -865,9 +865,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
         unset($_SESSION['info_message']);
     } 
 ?></div>
-
-<!--       <div class="mess"><?php if(isset($messages['success'])) echo $messages['success']; ?></div>
-      <div class="mess mess_info"><?php if(isset($messages['info'])) echo $messages['info']; ?></div>  -->
+	    
       <div>
         <label> <input name="fio" class="input <?php echo ($errors['fio'] != NULL) ? 'red' : ''; ?>" value="<?php echo $values['fio']; ?>" type="text" placeholder="ФИО" /> </label>
         
@@ -900,11 +898,8 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
             <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Мужской </span>
           </label>
           <label>
-
-		
             <input name="radio" class="ml-2" type="radio" value="W" <?php if($values['radio'] == 'W') echo 'checked'; ?>/>
             <span class="<?php echo ($errors['radio'] != NULL) ? 'error' : ''; ?>"> Женский </span>
-
           </label>
         </div>
         <div class="error" data-field="radio"> <?php echo $messages['radio']?> </div>
@@ -945,16 +940,18 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 <div class="form-buttons">
     <?php if($log): ?>
         <button class="button edbut" type="submit">Изменить</button>
-        <button class="button" type="submit" name="logout_form" value="1">Выйти</button> 
+        <button class="button logout-btn" type="submit" name="logout_form">Выйти</button> 
     <?php else: ?>
-        <button class="button" type="submit">Отправить</button>
+        <button class="button submit-btn" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
     <?php endif; ?> 
 </div>
+	      
     </form>
+	      
             <section id="block-copyright" class="block clear">
                 <h6>&nbsp;</h6>
-                <div class="fpt-56   "><p>Проект ООО «Инитлаб», Краснодар, Россия. <br>
+                <div class="fpt-56"><p>Проект ООО «Инитлаб», Краснодар, Россия. <br>
                     Drupal является зарегистрированной торговой маркой Dries Buytaert.</p></div>
             </section>
 
