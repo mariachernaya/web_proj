@@ -26,6 +26,8 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
+
+    const isLogout = formData.has('logout');
     
     // Очистка предыдущих сообщений и ошибок
     document.querySelectorAll('.error').forEach(el => el.textContent = '');
@@ -45,6 +47,20 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const data = await response.json();
+        if (isLogout) {
+            // Очищаем форму
+            form.reset();
+            // Обновляем кнопки
+            updateFormButtons(false);
+            // Показываем сообщение
+            const messElement = document.querySelector('.mess');
+            if (messElement) {
+                messElement.textContent = 'Вы успешно вышли из системы';
+                messElement.style.display = 'block';
+            }
+            return;
+        }
+        
         console.log("Server response:", data);
 
         // Обработка сообщений
