@@ -127,64 +127,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     validate_field('check', 'Не ознакомлены с контрактом', empty($check));
 
     if (!$error) {
-        if ($log) {
-		 if ($action === 'update') {
-            // Обновление данных для авторизованного пользователя
-            try {
-                $db->beginTransaction();
-
-                // Обновляем основные данные
-                $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
-                $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
-
-                // Удаляем старые языки
-                $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
-                $stmt->execute([$_SESSION['form_id']]);
-
-                // Добавляем новые языки
-                $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
-                foreach ($languages as $lang) {
-                    $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
-                    $stmtLang->execute([$lang]);
-                    $langId = $stmtLang->fetchColumn();
-                    if ($langId) {
-                        $stmt1->execute([$_SESSION['form_id'], $langId]);
-                    }
-                }
-
-                $db->commit();
-
-                // Обновляем значения в сессии
-                $_SESSION['form_data'] = [
-                    'fio' => $fio,
-                    'number' => $number,
-                    'email' => $email,
-                    'date' => $date,
-                    'radio' => $radio,
-                    'bio' => $bio
-                ];
-
-               $response = [
-                'messages' => [
-                    'success' => 'Данные успешно обновлены!'
-                ],
-                'log' => $log,
-                'success' => true
-            ];
-            
-            echo json_encode($response, JSON_UNESCAPED_UNICODE);
-            exit();
-
-            } catch (PDOException $e) {
-                $db->rollBack();
-                $response = [
-                    'messages' => [
-                        'error' => 'Ошибка при обновлении данных: ' . $e->getMessage()
-                    ],
-                    'success' => false
-                ];
-            } }
-	} else {
+		        if ($log && $action === 'update') {
+		    $languages = isset($_POST['language']) ? $_POST['language'] : [];
+		    
+		    try {
+		        $db->beginTransaction();
+		
+		        // Обновляем основные данные
+		        $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
+		        $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
+		
+		        // Удаляем старые языки
+		        $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
+		        $stmt->execute([$_SESSION['form_id']]);
+		
+		        // Добавляем новые языки
+		        $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
+		        foreach ($languages as $lang) {
+		            $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
+		            $stmtLang->execute([$lang]);
+		            $langId = $stmtLang->fetchColumn();
+		            if ($langId) {
+		                $stmt1->execute([$_SESSION['form_id'], $langId]);
+		            }
+		        }
+		
+		        $db->commit();
+		
+		        $response = [
+		            'messages' => ['success' => 'Данные успешно обновлены!'],
+		            'log' => $log,
+		            'success' => true
+		        ];
+		        
+		        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+		        exit();
+		
+		    } catch (PDOException $e) {
+		        $db->rollBack();
+		        $response = [
+		            'messages' => ['error' => 'Ошибка при обновлении данных'],
+		            'success' => false
+		        ];
+		        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+		        exit();
+		    }
+		} 
+	else {
             // Создание нового пользователя
             $login = uniqid();
             $pass = uniqid();
