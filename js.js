@@ -34,9 +34,7 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
         const response = await fetch('index.php', {
             method: 'POST',
             body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
         });
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -45,48 +43,49 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
         console.log("Server response:", data);
 
         // Обработка сообщений
-        // В обработчике ответа сервера:
-if (data.messages) {
-    const messElement = document.querySelector('.mess');
-    const messInfoElement = document.querySelector('.mess_info');
-    
-    // Основное сообщение
-    if (data.messages.success) {
-        if (messElement) {
-            messElement.textContent = data.messages.success;
-            messElement.style.display = 'block';
+        const messElement = document.querySelector('.mess');
+        const messInfoElement = document.querySelector('.mess_info');
+        
+        if (data.messages) {
+            if (data.messages.success && messElement) {
+                messElement.textContent = data.messages.success;
+                messElement.style.display = 'block';
+            }
+            
+            if (data.messages.info && messInfoElement) {
+                messInfoElement.innerHTML = data.messages.info;
+                messInfoElement.style.display = 'block';
+            }
+            
+            if (data.messages.error && messElement) {
+                messElement.textContent = data.messages.error;
+                messElement.style.display = 'block';
+            }
         }
-    }
-    
-    // Информационное сообщение
-    if (data.messages.info) {
-        if (messInfoElement) {
-            messInfoElement.innerHTML = data.messages.info;
-            messInfoElement.style.display = 'block';
+
+        // Обработка выхода из системы
+        if (data.logout) {
+            updateFormButtons(false);
+            if (messElement) {
+                messElement.textContent = data.messages?.success || 'Вы вышли из системы';
+                messElement.style.display = 'block';
+            }
+            
+            // Очищаем форму
+            form.reset();
+            return;
         }
-    }
-}
-        // В блоке обработки ответа сервера:
-       if (data.logout) {
-    updateFormButtons(false);
-    const messElement = document.querySelector('.mess');
-    if (messElement) {
-        messElement.textContent = data.messages?.success || 'Вы вышли из системы';
-        messElement.style.display = 'block';
-    }
-    return;
-}
-        if (data.success && data.messages?.success) {
-    const messElement = document.querySelector('.mess');
-    if (messElement) {
-        messElement.textContent = data.messages.success;
-        messElement.style.display = 'block';
-    }
-}
+
+        // Обновление данных в форме после успешного изменения
+        if (data.success && data.log) {
+            // Для AJAX-запросов данные уже должны быть актуальными
+            // Можно обновить интерфейс, если нужно
+            updateFormButtons(true);
+        }
+
         // Обработка ошибок валидации
         if (data.errors) {
             Object.entries(data.errors).forEach(([field, hasError]) => {
-                // Для полей с множественным выбором (language[])
                 const fieldName = field === 'language[]' ? 'language' : field;
                 const errorElement = document.querySelector(`.error[data-field="${fieldName}"]`);
                 const input = form.querySelector(`[name="${field}"]`) || 
