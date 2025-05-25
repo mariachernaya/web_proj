@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bio = isset($_POST['bio']) ? $_POST['bio'] : '';
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
-		if (isset($_POST['logout_form'])) {
+		if (isset($_POST['logout_form']) && $_POST['logout_form'] == '1') {
 		    // Очищаем все куки формы
 		    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 
 		               'language_value', 'bio_value', 'check_value', 'login', 'pass'];
