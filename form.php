@@ -846,8 +846,6 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
  <footer class="footer">
     <div class="container">
 
-
-
 <form  method="post" class="form" id="ajaxForm">
 	<div id="form-anchor"></div>
       <div class="head">
@@ -941,7 +939,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
     <?php if($log): ?>
 	    
         <button class="button edbut" type="submit">Изменить</button>
-	<button class="button" type="submit" name="logout_form" value="1">Выйти</button>
+	<button class="button" type="submit" name="logout" value="1">Выйти</button>
     <?php else: ?>
         <button class="button submit-btn" type="submit">Отправить</button>
         <a class="btnlike" href="login.php">Войти</a>
