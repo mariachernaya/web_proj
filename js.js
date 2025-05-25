@@ -1,25 +1,9 @@
 // Функция для обновления состояния кнопок
 function updateFormButtons(isLoggedIn) {
-    const submitBtn = document.querySelector('.submit-btn');
-    const edbut = document.querySelector('.edbut');
-    const logoutBtn = document.querySelector('.logout-btn');
-    const btnlike = document.querySelector('.btnlike');
-
-    if (isLoggedIn) {
-        // Показываем кнопки для авторизованных
-        if (edbut) edbut.style.display = 'inline-block';
-        if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        // Скрываем кнопки для неавторизованных
-        if (submitBtn) submitBtn.style.display = 'none';
-        if (btnlike) btnlike.style.display = 'none';
-    } else {
-        // Показываем кнопки для неавторизованных
-        if (submitBtn) submitBtn.style.display = 'inline-block';
-        if (btnlike) btnlike.style.display = 'inline-block';
-        // Скрываем кнопки для авторизованных
-        if (edbut) edbut.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-    }
+    document.querySelector('.submit-btn').style.display = isLoggedIn ? 'none' : 'inline-block';
+    document.querySelector('.btnlike').style.display = isLoggedIn ? 'none' : 'inline-block';
+    document.querySelector('.edbut').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
 }
 // Обработчик кнопки выхода
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
@@ -40,8 +24,13 @@ document.getElementById('logoutBtn')?.addEventListener('click', async () => {
         if (data.logout) {
             // Очищаем форму
             document.getElementById('ajaxForm').reset();
-            // Обновляем кнопки
-            updateFormButtons(false);
+            
+            // Мгновенно переключаем кнопки
+            document.querySelector('.submit-btn').style.display = 'inline-block';
+            document.querySelector('.btnlike').style.display = 'inline-block';
+            document.querySelector('.edbut').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            
             // Показываем сообщение
             const messElement = document.querySelector('.mess');
             if (messElement) {
@@ -53,6 +42,8 @@ document.getElementById('logoutBtn')?.addEventListener('click', async () => {
         console.error('Ошибка при выходе:', error);
     }
 });
+
+
 document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
