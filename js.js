@@ -21,10 +21,7 @@ function updateFormButtons(isLoggedIn) {
         if (logoutBtn) logoutBtn.style.display = 'none';
     }
 }
-// if (window.location.hash === '#form-anchor') {
-//     const anchor = document.getElementById('form-anchor');
-//     if (anchor) anchor.scrollIntoView();
-// }
+
 document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -84,7 +81,7 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
             
             // Показываем сообщение о выходе
             if (messElement) {
-                messElement.textContent = 'Вы успешно вышли из системы';
+                messElement.textContent = data.messages?.success || 'Вы успешно вышли из системы';
                 messElement.style.display = 'block';
             }
             return;
