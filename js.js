@@ -14,7 +14,7 @@ document.getElementById('logoutBtn')?.addEventListener('click', async () => {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: 'logout=1'
+            body: 'action=logout&logout=1' // Добавляем action=logout
         });
 
         if (!response.ok) throw new Error('Ошибка выхода');
@@ -46,7 +46,12 @@ document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
-    
+
+    // Добавляем action в FormData, если он есть
+    const submitButton = document.querySelector('button[type="submit"]:focus');
+    if (submitButton && submitButton.name === 'action') {
+        formData.append(submitButton.name, submitButton.value);
+    }
     // Определяем тип действия
     const action = formData.get('action');
     
