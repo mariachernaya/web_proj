@@ -938,7 +938,7 @@ $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 <div class="form-buttons">
     <button class="button submit-btn" type="submit" style="display: <?= $log ? 'none' : 'inline-block' ?>">Отправить</button>
     <a class="btnlike" href="login.php" style="display: <?= $log ? 'none' : 'inline-block' ?>">Войти</a>
-    <button class="button edbut" type="submit" style="display: <?= $log ? 'inline-block' : 'none' ?>">Изменить</button>
+    <button class="button edbut" type="submit" name="action" value="update" style="display: <?= $log ? 'inline-block' : 'none' ?>">Изменить</button>
     <button class="button logout-btn" type="button" id="logoutBtn" style="display: <?= $log ? 'inline-block' : 'none' ?>">Выйти</button>
 </div>
 	      
