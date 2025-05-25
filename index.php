@@ -31,26 +31,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bio = isset($_POST['bio']) ? $_POST['bio'] : '';
     $check = isset($_POST['check']) ? $_POST['check'] : '';
 
-    if (isset($_POST['logout_form'])) {
-        $_SESSION = [];
-        session_destroy();
-
-        $cookies = ['fio_value', 'number_value', 'email_value', 'date_value','radio_value', 'language_value', 'bio_value', 'check_value'];
-        foreach ($cookies as $name) {
-            setcookie($name, '', time() - 3600, '/');
-        }
-
-        if ($is_ajax) {
-            echo json_encode([
-                'logout' => true,
-                'log' => false,
-                'messages' => ['success' => 'Вы успешно вышли из системы']
-            ]);
-            exit();
-        }
-        header('Location: ./');
-        exit();
-    }
+	    if (isset($_POST['logout_form'])) {
+	    // Очищаем сессию
+	    $_SESSION = [];
+	    
+	    // Уничтожаем сессию
+	    if (ini_get("session.use_cookies")) {
+	        $params = session_get_cookie_params();
+	        setcookie(session_name(), '', time() - 42000,
+	            $params["path"], $params["domain"],
+	            $params["secure"], $params["httponly"]
+	        );
+	    }
+	    session_destroy();
+	
+	    // Очищаем куки формы
+	    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 'language_value', 'bio_value', 'check_value'];
+	    foreach ($cookies as $name) {
+	        setcookie($name, '', time() - 3600, '/');
+	    }
+	
+	    if ($is_ajax) {
+	        echo json_encode([
+	            'logout' => true,
+	            'log' => false,
+	            'messages' => ['success' => 'Вы успешно вышли из системы']
+	        ]);
+	        exit();
+	    }
+	    header('Location: ./');
+	    exit();
+	    }
 
     // Валидация полей
     $error = false;
@@ -113,12 +124,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($log) {
             // Обновление данных для авторизованного пользователя
             try {
+                $db->beginTransaction();
+
+                // Обновляем основные данные
                 $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
                 $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
 
+                // Удаляем старые языки
                 $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
                 $stmt->execute([$_SESSION['form_id']]);
 
+                // Добавляем новые языки
                 $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
                 foreach ($languages as $lang) {
                     $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
@@ -129,6 +145,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 }
 
+                $db->commit();
+
+                // Обновляем значения в сессии
+                $_SESSION['form_data'] = [
+                    'fio' => $fio,
+                    'number' => $number,
+                    'email' => $email,
+                    'date' => $date,
+                    'radio' => $radio,
+                    'bio' => $bio
+                ];
+
                 $response = [
                     'messages' => [
                         'success' => 'Данные успешно обновлены!'
@@ -138,14 +166,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ];
 
             } catch (PDOException $e) {
+                $db->rollBack();
                 $response = [
                     'messages' => [
-                        'error' => 'Ошибка при обновлении данных'
+                        'error' => 'Ошибка при обновлении данных: ' . $e->getMessage()
                     ],
                     'success' => false
                 ];
             }
-        } else {
+	}else {
             // Создание нового пользователя
             $login = uniqid();
             $pass = uniqid();
