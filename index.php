@@ -35,17 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	 if ($action === 'logout') {
         if (isset($_POST['logout']) && $_POST['logout'] == '1') {
-		    // Очищаем все куки формы
+		    
 		    $cookies = ['fio_value', 'number_value', 'email_value', 'date_value', 'radio_value', 
 		               'language_value', 'bio_value', 'check_value', 'login', 'pass'];
 		    foreach ($cookies as $name) {
 		        setcookie($name, '', time() - 3600, '/');
 		    }
 		    
-		    // Очищаем сессию
 		    $_SESSION = [];
 		    
-		    // Уничтожаем сессию
 		    if (ini_get("session.use_cookies")) {
 		        $params = session_get_cookie_params();
 		        setcookie(session_name(), '', time() - 42000,
@@ -68,13 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
   	  }
 		
-
-    // Валидация полей
     $error = false;
     $messages = [];
     $errors = [];
 
-    // Функция для валидации полей
     function validate_field($fieldName, $errorMessage, $condition) {
         global $errors, $messages, $error;
         
@@ -87,43 +82,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return false;
     }
 
-    // Валидация ФИО
     if (validate_field('fio', 'Это поле пустое', empty($fio))) {
     } else {
         validate_field('fio', 'Неправильный формат: Имя Фамилия, только кириллица', !preg_match('/^([а-яё]+-?[а-яё]+)( [а-яё]+-?[а-яё]+){1,2}$/Diu', $fio));
     }
 
-    // Валидация телефона
     if (validate_field('number', 'Это поле пустое', empty($number))) {
     } else {
         validate_field('number', 'Поле должно содержать 11 цифр, начиная с 8', strlen($number) != 11 || substr($number, 0, 1) != '8');
     }
 
-    // Валидация email
     if (validate_field('email', 'Это поле пустое', empty($email))) {
     } else {
         validate_field('email', 'Неправильный формат email', !filter_var($email, FILTER_VALIDATE_EMAIL));
     }
-
-    // Валидация даты
     if (validate_field('date', 'Это поле пустое', empty($date))) {
     } else {
         validate_field('date', 'Неверная дата', strtotime($date) > time());
     }
 
-    // Валидация пола
     validate_field('radio', "Не выбран пол", empty($radio) || !preg_match('/^(M|W)$/', $radio));
 
-    // Валидация языков
     validate_field('language', 'Не выбран язык', empty($language));
 
-    // Валидация биографии
     if (validate_field('bio', 'Это поле пустое', empty($bio))) {
     } else {
         validate_field('bio', 'Слишком длинная биография', strlen($bio) > 65535);
     }
 
-    // Валидация чекбокса
     validate_field('check', 'Не ознакомлены с контрактом', empty($check));
 
     if (!$error) {
@@ -133,15 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		    try {
 		        $db->beginTransaction();
 		
-		        // Обновляем основные данные
 		        $stmt = $db->prepare("UPDATE form_data SET fio = ?, number = ?, email = ?, dat = ?, radio = ?, bio = ? WHERE user_id = ?");
 		        $stmt->execute([$fio, $number, $email, $date, $radio, $bio, $_SESSION['user_id']]);
 		
-		        // Удаляем старые языки
 		        $stmt = $db->prepare("DELETE FROM form_data_lang WHERE id_form = ?");
 		        $stmt->execute([$_SESSION['form_id']]);
 		
-		        // Добавляем новые языки
 		        $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
 		        foreach ($languages as $lang) {
 		            $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
@@ -174,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		    }
 		} 
 	else {
-            // Создание нового пользователя
+
             $login = uniqid();
             $pass = uniqid();
             $mpass = md5($pass);
@@ -182,17 +165,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
                 $db->beginTransaction();
 
-                // Создаем пользователя
                 $stmt = $db->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
                 $stmt->execute([$login, $mpass]);
                 $user_id = $db->lastInsertId();
 
-                // Сохраняем данные формы
                 $stmt = $db->prepare("INSERT INTO form_data (user_id, fio, number, email, dat, radio, bio) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$user_id, $fio, $number, $email, $date, $radio, $bio]);
                 $fid = $db->lastInsertId();
 
-                // Сохраняем выбранные языки
                 $stmt1 = $db->prepare("INSERT INTO form_data_lang (id_form, id_lang) VALUES (?, ?)");
                 foreach ($languages as $lang) {
                     $stmtLang = $db->prepare("SELECT id FROM languages WHERE name = ?");
@@ -205,7 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $db->commit();
 
-                // Устанавливаем куки
                 setcookie('login', $login, time() + 3600 * 24 * 30, '/');
                 setcookie('pass', $pass, time() + 3600 * 24 * 30, '/');
 
@@ -264,7 +243,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
         exit();
     } else {
-        // Для не-AJAX запросов
         if (isset($response['messages']['success'])) {
             $_SESSION['success_message'] = $response['messages']['success'];
         }
